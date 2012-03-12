@@ -109,6 +109,12 @@
   </screen>
   
   <!--  the high score screen, displays high scores -->
+  <screen id="empty" >
+    <layer id="layer" backgroundColor="#0000" childLayout="center">
+    </layer>
+  </screen>
+  
+  <!--  the high score screen, displays high scores -->
   <screen id="highscore" controller="edu.mit.lids.ares.forestrunner.screens.HighScoreScreen">
     <layer id="layer" backgroundColor="#0000" childLayout="center">
       <panel id="pnl.end" height="80%" width="90%" align="center" valign="center" childLayout="vertical">

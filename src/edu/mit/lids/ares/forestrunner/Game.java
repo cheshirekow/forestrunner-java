@@ -1,15 +1,25 @@
 package edu.mit.lids.ares.forestrunner;
 
 
+import java.awt.DisplayMode;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.text.JTextComponent.KeyBinding;
+
 import com.jme3.app.SimpleApplication;
+import com.jme3.input.KeyInput;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
 import com.jme3.math.Vector3f;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
+import com.jme3.system.AppSettings;
+
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.ScreenController;
 import edu.mit.lids.ares.forestrunner.screens.*;
@@ -61,6 +71,38 @@ public class Game extends SimpleApplication
     {
         return m_nifty;
     }
+    
+    
+    /**
+     * Map hotkeys.
+     */
+    private void initKeys() 
+    {
+        // don't quit on escape
+        inputManager.deleteMapping( SimpleApplication.INPUT_MAPPING_EXIT );
+        
+        //add pause keys which bring up the pause menu
+        inputManager.addMapping("Pause",        new KeyTrigger(KeyInput.KEY_ESCAPE));
+        inputManager.addMapping("Pause",        new KeyTrigger(KeyInput.KEY_SPACE));
+         
+        //add the names to the action listener
+        inputManager.addListener(pauseListener,new String[]{"Pause"});
+    }
+     
+     
+    private ActionListener pauseListener = new ActionListener() 
+    {
+        public void onAction(String name, boolean keyPressed, float tpf) 
+        {
+             if (name.equals("Pause") && !keyPressed) 
+             {
+                 if( m_nifty.getCurrentScreen().getScreenId().compareTo("game")==0 )
+                     m_nifty.gotoScreen("empty");
+                 else if( m_nifty.getCurrentScreen().getScreenId().compareTo("empty")==0 )
+                     m_nifty.gotoScreen("game");
+             }
+         }
+     };
 
     public void simpleInitApp() 
     {
@@ -100,6 +142,8 @@ public class Game extends SimpleApplication
         flyCam.setEnabled(false);
         flyCam.setDragToRotate(true);
         inputManager.setCursorVisible(true);
+        
+        initKeys();
     }
 
 }
