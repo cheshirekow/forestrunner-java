@@ -45,7 +45,7 @@ public class GameScreen implements ScreenController
         System.out.println("game button [" + id +"] pressed ");
         if( id.compareTo("game.btn.new")==0 )
         {
-            m_game.nifty().gotoScreen("countdown3");
+            m_nifty.gotoScreen("countdown3");
         }
         else
         {

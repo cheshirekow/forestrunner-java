@@ -1,40 +1,42 @@
 package edu.mit.lids.ares.forestrunner;
 
 
-import java.awt.DisplayMode;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.text.JTextComponent.KeyBinding;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.niftygui.NiftyJmeDisplay;
+import com.jme3.post.FilterPostProcessor;
+import com.jme3.post.filters.CartoonEdgeFilter;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
-import com.jme3.system.AppSettings;
+import com.jme3.scene.shape.Quad;
+import com.jme3.scene.Spatial;
+import com.jme3.renderer.queue.RenderQueue;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.ScreenController;
+
 import edu.mit.lids.ares.forestrunner.screens.*;
 
 public class Game extends SimpleApplication
 {
-    public enum Mode
+    public enum State
     {
-        DEMO,
-        PLAY
+        CRASHED,
+        RUNNING,
+        PAUSED
     }
 
     private Nifty                           m_nifty;
     private Map<String,ScreenController>    m_screens;
-    private Mode                            m_mode;
+    private State                           m_state;
     
     private Map<String,Integer>             m_params;
     private String                          m_user_hash;
@@ -49,27 +51,22 @@ public class Game extends SimpleApplication
         return m_user_hash;
     }
     
+    public State getState()
+    {
+        return m_state;
+    }
+    
     public Game()
     {
         m_screens = new HashMap<String,ScreenController>();
         m_params  = new HashMap<String,Integer>();
-        m_mode    = Mode.DEMO;
+        m_state   = State.CRASHED;
         
         String[] paramNames = {"velocity","density","radius"};
         for( String paramName : paramNames )
             m_params.put(paramName,1);
                 
         m_user_hash = "d0d20817f7f5b26f3637590e7a2e1621";
-    }
-    
-    public Map<String,ScreenController> screenMap()
-    {
-        return m_screens;
-    }
-    
-    public Nifty nifty()
-    {
-        return m_nifty;
     }
     
     
@@ -94,13 +91,25 @@ public class Game extends SimpleApplication
     {
         public void onAction(String name, boolean keyPressed, float tpf) 
         {
-             if (name.equals("Pause") && !keyPressed) 
-             {
-                 if( m_nifty.getCurrentScreen().getScreenId().compareTo("game")==0 )
-                     m_nifty.gotoScreen("empty");
-                 else if( m_nifty.getCurrentScreen().getScreenId().compareTo("empty")==0 )
-                     m_nifty.gotoScreen("game");
-             }
+            // the pause action is only meaning full if the game is active
+            if (name.equals("Pause") && !keyPressed) 
+            {
+                // if we're in the game screen and we're paused then we can
+                // resume, but we may also be in the game screen because we're
+                // crashed so we don't resume then
+                if( m_nifty.getCurrentScreen().getScreenId().compareTo("game")==0 
+                       && m_state==State.PAUSED )
+                {
+                    m_nifty.gotoScreen("empty");
+                    m_state = State.RUNNING;
+                }
+                    
+                else if( m_nifty.getCurrentScreen().getScreenId().compareTo("empty")==0 )
+                {
+                    m_state = State.PAUSED;
+                    m_nifty.gotoScreen("game");
+                }
+            }
          }
      };
 
@@ -109,10 +118,41 @@ public class Game extends SimpleApplication
         setDisplayFps(false);
         setDisplayStatView(false);
         
+        
+        if(true)
+        {
+            Quad q=new Quad(1f, 1f);
+            Geometry geom=new Geometry("bg", q);
+            Material bgMaterial = new Material(assetManager, "Shaders/fixedBg/Gradient.j3md");
+            bgMaterial.setColor("FirstColor", new ColorRGBA(  1f,  1f,  1f,1f) );   // dark gray
+            bgMaterial.setColor("SecondColor", new ColorRGBA(  1f,  1f,  1f,1f) );  // light gray
+            geom.setMaterial(bgMaterial);
+            geom.setQueueBucket(RenderQueue.Bucket.Sky);
+            geom.setCullHint(Spatial.CullHint.Never);
+            rootNode.attachChild(geom);
+        }
+        
+        if(true)
+        {
+            Quad q=new Quad(1f, 0.5f);
+            Geometry geom=new Geometry("bg", q);
+            Material bgMaterial = new Material(assetManager, "Shaders/fixedBg/Gradient.j3md");
+            bgMaterial.setColor("FirstColor", new ColorRGBA(0.3f,0.3f,0.3f,1f) );   // dark gray
+            bgMaterial.setColor("SecondColor", new ColorRGBA(0.7f,0.7f,0.7f,1f) );  // light gray
+            geom.setMaterial(bgMaterial);
+            geom.setQueueBucket(RenderQueue.Bucket.Sky);
+            geom.setCullHint(Spatial.CullHint.Never);
+            rootNode.attachChild(geom);
+        }
+        
+        
+        
         Box b = new Box(Vector3f.ZERO, 1, 1, 1);
         Geometry geom = new Geometry("Box", b);
+        geom.setLocalTranslation(-5f,-5f,-10f);
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.setTexture("ColorMap", assetManager.loadTexture("Interface/Logo/Monkey.jpg"));
+        //mat.setTexture("ColorMap", assetManager.loadTexture("Interface/Logo/Monkey.jpg"));
+        mat.setColor("Color", new ColorRGBA(1.0f,0f,0f,1f) );
         geom.setMaterial(mat);
         rootNode.attachChild(geom);
 
@@ -144,6 +184,17 @@ public class Game extends SimpleApplication
         inputManager.setCursorVisible(true);
         
         initKeys();
+        setupProcessor();
+        
+    }
+    
+    private void setupProcessor() {
+        FilterPostProcessor fpp=new FilterPostProcessor(assetManager);
+        CartoonEdgeFilter cartoon=new CartoonEdgeFilter();
+        cartoon.setDepthThreshold(.2f);
+        cartoon.setEdgeWidth(0.5f);
+        fpp.addFilter(cartoon);
+        viewPort.addProcessor(fpp);
     }
 
 }
