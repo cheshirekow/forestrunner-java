@@ -1,6 +1,8 @@
 package edu.mit.lids.ares.forestrunner.screens;
 
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.NiftyEventSubscriber;
+import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import edu.mit.lids.ares.forestrunner.Game;
@@ -36,6 +38,20 @@ public class HighScoreScreen implements ScreenController
     {
         // TODO Auto-generated method stub
         
+    }
+    
+    @NiftyEventSubscriber(pattern="highscore.btn.*")
+    public void onButton( String id, ButtonClickedEvent event )
+    {
+        System.out.println("highscore button [" + id +"] pressed ");
+        if( id.compareTo("highscore.btn.again")==0 )
+        {
+            m_game.nifty().gotoScreen("countdown3");
+        }
+        else
+        {
+            m_game.nifty().gotoScreen("game");
+        }
     }
 
 }

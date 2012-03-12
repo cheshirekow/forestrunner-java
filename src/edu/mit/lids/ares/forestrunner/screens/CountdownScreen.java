@@ -7,15 +7,15 @@ import edu.mit.lids.ares.forestrunner.Game;
 
 public class CountdownScreen implements ScreenController
 {
-    Game    m_game;
-    Nifty   m_nifty;
-    Screen  m_screen;
+    Game        m_game;
+    Nifty       m_nifty;
+    Screen[]    m_screen;
     
     public CountdownScreen(Game game)
     {
         m_game      = game;
         m_nifty     = null;
-        m_screen    = null;
+        m_screen    = new Screen[3];
     }
     
     @Override
@@ -23,7 +23,13 @@ public class CountdownScreen implements ScreenController
     {
         System.out.println("bind( " + screen.getScreenId() + ")");
         m_nifty     = nifty;
-        m_screen    = screen;
+
+        if( screen.getScreenId().compareTo("countdown3") ==0 )
+            m_screen[2] = screen;
+        if( screen.getScreenId().compareTo("countdown2") ==0 )
+            m_screen[1] = screen;
+        if( screen.getScreenId().compareTo("countdown1") ==0 )
+            m_screen[0] = screen;
     }
 
     @Override
@@ -40,22 +46,25 @@ public class CountdownScreen implements ScreenController
         
     }
     
-    public void onStep()
+    public void onStep(String num)
     {
-        System.out.println("Countdown effect end [" + m_screen.getScreenId() + "]");
+        int screenNum = Integer.parseInt(num);
         
-        if(m_screen == null)
+        System.out.println("Countdown effect end [" + screenNum + "]");
+        
+        switch(screenNum)
         {
-            System.out.println("Countdown screen was never bound!");
-        }
-        else
-        {
-            if( m_screen.getScreenId().compareTo("countdown3") ==0 )
+            case 3:
                 m_nifty.gotoScreen("countdown2");
-            if( m_screen.getScreenId().compareTo("countdown2") ==0 )
+                break;
+            case 2:
                 m_nifty.gotoScreen("countdown1");
-            if( m_screen.getScreenId().compareTo("countdown1") ==0 )
+                break;
+            case 1:
                 m_nifty.gotoScreen("highscore");
+                break;
+            default:
+                assert(false);
         }
     }
     

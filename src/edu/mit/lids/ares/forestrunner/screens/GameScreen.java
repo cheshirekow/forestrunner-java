@@ -47,6 +47,10 @@ public class GameScreen implements ScreenController
         {
             m_game.nifty().gotoScreen("countdown3");
         }
+        else
+        {
+            // continue game here
+        }
     }
 
 }

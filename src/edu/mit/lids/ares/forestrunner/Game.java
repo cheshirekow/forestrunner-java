@@ -12,16 +12,25 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.ScreenController;
+import edu.mit.lids.ares.forestrunner.Game.Mode;
 import edu.mit.lids.ares.forestrunner.screens.*;
 
 public class Game extends SimpleApplication
 {
-    private Nifty                   m_nifty;
-    Map<String,ScreenController>    m_screens;
+    public enum Mode
+    {
+        DEMO,
+        PLAY
+    }
+
+    private Nifty                           m_nifty;
+    private Map<String,ScreenController>    m_screens;
+    private Mode                            m_mode;
     
     public Game()
     {
         m_screens = new HashMap<String,ScreenController>();
+        m_mode    = Mode.DEMO;
     }
     
     public Map<String,ScreenController> screenMap()
@@ -36,8 +45,8 @@ public class Game extends SimpleApplication
 
     public void simpleInitApp() 
     {
-        //setDisplayFps(false);
-        //setDisplayStatView(false);
+        setDisplayFps(false);
+        setDisplayStatView(false);
         
         Box b = new Box(Vector3f.ZERO, 1, 1, 1);
         Geometry geom = new Geometry("Box", b);
