@@ -12,7 +12,6 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.ScreenController;
-import edu.mit.lids.ares.forestrunner.Game.Mode;
 import edu.mit.lids.ares.forestrunner.screens.*;
 
 public class Game extends SimpleApplication
@@ -27,10 +26,30 @@ public class Game extends SimpleApplication
     private Map<String,ScreenController>    m_screens;
     private Mode                            m_mode;
     
+    private Map<String,Integer>             m_params;
+    private String                          m_user_hash;
+    
+    public Integer getParam(String param)
+    {
+        return m_params.get(param);
+    }
+    
+    public String getUserHash()
+    {
+        return m_user_hash;
+    }
+    
     public Game()
     {
         m_screens = new HashMap<String,ScreenController>();
+        m_params  = new HashMap<String,Integer>();
         m_mode    = Mode.DEMO;
+        
+        String[] paramNames = {"velocity","density","radius"};
+        for( String paramName : paramNames )
+            m_params.put(paramName,1);
+                
+        m_user_hash = "d0d20817f7f5b26f3637590e7a2e1621";
     }
     
     public Map<String,ScreenController> screenMap()
