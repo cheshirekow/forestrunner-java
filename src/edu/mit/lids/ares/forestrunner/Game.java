@@ -308,7 +308,8 @@ public class Game extends SimpleApplication
         for( ScreenController sc : m_screens.values() )
         {
             m_nifty.registerScreenController(sc);
-            m_nifty.subscribeAnnotations(sc);
+            // apparently registerScreenController also subscribes annotations
+            //m_nifty.subscribeAnnotations(sc);
         }
         
         m_nifty.fromXml("Interface/Nifty/ui.xml", "disclaimer");
