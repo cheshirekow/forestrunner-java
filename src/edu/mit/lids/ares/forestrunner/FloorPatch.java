@@ -4,12 +4,16 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import edu.mit.lids.ares.forestrunner.toonblow.FixedTangentBinormalGenerator;
+
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Matrix3f;
+import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.debug.Grid;
 import com.jme3.scene.shape.Cylinder;
 
 public class FloorPatch extends Node
@@ -27,6 +31,7 @@ public class FloorPatch extends Node
     List<Geometry>      m_trees;
     float               m_width;
     float               m_height;
+    Geometry            m_floor;
     
     public static int getPoisson(double lambda) 
     {
@@ -43,12 +48,22 @@ public class FloorPatch extends Node
         return k - 1;
     }
     
-    public FloorPatch(String name, float width, float height)
+    public FloorPatch(String name, float width, float height, AssetManager assetManager)
     {
         super(name);
         m_trees     = new LinkedList<Geometry>();
         m_width     = width;
         m_height    = height;
+        
+        Grid        grid    = new Grid( (int)(width), (int)(height), 1f);
+        Geometry    geometry= new Geometry("wireframe grid", grid );
+        Material    material= new Material(assetManager,
+                                    "Common/MatDefs/Misc/Unshaded.j3md");
+        material.getAdditionalRenderState().setWireframe(true);
+        material.setColor("Color", ColorRGBA.Black);
+        geometry.setMaterial(material);
+        m_floor = geometry;
+        m_floor.setShadowMode(ShadowMode.Off);
     }
     
     public void regenerate(AssetManager assetManager, float density, float radius)
@@ -62,17 +77,18 @@ public class FloorPatch extends Node
             
             Cylinder cylinder   = new Cylinder(25,25,radius,0.5f,true,false);
             Geometry geometry   = new Geometry("cylinder", cylinder);
-            Material material   = new Material(assetManager,                // Create new material and...
-                                    "Common/MatDefs/Light/Lighting.j3md");  // ... specify .j3md file to use (illuminated).
+            Material material   = assetManager.loadMaterial("Materials/LightBlow/Toon_System/Toon_Base_Specular.j3m");
             material.setBoolean("UseMaterialColors",true);      // Set some parameters, e.g. blue.
             material.setColor("Ambient", s_colors.get(iColor));       // ... color of this object
             material.setColor("Diffuse", s_colors.get(iColor));
             geometry.setMaterial(material);
+            FixedTangentBinormalGenerator.generate(geometry);
             m_trees.add(geometry);
         }
         
         // clear out children
         detachAllChildren();
+        attachChild(m_floor);
         
         // add as many children as was sampled
         for(int i=0; i < numTrees; i++)
@@ -90,7 +106,7 @@ public class FloorPatch extends Node
             Matrix3f rotation = new Matrix3f(   1f,     0f,     0f,
                                                 0f,     cosx,   sinx,
                                                 0f,     -sinx,  cosx);
-            m_trees.get(i).setLocalTranslation(x, 0f, y);
+            m_trees.get(i).setLocalTranslation(x, 0.25f, y);
             m_trees.get(i).setLocalRotation(rotation);
         }
     }

@@ -16,9 +16,9 @@ import com.jme3.math.Vector3f;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.CartoonEdgeFilter;
+import com.jme3.post.filters.FogFilter;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Quad;
 import com.jme3.scene.Spatial;
 import com.jme3.renderer.queue.RenderQueue;
@@ -29,6 +29,7 @@ import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
 
 import edu.mit.lids.ares.forestrunner.screens.*;
+import edu.mit.lids.ares.forestrunner.toonblow.CartoonEdgeProcessor;
 
 public class Game extends SimpleApplication
 {
@@ -49,7 +50,8 @@ public class Game extends SimpleApplication
     private Node                            m_patchRoot;
     
     private float   m_density;
-    private float   m_speed;
+    private float   m_xSpeed;
+    private float   m_ySpeed;
     private float   m_radius;
     private float   m_xPos;
     private float   m_yPos;
@@ -89,13 +91,14 @@ public class Game extends SimpleApplication
                 
         m_user_hash = "d0d20817f7f5b26f3637590e7a2e1621";
                 
-        m_speed     = 3.0f;
+        m_xSpeed    = 0f;
+        m_ySpeed    = 3.0f;
         m_density   = 20f;
-        m_radius    = 0.3f;
+        m_radius    = 0.1f;
         
         m_xPos      = 0;
         m_yPos      = 0;
-        m_patchSize = 20f;
+        m_patchSize = 20.1f;
         
         m_patchDimX = 5;
         m_patchDimY = 4;
@@ -174,7 +177,7 @@ public class Game extends SimpleApplication
             for(int j=0; j < dimy; j++)
             {
                 String      patchName   = "floorpatch_" + i + "_" + j;
-                FloorPatch  patch       = new FloorPatch(patchName,width,height); 
+                FloorPatch  patch       = new FloorPatch(patchName,width,height,assetManager); 
                 m_patches[i][j]         = patch; 
                 m_patchRoot.attachChild(patch);
             }
@@ -212,7 +215,7 @@ public class Game extends SimpleApplication
             for(int j=0; j < dimy; j++)
             {
                 FloorPatch patch = m_patches[i][j];
-                patch.setLocalTranslation((i-dimx/2)*width, -0.7f, -j*height);
+                patch.setLocalTranslation((i-dimx/2f)*width, 0f, -j*height);
                 patch.regenerate(assetManager,density,radius);
             }
         }
@@ -244,29 +247,42 @@ public class Game extends SimpleApplication
         
         if(true)
         {
-            Quad q=new Quad(1f, 0.5f);
+            Quad q=new Quad(1f, 0.95f);
             Geometry geom=new Geometry("bg", q);
             Material bgMaterial = new Material(assetManager, "Shaders/fixedBg/Gradient.j3md");
             bgMaterial.setColor("FirstColor", new ColorRGBA(0.3f,0.3f,0.3f,1f) );   // dark gray
-            bgMaterial.setColor("SecondColor", new ColorRGBA(0.7f,0.7f,0.7f,1f) );  // light gray
+            bgMaterial.setColor("SecondColor", new ColorRGBA(0.65f,0.65f,0.65f,1f) );  // light gray
             geom.setMaterial(bgMaterial);
             geom.setQueueBucket(RenderQueue.Bucket.Sky);
             geom.setCullHint(Spatial.CullHint.Never);
             rootNode.attachChild(geom);
         }
         
-        
+        AircraftMesh    ac      = new AircraftMesh();
+        Geometry        geom    = new Geometry("aircraft",ac);
         /*
-        Box b = new Box(Vector3f.ZERO, 1, 1, 1);
-        Geometry geom = new Geometry("Box", b);
-        geom.setLocalTranslation(-5f,-5f,-10f);
-        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        //mat.setTexture("ColorMap", assetManager.loadTexture("Interface/Logo/Monkey.jpg"));
-        mat.setColor("Color", new ColorRGBA(1.0f,0f,0f,1f) );
-        geom.setMaterial(mat);
-        rootNode.attachChild(geom);
+        Material material   = new Material(assetManager,                
+                                    "Common/MatDefs/Light/Lighting.j3md");
+        material.setBoolean("UseMaterialColors",true);    
+        material.setColor("Ambient", ColorRGBA.Gray);     
+        material.setColor("Diffuse", ColorRGBA.Gray);
         */
-
+        Material material   = new Material(assetManager,
+                                    "Common/MatDefs/Misc/Unshaded.j3md");
+        material.setColor("Color", ColorRGBA.Gray);
+        geom.setMaterial(material);
+        geom.setLocalTranslation(0f, 0f, 0f);
+        rootNode.attachChild(geom);
+        
+        geom = new Geometry("aircraft_wf",ac);
+        material = material.clone();
+        material.setColor("Color", ColorRGBA.Black);
+        material.getAdditionalRenderState().setWireframe(true);
+        geom.setMaterial(material);
+        geom.setLocalScale(1.1f);
+        geom.setLocalTranslation(0f, 0f, -0.01f);
+        rootNode.attachChild(geom);
+        
         NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(assetManager,
                                                           inputManager,
                                                           audioRenderer,
@@ -292,14 +308,16 @@ public class Game extends SimpleApplication
         guiViewPort.addProcessor(niftyDisplay);
 
         // disable the fly cam
-        flyCam.setEnabled(false);
+        //flyCam.setEnabled(false);
         flyCam.setDragToRotate(true);
         inputManager.setCursorVisible(true);
         
         // changes the camera "zoom" by setting the viewing angle to 20deg
         // so that cylinders don't get clipped when they get close to the
         // camera
+        cam.setLocation(new Vector3f(0f,2.5f,5f));
         cam.setFrustumPerspective(30f, 640f/480f, 1f, 1000f);
+        cam.lookAt(new Vector3f(0f,0f,-4f), new Vector3f(0f,1f,0f) );
         
         initPatches();
         initKeys();
@@ -309,9 +327,21 @@ public class Game extends SimpleApplication
     private void setupProcessor() {
         FilterPostProcessor fpp=new FilterPostProcessor(assetManager);
         CartoonEdgeFilter cartoon=new CartoonEdgeFilter();
-        cartoon.setDepthThreshold(.2f);
-        cartoon.setEdgeWidth(0.5f);
-        fpp.addFilter(cartoon);
+        cartoon.setDepthSensitivity(0f);
+        cartoon.setNormalSensitivity(10f);
+        
+        // if we choose to set the camera to show a lot of the plane, then
+        // we may want a fog filter to make stuff disappear in the distance
+        FogFilter   fog = new FogFilter();
+        fog.setFogColor(new ColorRGBA(0.65f,0.65f,0.65f,1f));
+        fog.setFogDensity(10f);
+        fog.setFogDistance(400f);
+        
+        CartoonEdgeProcessor cartoonEdgeProcess = new CartoonEdgeProcessor();
+        viewPort.addProcessor(cartoonEdgeProcess);
+        
+        //fpp.addFilter(cartoon);
+        fpp.addFilter(fog);
         viewPort.addProcessor(fpp);
     }
     
@@ -321,7 +351,8 @@ public class Game extends SimpleApplication
         if(m_state != State.RUNNING)
             return;
         
-        m_yPos += m_speed*tpf;
+        m_yPos += m_ySpeed*tpf;
+        m_xPos += m_xSpeed*tpf;
         
         // if we've passed the end if the first row, then shuffle it back
         // to the last row
@@ -343,11 +374,11 @@ public class Game extends SimpleApplication
                 for(int j=0; j < dimy-1; j++)
                 {
                     patch = m_patches[i][j] = m_patches[i][j+1];
-                    patch.setLocalTranslation((i-dimx/2)*width, -0.7f, -j*height);
+                    patch.setLocalTranslation((i-dimx/2f)*width, 0f, -j*height);
                 }
                 
                 m_patches[i][dimy-1] = temp;
-                temp.setLocalTranslation((i-dimx/2)*width, -0.7f, -(dimy-1)*height);
+                temp.setLocalTranslation((i-dimx/2f)*width, 0f, -(dimy-1)*height);
                 temp.regenerate(assetManager, m_density, m_radius);
             }
         }

@@ -11,14 +11,14 @@ public class Main
         settings.put("Height",  480);
         settings.put("Title",   "Forest Runner");
         settings.put("VSync",   true);
-        settings.put("Samples", 4);
+        settings.setSamples(4);
         
         Game app = new Game();
         app.setShowSettings(false);
         app.setSettings(settings);
         app.setPauseOnLostFocus(true);
         
-        //java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.SEVERE);
+        java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.SEVERE);
         java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.SEVERE);
         
         app.start();
