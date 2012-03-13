@@ -1,0 +1,97 @@
+package edu.mit.lids.ares.forestrunner;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import com.jme3.asset.AssetManager;
+import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.Matrix3f;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
+import com.jme3.scene.shape.Cylinder;
+
+public class FloorPatch extends Node
+{
+    static ArrayList<ColorRGBA>  s_colors;
+    
+    static
+    {
+        s_colors = new ArrayList<ColorRGBA>();
+        s_colors.add( new ColorRGBA(1.0f,0f,0f,1f) );   // red
+        s_colors.add( new ColorRGBA(0f,1.0f,0f,1f) );   // green
+        s_colors.add( new ColorRGBA(0f,0f,1.0f,1f) );   // blue
+    }
+    
+    List<Geometry>      m_trees;
+    float               m_width;
+    float               m_height;
+    
+    public static int getPoisson(double lambda) 
+    {
+        double L = Math.exp(-lambda);
+        double p = 1.0;
+        int k = 0;
+
+        do 
+        {
+            k++;
+            p *= Math.random();
+        } while (p > L);
+
+        return k - 1;
+    }
+    
+    public FloorPatch(String name, float width, float height)
+    {
+        super(name);
+        m_trees     = new LinkedList<Geometry>();
+        m_width     = width;
+        m_height    = height;
+    }
+    
+    public void regenerate(AssetManager assetManager, float density, float radius)
+    {
+        int numTrees    = getPoisson(density);
+        
+        // if we don't have enough trees in the queue, then generate some more
+        while(m_trees.size() < numTrees)
+        {
+            int iColor      = (int) (Math.random()*(double)s_colors.size() );
+            
+            Cylinder cylinder   = new Cylinder(25,25,radius,0.5f,true,false);
+            Geometry geometry   = new Geometry("cylinder", cylinder);
+            Material material   = new Material(assetManager,                // Create new material and...
+                                    "Common/MatDefs/Light/Lighting.j3md");  // ... specify .j3md file to use (illuminated).
+            material.setBoolean("UseMaterialColors",true);      // Set some parameters, e.g. blue.
+            material.setColor("Ambient", s_colors.get(iColor));       // ... color of this object
+            material.setColor("Diffuse", s_colors.get(iColor));
+            geometry.setMaterial(material);
+            m_trees.add(geometry);
+        }
+        
+        // clear out children
+        detachAllChildren();
+        
+        // add as many children as was sampled
+        for(int i=0; i < numTrees; i++)
+        {
+            assert( i < m_trees.size() );
+            attachChild(m_trees.get(i));
+            
+            // translate it to some point, uniformly distributed
+            float x = (float)Math.random()*m_width;
+            float y = (float)Math.random()*m_height;
+            
+            float cosx  = 0;
+            float sinx  = 1;
+            
+            Matrix3f rotation = new Matrix3f(   1f,     0f,     0f,
+                                                0f,     cosx,   sinx,
+                                                0f,     -sinx,  cosx);
+            m_trees.get(i).setLocalTranslation(x, 0f, y);
+            m_trees.get(i).setLocalRotation(rotation);
+        }
+    }
+}

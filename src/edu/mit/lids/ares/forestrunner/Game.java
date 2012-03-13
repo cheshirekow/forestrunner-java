@@ -8,6 +8,8 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.light.AmbientLight;
+import com.jme3.light.PointLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
@@ -15,10 +17,12 @@ import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.CartoonEdgeFilter;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Quad;
 import com.jme3.scene.Spatial;
 import com.jme3.renderer.queue.RenderQueue;
+import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.ScreenController;
@@ -40,6 +44,17 @@ public class Game extends SimpleApplication
     
     private Map<String,Integer>             m_params;
     private String                          m_user_hash;
+    private FloorPatch[][]                  m_patches;
+    private Node                            m_patchRoot;
+    
+    private float   m_density;
+    private float   m_speed;
+    private float   m_radius;
+    private float   m_xPos;
+    private float   m_yPos;
+    private float   m_patchSize;
+    private int     m_patchDimX;
+    private int     m_patchDimY;
     
     public Integer getParam(String param)
     {
@@ -67,6 +82,17 @@ public class Game extends SimpleApplication
             m_params.put(paramName,1);
                 
         m_user_hash = "d0d20817f7f5b26f3637590e7a2e1621";
+                
+        m_speed     = 3.0f;
+        m_density   = 20f;
+        m_radius    = 0.3f;
+        
+        m_xPos      = 0;
+        m_yPos      = 0;
+        m_patchSize = 20f;
+        
+        m_patchDimX = 5;
+        m_patchDimY = 4;
     }
     
     
@@ -81,9 +107,10 @@ public class Game extends SimpleApplication
         //add pause keys which bring up the pause menu
         inputManager.addMapping("Pause",        new KeyTrigger(KeyInput.KEY_ESCAPE));
         inputManager.addMapping("Pause",        new KeyTrigger(KeyInput.KEY_SPACE));
+        inputManager.addMapping("Crash",        new KeyTrigger(KeyInput.KEY_Q));
          
         //add the names to the action listener
-        inputManager.addListener(pauseListener,new String[]{"Pause"});
+        inputManager.addListener(pauseListener,new String[]{"Pause", "Crash"});
     }
      
      
@@ -110,8 +137,54 @@ public class Game extends SimpleApplication
                     m_nifty.gotoScreen("game");
                 }
             }
-         }
-     };
+            
+            if (name.equals("Crash") && !keyPressed )
+            {
+                m_nifty.gotoScreen("highscore");
+                m_state = State.CRASHED;
+            }
+        }
+    };
+     
+    public void initPatches()
+    {
+        int   dimx      = m_patchDimX;
+        int   dimy      = m_patchDimY;
+        float width     = m_patchSize;
+        float height    = m_patchSize;
+        float density   = m_density;
+        float radius    = m_radius;
+        
+        m_patchRoot = new Node("patch_root");
+        m_patches = new FloorPatch[dimx][dimy];
+        
+        rootNode.attachChild(m_patchRoot);
+        
+        for(int i=0; i < dimx; i++)
+        {
+            for(int j=0; j < dimy; j++)
+            {
+                String      patchName   = "floorpatch_" + i + "_" + j;
+                FloorPatch  patch       = new FloorPatch(patchName,width,height); 
+                m_patches[i][j]         = patch; 
+                patch.setLocalTranslation((i-dimx/2)*width, -0.7f, -j*height);
+                m_patchRoot.attachChild(patch);
+                patch.regenerate(assetManager,density,radius);
+            }
+        }
+        
+        PointLight lamp_light = new PointLight();
+        lamp_light.setColor(ColorRGBA.White.mult(2f));
+        lamp_light.setRadius(100f);
+        lamp_light.setPosition(new Vector3f(-10f, 2f, 6f));
+        rootNode.addLight(lamp_light);
+        
+        AmbientLight al = new AmbientLight();
+        al.setColor(ColorRGBA.White.mult(0.3f));
+        rootNode.addLight(al);
+        
+        rootNode.setShadowMode(ShadowMode.CastAndReceive);
+    }
 
     public void simpleInitApp() 
     {
@@ -146,7 +219,7 @@ public class Game extends SimpleApplication
         }
         
         
-        
+        /*
         Box b = new Box(Vector3f.ZERO, 1, 1, 1);
         Geometry geom = new Geometry("Box", b);
         geom.setLocalTranslation(-5f,-5f,-10f);
@@ -155,6 +228,7 @@ public class Game extends SimpleApplication
         mat.setColor("Color", new ColorRGBA(1.0f,0f,0f,1f) );
         geom.setMaterial(mat);
         rootNode.attachChild(geom);
+        */
 
         NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(assetManager,
                                                           inputManager,
@@ -183,9 +257,14 @@ public class Game extends SimpleApplication
         flyCam.setDragToRotate(true);
         inputManager.setCursorVisible(true);
         
+        // changes the camera "zoom" by setting the viewing angle to 20deg
+        // so that cylinders don't get clipped when they get close to the
+        // camera
+        cam.setFrustumPerspective(30f, 640f/480f, 1f, 1000f);
+        
+        initPatches();
         initKeys();
         setupProcessor();
-        
     }
     
     private void setupProcessor() {
@@ -195,6 +274,43 @@ public class Game extends SimpleApplication
         cartoon.setEdgeWidth(0.5f);
         fpp.addFilter(cartoon);
         viewPort.addProcessor(fpp);
+    }
+    
+    @Override
+    public void simpleUpdate(float tpf) 
+    {
+        m_yPos += m_speed*tpf;
+        
+        // if we've passed the end if the first row, then shuffle it back
+        // to the last row
+        if(m_yPos > m_patchSize)
+        {
+            // reduce the yposition by one patch length
+            m_yPos -= m_patchSize;
+            
+            // shuffle patches
+            int   dimx      = m_patchDimX;
+            int   dimy      = m_patchDimY;
+            float width     = m_patchSize;
+            float height    = m_patchSize;
+            
+            for(int i=0; i < dimx; i++)
+            {
+                FloorPatch temp = m_patches[i][0];
+                FloorPatch patch;
+                for(int j=0; j < dimy-1; j++)
+                {
+                    patch = m_patches[i][j] = m_patches[i][j+1];
+                    patch.setLocalTranslation((i-dimx/2)*width, -0.7f, -j*height);
+                }
+                
+                m_patches[i][dimy-1] = temp;
+                temp.setLocalTranslation((i-dimx/2)*width, -0.7f, -(dimy-1)*height);
+                temp.regenerate(assetManager, m_density, m_radius);
+            }
+        }
+        
+        m_patchRoot.setLocalTranslation(0,0,m_yPos);
     }
 
 }

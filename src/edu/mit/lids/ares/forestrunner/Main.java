@@ -18,7 +18,7 @@ public class Main
         app.setSettings(settings);
         app.setPauseOnLostFocus(true);
         
-        //java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.SEVERE);
+        java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.SEVERE);
         java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.SEVERE);
         
         app.start();
