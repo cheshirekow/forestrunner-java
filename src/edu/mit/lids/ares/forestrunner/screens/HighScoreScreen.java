@@ -176,6 +176,7 @@ public class HighScoreScreen implements ScreenController
         System.out.println("highscore button [" + id +"] pressed ");
         if( id.compareTo("highscore.btn.again")==0 )
         {
+            m_game.initRun();
             m_nifty.gotoScreen("countdown3");
         }
         else if( id.compareTo("highscore.btn.settings")==0 )

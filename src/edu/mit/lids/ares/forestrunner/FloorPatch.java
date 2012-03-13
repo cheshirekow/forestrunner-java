@@ -24,8 +24,9 @@ public class FloorPatch extends Node
     {
         s_colors = new ArrayList<ColorRGBA>();
         s_colors.add( new ColorRGBA(1.0f,0f,0f,1f) );   // red
-        s_colors.add( new ColorRGBA(0f,1.0f,0f,1f) );   // green
-        s_colors.add( new ColorRGBA(0f,0f,1.0f,1f) );   // blue
+        //s_colors.add( new ColorRGBA(0f,1.0f,0f,1f) );   // green
+        //s_colors.add( new ColorRGBA(0f,0f,1.0f,1f) );   // blue
+        s_colors.add( new ColorRGBA(1.0f,1.0f,0f,1f) ); // yellow;
     }
     
     List<Geometry>      m_trees;
@@ -64,6 +65,12 @@ public class FloorPatch extends Node
         geometry.setMaterial(material);
         m_floor = geometry;
         m_floor.setShadowMode(ShadowMode.Off);
+    }
+    
+    public void fullRegenerate(AssetManager assetManager, float density, float radius)
+    {
+        m_trees.clear();
+        regenerate(assetManager,density,radius);
     }
     
     public void regenerate(AssetManager assetManager, float density, float radius)
@@ -106,7 +113,11 @@ public class FloorPatch extends Node
             Matrix3f rotation = new Matrix3f(   1f,     0f,     0f,
                                                 0f,     cosx,   sinx,
                                                 0f,     -sinx,  cosx);
-            m_trees.get(i).setLocalTranslation(x, 0.25f, y);
+            
+            // random height eliminates jittering in image of overlapping
+            // cylinders
+            m_trees.get(i).setLocalTranslation(x, 
+                                0.25f + (float)(Math.random()*0.001), y);
             m_trees.get(i).setLocalRotation(rotation);
         }
     }

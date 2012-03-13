@@ -103,11 +103,11 @@
                 </panel>
                 <panel id="pnl.options" style="nifty-panel-80" width="50%" height="80%" childLayout="vertical">
                     <text id="txt.speed" width="90%" font="aurulent-sans-16.fnt" text="${game.speed}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
-                    <control id="sldr.speed"    name="horizontalSlider" width="100%" min="1" max="10" initial="1" stepSize="1" buttonStepSize="1" />
+                    <control id="game.sldr.velocity"  name="horizontalSlider" width="100%" min="0" max="9" initial="0" stepSize="1" buttonStepSize="1" />
                     <text id="txt.density" width="90%" font="aurulent-sans-16.fnt" text="${game.density}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
-                    <control id="sldr.density"  name="horizontalSlider" width="100%" min="1" max="10" initial="1" stepSize="1" buttonStepSize="1" />
+                    <control id="game.sldr.density"  name="horizontalSlider" width="100%" min="0" max="9" initial="0" stepSize="1" buttonStepSize="1" />
                     <text id="txt.radius" width="90%" font="aurulent-sans-16.fnt" text="${game.radius}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
-                    <control id="sldr.radius"   name="horizontalSlider" width="100%" min="1" max="10" initial="1" stepSize="1" buttonStepSize="1" />
+                    <control id="game.sldr.radius"   name="horizontalSlider" width="100%" min="0" max="9" initial="0" stepSize="1" buttonStepSize="1" />
                     <panel id="pnl.spacer" width="100%" height="20px">
                     </panel>
                     <panel id="pnl.buttons" width="80%" childLayout="horizontal" align="center">

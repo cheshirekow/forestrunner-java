@@ -64,6 +64,11 @@ public class Game extends SimpleApplication
         return m_params.get(param);
     }
     
+    public void setParam(String param, int value)
+    {
+        m_params.put(param, value);
+    }
+    
     public String getUserHash()
     {
         return m_user_hash;
@@ -87,7 +92,7 @@ public class Game extends SimpleApplication
         
         String[] paramNames = {"velocity","density","radius"};
         for( String paramName : paramNames )
-            m_params.put(paramName,1);
+            m_params.put(paramName,0);
                 
         m_user_hash = "d0d20817f7f5b26f3637590e7a2e1621";
                 
@@ -200,6 +205,10 @@ public class Game extends SimpleApplication
     
     public void initRun()
     {
+        m_radius = 0.1f + 0.05f * m_params.get("radius");
+        m_ySpeed = 3.0f + 0.5f * m_params.get("velocity");
+        m_density= 20f  + 10f  * m_params.get("density");
+        
         int   dimx      = m_patchDimX;
         int   dimy      = m_patchDimY;
         float width     = m_patchSize;
@@ -216,7 +225,7 @@ public class Game extends SimpleApplication
             {
                 FloorPatch patch = m_patches[i][j];
                 patch.setLocalTranslation((i-dimx/2f)*width, 0f, -j*height);
-                patch.regenerate(assetManager,density,radius);
+                patch.fullRegenerate(assetManager,density,radius);
             }
         }
         

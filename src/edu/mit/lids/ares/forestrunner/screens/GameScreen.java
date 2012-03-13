@@ -3,6 +3,9 @@ package edu.mit.lids.ares.forestrunner.screens;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
+import de.lessvoid.nifty.controls.ListBox;
+import de.lessvoid.nifty.controls.Slider;
+import de.lessvoid.nifty.controls.SliderChangedEvent;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import edu.mit.lids.ares.forestrunner.Game;
@@ -40,6 +43,15 @@ public class GameScreen implements ScreenController
     public void onStartScreen()
     {
         m_resumeImmediately = false;
+        
+        String[] params = {"velocity", "density", "radius"};
+        
+        for( String param : params )
+        {
+            String idName = "game.sldr." + param;
+            Slider slider = m_screen.findNiftyControl(idName, Slider.class);
+            slider.setValue( m_game.getParam(param) );
+        }
     }
     
     @NiftyEventSubscriber(pattern="game.btn.*")
@@ -49,18 +61,21 @@ public class GameScreen implements ScreenController
         
         if( id.compareTo("game.btn.new")==0 )
         {
-            m_nifty.gotoScreen("countdown3");
             m_game.initRun();
+            m_nifty.gotoScreen("countdown3");
         }
         else
         {
             if(m_game.getState() == State.PAUSED)
             {
-                m_nifty.gotoScreen("empty");
                 m_resumeImmediately = true;
+                m_nifty.gotoScreen("empty");
             }
             else
+            {
                 m_game.initRun();
+                m_nifty.gotoScreen("countdown3");
+            }
         }
     }
     
@@ -70,6 +85,22 @@ public class GameScreen implements ScreenController
         {
             System.out.println("Game is just paused, resuming now");
             m_game.setState(State.RUNNING);
+        }
+    }
+    
+    @NiftyEventSubscriber(pattern="game.sldr.*")
+    public void onSlider( String id, SliderChangedEvent event )
+    {
+        String[] params = {"velocity", "density", "radius"};
+        
+        for( String param : params )
+        {
+            String idName = "game.sldr." + param;
+            if( id.compareTo(idName)== 0)
+            {
+                System.out.println("Setting value of " + param + " to " + (int)event.getValue() );
+                m_game.setParam(param, (int)event.getValue());
+            }
         }
     }
 
