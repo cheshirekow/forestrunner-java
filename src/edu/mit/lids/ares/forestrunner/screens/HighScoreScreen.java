@@ -118,6 +118,8 @@ public class HighScoreScreen implements ScreenController
     @Override
     public void onStartScreen()
     {
+        System.out.println("Building highscore tables");
+        
         String[] paramNames = {"velocity","density","radius"};
         
         String getString = "";
@@ -144,11 +146,15 @@ public class HighScoreScreen implements ScreenController
         Gson gson = new Gson();
         ResultObject result= gson.fromJson(jsonResult, ResultObject.class);
         
+        System.out.println("Score request status: " + result.status );
+        
         ListBox<HighScoreRow> listBox =(ListBox<HighScoreRow>) 
                 m_screen.findNiftyControl("lb.personalHigh", ListBox.class);
         listBox.clear();
+        System.out.println("personal scores:");
         for( HighScoreRow row : result.user_scores )
         {
+            System.out.println("   " + row.user_nick + ", " + row.date + ", " + row.score);
             row.date = row.date.substring(0,5);
             listBox.addItem(row);
         }
@@ -157,8 +163,10 @@ public class HighScoreScreen implements ScreenController
         listBox = (ListBox<HighScoreRow>) 
                 m_screen.findNiftyControl("lb.globalHigh", ListBox.class);
         listBox.clear();
+        System.out.println("global scores:");
         for( HighScoreRow row : result.global_scores)
         {
+            System.out.println("   " + row.user_nick + ", " + row.date + ", " + row.score);
             row.date = row.date.substring(0,5);
             listBox.addItem(row);        
         }

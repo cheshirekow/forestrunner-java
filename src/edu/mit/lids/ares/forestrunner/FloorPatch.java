@@ -89,7 +89,6 @@ public class FloorPatch extends Node
             material.setColor("Ambient", s_colors.get(iColor));       // ... color of this object
             material.setColor("Diffuse", s_colors.get(iColor));
             geometry.setMaterial(material);
-            FixedTangentBinormalGenerator.generate(geometry);
             m_trees.add(geometry);
         }
         
