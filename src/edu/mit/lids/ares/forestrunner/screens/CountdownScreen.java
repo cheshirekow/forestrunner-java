@@ -4,6 +4,7 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import edu.mit.lids.ares.forestrunner.Game;
+import edu.mit.lids.ares.forestrunner.Game.State;
 
 public class CountdownScreen implements ScreenController
 {
@@ -62,6 +63,7 @@ public class CountdownScreen implements ScreenController
                 break;
             case 1:
                 m_nifty.gotoScreen("empty");
+                m_game.setState(State.RUNNING);
                 break;
             default:
                 assert(false);

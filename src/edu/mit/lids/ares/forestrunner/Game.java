@@ -26,6 +26,7 @@ import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.ScreenController;
+import de.lessvoid.nifty.controls.ButtonClickedEvent;
 
 import edu.mit.lids.ares.forestrunner.screens.*;
 
@@ -69,6 +70,11 @@ public class Game extends SimpleApplication
     public State getState()
     {
         return m_state;
+    }
+    
+    public void setState( State state )
+    {
+        m_state = state;
     }
     
     public Game()
@@ -124,11 +130,15 @@ public class Game extends SimpleApplication
                 // if we're in the game screen and we're paused then we can
                 // resume, but we may also be in the game screen because we're
                 // crashed so we don't resume then
-                if( m_nifty.getCurrentScreen().getScreenId().compareTo("game")==0 
-                       && m_state==State.PAUSED )
+                if( m_nifty.getCurrentScreen().getScreenId().compareTo("game")==0 )
                 {
-                    m_nifty.gotoScreen("empty");
-                    m_state = State.RUNNING;
+                    GameScreen screen = 
+                            GameScreen.class.cast( m_screens.get("game") );
+                    
+                    if( m_state==State.PAUSED )
+                        screen.onButton("game.btn.cancel", new ButtonClickedEvent(null));
+                    else
+                        screen.onButton("game.btn.new", new ButtonClickedEvent(null));
                 }
                     
                 else if( m_nifty.getCurrentScreen().getScreenId().compareTo("empty")==0 )
@@ -137,10 +147,11 @@ public class Game extends SimpleApplication
                     m_nifty.gotoScreen("game");
                 }
             }
+                
             
             if (name.equals("Crash") && !keyPressed )
             {
-                m_nifty.gotoScreen("highscore");
+                m_nifty.gotoScreen("crash");
                 m_state = State.CRASHED;
             }
         }
@@ -152,8 +163,6 @@ public class Game extends SimpleApplication
         int   dimy      = m_patchDimY;
         float width     = m_patchSize;
         float height    = m_patchSize;
-        float density   = m_density;
-        float radius    = m_radius;
         
         m_patchRoot = new Node("patch_root");
         m_patches = new FloorPatch[dimx][dimy];
@@ -167,11 +176,11 @@ public class Game extends SimpleApplication
                 String      patchName   = "floorpatch_" + i + "_" + j;
                 FloorPatch  patch       = new FloorPatch(patchName,width,height); 
                 m_patches[i][j]         = patch; 
-                patch.setLocalTranslation((i-dimx/2)*width, -0.7f, -j*height);
                 m_patchRoot.attachChild(patch);
-                patch.regenerate(assetManager,density,radius);
             }
         }
+        
+        initRun();
         
         PointLight lamp_light = new PointLight();
         lamp_light.setColor(ColorRGBA.White.mult(2f));
@@ -184,6 +193,34 @@ public class Game extends SimpleApplication
         rootNode.addLight(al);
         
         rootNode.setShadowMode(ShadowMode.CastAndReceive);
+    }
+    
+    public void initRun()
+    {
+        int   dimx      = m_patchDimX;
+        int   dimy      = m_patchDimY;
+        float width     = m_patchSize;
+        float height    = m_patchSize;
+        float density   = m_density;
+        float radius    = m_radius;
+        
+        m_yPos = 0;
+        m_xPos = 0;
+        
+        for(int i=0; i < dimx; i++)
+        {
+            for(int j=0; j < dimy; j++)
+            {
+                FloorPatch patch = m_patches[i][j];
+                patch.setLocalTranslation((i-dimx/2)*width, -0.7f, -j*height);
+                patch.regenerate(assetManager,density,radius);
+            }
+        }
+        
+        m_state = State.PAUSED;
+        m_patchRoot.setLocalTranslation(0,0,0);
+        
+        System.out.println("initialized a new run");
     }
 
     public void simpleInitApp() 
@@ -240,6 +277,8 @@ public class Game extends SimpleApplication
         m_screens.put("game",       new GameScreen(this));
         m_screens.put("highscore",  new HighScoreScreen(this));
         m_screens.put("countdown",  new CountdownScreen(this));
+        m_screens.put("empty",      new EmptyScreen(this));
+        m_screens.put("crash",      new CrashScreen(this));
         
         for( ScreenController sc : m_screens.values() )
         {
@@ -279,6 +318,9 @@ public class Game extends SimpleApplication
     @Override
     public void simpleUpdate(float tpf) 
     {
+        if(m_state != State.RUNNING)
+            return;
+        
         m_yPos += m_speed*tpf;
         
         // if we've passed the end if the first row, then shuffle it back
