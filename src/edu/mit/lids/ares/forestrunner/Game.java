@@ -33,6 +33,7 @@ public class Game extends SimpleApplication
 {
     public enum State
     {
+        COLLISION,
         CRASHED,
         RUNNING,
         PAUSED
@@ -465,6 +466,23 @@ public class Game extends SimpleApplication
         }
         
         m_patchRoot.setLocalTranslation(-m_xPos,0,m_yPos);
+        
+        Boolean collision = false;
+        for( int i=0; i < m_patchDimX && !collision; i++)
+        {
+            for(int j=0; j < m_patchDimY && !collision; j++)
+            {
+                collision 
+                    = m_patches[i][j].collisionCheck(m_xPos, m_yPos, m_radius);
+                if(collision)
+                    System.out.println("Collision in loop");
+            }
+        }
+        
+        if(false & collision)
+        {
+            
+        }
     }
 
 }

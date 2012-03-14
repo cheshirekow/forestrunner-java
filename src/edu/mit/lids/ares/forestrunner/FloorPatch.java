@@ -8,6 +8,7 @@ import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Matrix3f;
+import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -31,6 +32,7 @@ public class FloorPatch extends Node
     float               m_width;
     float               m_height;
     Geometry            m_floor;
+    int                 m_numTrees;
     
     public static int getPoisson(double lambda) 
     {
@@ -73,10 +75,10 @@ public class FloorPatch extends Node
     
     public void regenerate(AssetManager assetManager, float density, float radius)
     {
-        int numTrees    = getPoisson(density);
+        m_numTrees    = getPoisson(density);
         
         // if we don't have enough trees in the queue, then generate some more
-        while(m_trees.size() < numTrees)
+        while(m_trees.size() < m_numTrees)
         {
             int iColor      = (int) (Math.random()*(double)s_colors.size() );
             
@@ -95,7 +97,7 @@ public class FloorPatch extends Node
         attachChild(m_floor);
         
         // add as many children as was sampled
-        for(int i=0; i < numTrees; i++)
+        for(int i=0; i < m_numTrees; i++)
         {
             assert( i < m_trees.size() );
             attachChild(m_trees.get(i));
@@ -117,5 +119,26 @@ public class FloorPatch extends Node
                                 0.25f + (float)(Math.random()*0.001), y);
             m_trees.get(i).setLocalRotation(rotation);
         }
+    }
+    
+    Boolean collisionCheck( float x, float y, float r )
+    {
+        float r2 = r*r;
+        
+        for(int i=0; i < m_numTrees; i++)
+        {
+            Vector3f t = m_trees.get(i).getWorldTranslation();
+            float d2  = t.x*t.x + t.y*t.y;
+            
+            if(d2 < r2)
+            {
+                System.out.println("Collision in check");
+                return true;
+            }
+            else
+                System.out.println("Distance: " + d2);
+        }
+        
+        return false;
     }
 }
