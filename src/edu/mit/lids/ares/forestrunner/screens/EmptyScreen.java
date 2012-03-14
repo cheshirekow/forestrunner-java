@@ -1,12 +1,9 @@
 package edu.mit.lids.ares.forestrunner.screens;
 
 import de.lessvoid.nifty.Nifty;
-import de.lessvoid.nifty.NiftyEventSubscriber;
-import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import edu.mit.lids.ares.forestrunner.Game;
-import edu.mit.lids.ares.forestrunner.Game.State;
 
 public class EmptyScreen implements ScreenController
 {

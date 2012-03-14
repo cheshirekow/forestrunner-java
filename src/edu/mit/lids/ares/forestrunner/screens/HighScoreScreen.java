@@ -1,21 +1,13 @@
 package edu.mit.lids.ares.forestrunner.screens;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Scanner;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
@@ -218,6 +210,9 @@ public class HighScoreScreen implements ScreenController
             Gson gson = new Gson();
             NickResultObject nickResult = 
                     gson.fromJson(jsonResult, NickResultObject.class);
+            if( nickResult.status.compareTo("OK") != 0 )
+                System.out.println("Failed to set nickname: " + nickResult.message );
+
             onStartScreen();
         }
     }

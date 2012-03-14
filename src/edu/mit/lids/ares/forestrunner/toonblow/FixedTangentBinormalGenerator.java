@@ -57,6 +57,7 @@ public class FixedTangentBinormalGenerator {
     private static final float ZERO_TOLERANCE = 0.0000001f;
     private static final Logger log = Logger.getLogger(
             FixedTangentBinormalGenerator.class.getName());
+    @SuppressWarnings("unused")
     private static float toleranceAngle;
     private static float toleranceDot;
     
@@ -425,14 +426,14 @@ public class FixedTangentBinormalGenerator {
     {
         ArrayList<VertexInfo> vertexMap = linkVertices(mesh);
         
-        FloatBuffer normalBuffer = (FloatBuffer) mesh.getBuffer(Type.Normal).getData();
+        //FloatBuffer normalBuffer = (FloatBuffer) mesh.getBuffer(Type.Normal).getData();
         
         FloatBuffer tangents = BufferUtils.createFloatBuffer(vertices.length * 4);
-//        FloatBuffer binormals = BufferUtils.createFloatBuffer(vertices.length * 3);
+        //FloatBuffer binormals = BufferUtils.createFloatBuffer(vertices.length * 3);
 
         Vector3f tangent = new Vector3f();
         Vector3f binormal = new Vector3f();
-        Vector3f normal = new Vector3f();
+        //Vector3f normal = new Vector3f();
         Vector3f givenNormal = new Vector3f();
         
         Vector3f tangentUnit = new Vector3f();
@@ -641,7 +642,7 @@ public class FixedTangentBinormalGenerator {
         lineMesh.setBuffer(Type.Color, 4, lineColor);
         
         lineMesh.setStatic();
-        lineMesh.setInterleaved();
+        //lineMesh.setInterleaved();
         return lineMesh;
     }
     
@@ -734,7 +735,7 @@ public class FixedTangentBinormalGenerator {
         lineMesh.setBuffer(Type.Color, 4, lineColor);
         
         lineMesh.setStatic();
-        lineMesh.setInterleaved();
+        //lineMesh.setInterleaved();
         return lineMesh;
     }
 }
