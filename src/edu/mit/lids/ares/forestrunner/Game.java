@@ -12,6 +12,7 @@ import com.jme3.light.AmbientLight;
 import com.jme3.light.PointLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.post.FilterPostProcessor;
@@ -48,8 +49,14 @@ public class Game extends SimpleApplication
     private String                          m_user_hash;
     private FloorPatch[][]                  m_patches;
     private Node                            m_patchRoot;
+    private Node                            m_patchRotate;
+    
+    private Boolean m_leftDown;
+    private Boolean m_rightDown;
     
     private float   m_density;
+    private float   m_xAccel;
+    private float   m_xSpeedMax;
     private float   m_xSpeed;
     private float   m_ySpeed;
     private float   m_radius;
@@ -96,6 +103,11 @@ public class Game extends SimpleApplication
                 
         m_user_hash = "d0d20817f7f5b26f3637590e7a2e1621";
                 
+        m_leftDown  = false;
+        m_rightDown = false;
+                
+        m_xAccel    = 10.0f;
+        m_xSpeedMax = 6.0f;
         m_xSpeed    = 0f;
         m_ySpeed    = 3.0f;
         m_density   = 20f;
@@ -122,9 +134,15 @@ public class Game extends SimpleApplication
         inputManager.addMapping("Pause",        new KeyTrigger(KeyInput.KEY_ESCAPE));
         inputManager.addMapping("Pause",        new KeyTrigger(KeyInput.KEY_SPACE));
         inputManager.addMapping("Crash",        new KeyTrigger(KeyInput.KEY_Q));
+        
+        inputManager.addMapping("Left",         new KeyTrigger(KeyInput.KEY_A));
+        inputManager.addMapping("Left",         new KeyTrigger(KeyInput.KEY_LEFT));
+        inputManager.addMapping("Right",        new KeyTrigger(KeyInput.KEY_D));
+        inputManager.addMapping("Right",        new KeyTrigger(KeyInput.KEY_RIGHT));
          
         //add the names to the action listener
         inputManager.addListener(pauseListener,new String[]{"Pause", "Crash"});
+        inputManager.addListener(dodgeListener,new String[]{"Left", "Right"});
     }
      
      
@@ -164,6 +182,29 @@ public class Game extends SimpleApplication
             }
         }
     };
+    
+    private ActionListener dodgeListener = new ActionListener() 
+    {
+        public void onAction(String name, boolean keyPressed, float tpf) 
+        {
+            // the pause action is only meaning full if the game is active
+            if (name.equals("Left") ) 
+            {
+                if(keyPressed)
+                    m_leftDown = true;
+                else
+                    m_leftDown = false;
+            }
+                
+            else // (name.equals("Right") )
+            {
+                if(keyPressed)
+                    m_rightDown = true;
+                else
+                    m_rightDown = false;
+            }
+        }
+    };
      
     public void initPatches()
     {
@@ -172,10 +213,12 @@ public class Game extends SimpleApplication
         float width     = m_patchSize;
         float height    = m_patchSize;
         
-        m_patchRoot = new Node("patch_root");
-        m_patches = new FloorPatch[dimx][dimy];
+        m_patchRoot     = new Node("patch_root");
+        m_patchRotate   = new Node("patch_rotate");
+        m_patches       = new FloorPatch[dimx][dimy];
         
-        rootNode.attachChild(m_patchRoot);
+        m_patchRotate.attachChild(m_patchRoot);
+        rootNode.attachChild(m_patchRotate);
         
         for(int i=0; i < dimx; i++)
         {
@@ -206,7 +249,7 @@ public class Game extends SimpleApplication
     public void initRun()
     {
         m_radius = 0.1f + 0.05f * m_params.get("radius");
-        m_ySpeed = 3.0f + 0.5f * m_params.get("velocity");
+        m_ySpeed = 3.0f + 1.0f * m_params.get("velocity");
         m_density= 20f  + 10f  * m_params.get("density");
         
         int   dimx      = m_patchDimX;
@@ -240,7 +283,8 @@ public class Game extends SimpleApplication
         setDisplayFps(false);
         setDisplayStatView(false);
         
-        
+        // the quads aren't visible with fog anyway
+        /*
         if(true)
         {
             Quad q=new Quad(1f, 1f);
@@ -266,6 +310,7 @@ public class Game extends SimpleApplication
             geom.setCullHint(Spatial.CullHint.Never);
             rootNode.attachChild(geom);
         }
+        */
         
         AircraftMesh    ac      = new AircraftMesh();
         Geometry        geom    = new Geometry("aircraft",ac);
@@ -318,7 +363,7 @@ public class Game extends SimpleApplication
         guiViewPort.addProcessor(niftyDisplay);
 
         // disable the fly cam
-        //flyCam.setEnabled(false);
+        flyCam.setEnabled(false);
         flyCam.setDragToRotate(true);
         inputManager.setCursorVisible(true);
         
@@ -358,9 +403,38 @@ public class Game extends SimpleApplication
     @Override
     public void simpleUpdate(float tpf) 
     {
+        // if we're paused or crashed don't update the scene
         if(m_state != State.RUNNING)
             return;
         
+        // update the xspeed if necessary
+        if(m_leftDown || m_rightDown)
+        {
+            if(m_leftDown)
+                m_xSpeed -= m_xAccel*tpf;
+            if(m_rightDown)
+                m_xSpeed += m_xAccel*tpf;
+        }
+        else
+        {
+            float sign = Math.signum(m_xSpeed); 
+            m_xSpeed -= sign*m_xAccel*tpf;
+            
+            // avoid overshoot
+            if( sign != Math.signum(m_xSpeed) )
+                m_xSpeed = 0;
+        }
+        
+        m_xSpeed = Math.min(m_xSpeed, m_xSpeedMax);
+        m_xSpeed = Math.max(m_xSpeed, -m_xSpeedMax);
+        
+        // rotate the scene according to xspeed
+        float angle = (float)(Math.PI / 9) * m_xSpeed / m_xSpeedMax;
+        Quaternion q = new Quaternion();
+        q.fromAngleAxis(angle, new Vector3f(0f,0f,1f));
+        m_patchRotate.setLocalRotation(q);
+        
+        // update the position
         m_yPos += m_ySpeed*tpf;
         m_xPos += m_xSpeed*tpf;
         
@@ -393,7 +467,7 @@ public class Game extends SimpleApplication
             }
         }
         
-        m_patchRoot.setLocalTranslation(0,0,m_yPos);
+        m_patchRoot.setLocalTranslation(-m_xPos,0,m_yPos);
     }
 
 }
