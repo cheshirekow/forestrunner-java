@@ -3,3 +3,11 @@ bin
 .classpath
 .project
 .settings
+Info.plist
+appletlogo.png
+build.xml
+build/
+dist/
+manifest.mf
+nbproject/
+osx*

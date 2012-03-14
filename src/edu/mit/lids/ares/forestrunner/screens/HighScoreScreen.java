@@ -4,10 +4,10 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Collection;
 import java.util.Scanner;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
@@ -28,23 +28,6 @@ public class HighScoreScreen implements ScreenController
     String  m_userName;
     
     
-    static class ResultObject
-    {
-        public String status;
-        public String message;
-        public Collection<HighScoreRow> global_scores;
-        public Collection<HighScoreRow> user_scores;
-    }
-    
-    static class NickResultObject
-    {
-        public String status;
-        public String message;
-        public String nick;
-    }
-    
-    
-
     public String urlAppend( String string, String key, String value )
     {
         if(m_firstParamEncoded)
@@ -85,9 +68,11 @@ public class HighScoreScreen implements ScreenController
             e.printStackTrace();  
         }
         
-        Gson gson = new Gson();
-        NickResultObject nickResult = 
-                gson.fromJson(jsonResult, NickResultObject.class);
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(NickChangeResult.class, new JsonNickChangeResultDeserializer());
+        Gson gson = gsonBuilder.create();
+        NickChangeResult nickResult = 
+                gson.fromJson(jsonResult, NickChangeResult.class);
         m_userName = nickResult.nick;
     }
         
@@ -135,8 +120,12 @@ public class HighScoreScreen implements ScreenController
             e.printStackTrace();  
         }
         
-        Gson gson = new Gson();
-        ResultObject result= gson.fromJson(jsonResult, ResultObject.class);
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(HighScoreRow.class, new JsonHighScoreRowDeserializer());
+        gsonBuilder.registerTypeAdapter(HighScoreResult.class, new JsonHighScoreDeserializer());
+        Gson gson = gsonBuilder.create();
+        
+        HighScoreResult result= gson.fromJson(jsonResult, HighScoreResult.class);
         
         System.out.println("Score request status: " + result.status );
         
@@ -207,9 +196,12 @@ public class HighScoreScreen implements ScreenController
                 e.printStackTrace();  
             }
             
-            Gson gson = new Gson();
-            NickResultObject nickResult = 
-                    gson.fromJson(jsonResult, NickResultObject.class);
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            gsonBuilder.registerTypeAdapter(NickChangeResult.class, new JsonNickChangeResultDeserializer());
+            Gson gson = gsonBuilder.create();
+            
+            NickChangeResult nickResult = 
+                    gson.fromJson(jsonResult, NickChangeResult.class);
             if( nickResult.status.compareTo("OK") != 0 )
                 System.out.println("Failed to set nickname: " + nickResult.message );
 
