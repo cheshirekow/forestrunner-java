@@ -123,21 +123,25 @@ public class FloorPatch extends Node
     
     Boolean collisionCheck( float x, float y, float r )
     {
-        float r2 = r*r;
-        
+        float r2    = r*r;
+        //float minD2 = (float)1e16;
+
+        //System.out.println("trees:");
         for(int i=0; i < m_numTrees; i++)
         {
             Vector3f t = m_trees.get(i).getWorldTranslation();
-            float d2  = t.x*t.x + t.y*t.y;
+            //System.out.println("   " + t);
+            float d2  = t.x*t.x + t.z*t.z;
             
             if(d2 < r2)
             {
-                System.out.println("Collision in check");
+                //System.out.println("Collision in check");
                 return true;
             }
-            else
-                System.out.println("Distance: " + d2);
+            
+            //minD2 = Math.min(d2, minD2);
         }
+        //System.out.println("min dist: " + Math.sqrt(minD2) + ", radius: " + r );
         
         return false;
     }

@@ -20,6 +20,7 @@ import com.jme3.post.filters.CartoonEdgeFilter;
 import com.jme3.post.filters.FogFilter;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 
 import de.lessvoid.nifty.Nifty;
@@ -48,6 +49,7 @@ public class Game extends SimpleApplication
     private FloorPatch[][]                  m_patches;
     private Node                            m_patchRoot;
     private Node                            m_patchRotate;
+    private Spatial                         m_aircraftNode;
     
     private Boolean m_leftDown;
     private Boolean m_rightDown;
@@ -325,6 +327,7 @@ public class Game extends SimpleApplication
         geom.setMaterial(material);
         geom.setLocalTranslation(0f, 0f, 0f);
         rootNode.attachChild(geom);
+        m_aircraftNode = geom;
         
         geom = new Geometry("aircraft_wf",ac);
         material = material.clone();
@@ -466,6 +469,7 @@ public class Game extends SimpleApplication
         }
         
         m_patchRoot.setLocalTranslation(-m_xPos,0,m_yPos);
+        rootNode.updateGeometricState();
         
         Boolean collision = false;
         for( int i=0; i < m_patchDimX && !collision; i++)
@@ -479,10 +483,8 @@ public class Game extends SimpleApplication
             }
         }
         
-        if(false & collision)
-        {
-            
-        }
+        if(collision)
+            pauseListener.onAction("Crash", false, tpf);
     }
 
 }
