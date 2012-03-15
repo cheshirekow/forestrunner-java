@@ -63,6 +63,9 @@ public class Game extends SimpleApplication
     private float   m_xPos;
     private float   m_yPos;
     private float   m_patchSize;
+    private float   m_acSide;
+    private float   m_acRadius;
+    private float   m_acTrans;
     private int     m_patchDimX;
     private int     m_patchDimY;
     
@@ -119,6 +122,10 @@ public class Game extends SimpleApplication
         
         m_patchDimX = 5;
         m_patchDimY = 4;
+        
+        m_acSide    = 0.3f;
+        m_acRadius  = (m_acSide/2f) * (float)Math.tan(Math.PI/6.0);
+        m_acTrans   = (float)( m_acSide*Math.sin(Math.PI/3) ) - m_acRadius;
     }
     
     
@@ -312,7 +319,7 @@ public class Game extends SimpleApplication
         }
         */
         
-        AircraftMesh    ac      = new AircraftMesh();
+        AircraftMesh    ac      = new AircraftMesh(m_acSide);
         Geometry        geom    = new Geometry("aircraft",ac);
         /*
         Material material   = new Material(assetManager,                
@@ -325,7 +332,7 @@ public class Game extends SimpleApplication
                                     "Common/MatDefs/Misc/Unshaded.j3md");
         material.setColor("Color", ColorRGBA.Gray);
         geom.setMaterial(material);
-        geom.setLocalTranslation(0f, 0f, 0f);
+        geom.setLocalTranslation(0f, 0f, -m_acTrans);
         rootNode.attachChild(geom);
         m_aircraftNode = geom;
         
@@ -335,7 +342,7 @@ public class Game extends SimpleApplication
         material.getAdditionalRenderState().setWireframe(true);
         geom.setMaterial(material);
         geom.setLocalScale(1.1f);
-        geom.setLocalTranslation(0f, 0f, -0.01f);
+        geom.setLocalTranslation(0f, 0f, -m_acTrans-0.01f);
         rootNode.attachChild(geom);
         
         NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(assetManager,
@@ -477,7 +484,7 @@ public class Game extends SimpleApplication
             for(int j=0; j < m_patchDimY && !collision; j++)
             {
                 collision 
-                    = m_patches[i][j].collisionCheck(m_xPos, m_yPos, m_radius);
+                    = m_patches[i][j].collisionCheck(m_xPos, m_yPos, m_radius + m_acRadius);
                 if(collision)
                     System.out.println("Collision in loop");
             }

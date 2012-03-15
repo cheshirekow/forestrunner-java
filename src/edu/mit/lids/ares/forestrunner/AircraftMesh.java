@@ -7,9 +7,8 @@ import com.jme3.util.BufferUtils;
 
 public class AircraftMesh extends Mesh
 {
-    public AircraftMesh()
+    public AircraftMesh(float sideLen)
     {
-        float sideLen = 0.3f;
         float y       = (float) Math.sqrt( sideLen*sideLen 
                                     - (sideLen/2f)*(sideLen/2f) );
         float x       = sideLen/2f;
