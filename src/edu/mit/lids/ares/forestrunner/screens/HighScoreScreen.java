@@ -21,12 +21,11 @@ import edu.mit.lids.ares.forestrunner.Game;
 
 public class HighScoreScreen implements ScreenController
 {
-    Game    m_game;
-    Nifty   m_nifty;
-    Screen  m_screen;
-    Boolean m_firstParamEncoded;
-    String  m_userName;
-    
+    Game            m_game;
+    Nifty           m_nifty;
+    Screen          m_screen;
+    Boolean         m_firstParamEncoded;
+    String          m_userName;
     
     public String urlAppend( String string, String key, String value )
     {

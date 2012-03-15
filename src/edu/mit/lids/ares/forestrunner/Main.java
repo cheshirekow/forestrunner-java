@@ -13,7 +13,7 @@ public class Main
         settings.put("VSync",   true);
         settings.setSamples(4);
         
-        Game app = new Game();
+        Game app = new Game(SystemContext.DESKTOP);
         app.setShowSettings(false);
         app.setSettings(settings);
         app.setPauseOnLostFocus(true);

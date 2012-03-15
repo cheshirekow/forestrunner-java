@@ -20,7 +20,6 @@ import com.jme3.post.filters.CartoonEdgeFilter;
 import com.jme3.post.filters.FogFilter;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 
 import de.lessvoid.nifty.Nifty;
@@ -39,17 +38,17 @@ public class Game extends SimpleApplication
         RUNNING,
         PAUSED
     }
-
+    
     private Nifty                           m_nifty;
     private Map<String,ScreenController>    m_screens;
     private State                           m_state;
+    private SystemContext                   m_system;
     
     private Map<String,Integer>             m_params;
     private String                          m_user_hash;
     private FloorPatch[][]                  m_patches;
     private Node                            m_patchRoot;
     private Node                            m_patchRotate;
-    private Spatial                         m_aircraftNode;
     
     private Boolean m_leftDown;
     private Boolean m_rightDown;
@@ -89,12 +88,17 @@ public class Game extends SimpleApplication
         return m_state;
     }
     
+    public SystemContext getSystem()
+    {
+        return m_system;
+    }
+    
     public void setState( State state )
     {
         m_state = state;
     }
     
-    public Game()
+    private void init()
     {
         m_screens = new HashMap<String,ScreenController>();
         m_params  = new HashMap<String,Integer>();
@@ -126,6 +130,18 @@ public class Game extends SimpleApplication
         m_acSide    = 0.3f;
         m_acRadius  = (m_acSide/2f) * (float)Math.tan(Math.PI/6.0);
         m_acTrans   = (float)( m_acSide*Math.sin(Math.PI/3) ) - m_acRadius;
+    }
+    
+    public Game()
+    {
+        m_system = SystemContext.APPLET;
+        init();
+    }
+    
+    public Game(SystemContext ctx)
+    {
+        m_system = ctx;
+        init();
     }
     
     
@@ -334,7 +350,6 @@ public class Game extends SimpleApplication
         geom.setMaterial(material);
         geom.setLocalTranslation(0f, 0f, -m_acTrans);
         rootNode.attachChild(geom);
-        m_aircraftNode = geom;
         
         geom = new Geometry("aircraft_wf",ac);
         material = material.clone();
