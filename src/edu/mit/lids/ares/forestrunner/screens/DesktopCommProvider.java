@@ -179,6 +179,7 @@ public class DesktopCommProvider
                         "'velocity' INTEGER NOT NULL , " +
                         "'density' INTEGER NOT NULL , " +
                         "'radius' INTEGER NOT NULL , " +
+                        "'date' DATETIME NOT NULL DEFAULT timespec('now'), " +
                         "'score' DOUBLE NOT NULL )" );
                 st.step();
                 st.dispose();
@@ -372,7 +373,7 @@ public class DesktopCommProvider
         
         String sqlQuery     = "SELECT date, score FROM main.scores WHERE " + 
                                 StringUtils.join(conditions, " AND ") + 
-                                " LIMIT 20 ";
+                                " ORDER BY score DESC LIMIT 20 ";
         
         try
         {
@@ -481,15 +482,18 @@ public class DesktopCommProvider
         // build lists of properties and values
         String[] propNames2 = {"velocity","density","radius","score"};
         
-        List<String>   propList     = Arrays.asList(propNames2); 
+        List<String>   propList     = new ArrayList<String>(); 
         List<String>   valueList    = new ArrayList<String>();
-        for( String propName : propList )
-            valueList.add(props.getProperty(propName));
+        for( String propName : propNames2 )
+        {
+            propList.add(propName);
+            valueList.add(  props.getProperty(propName) );
+        }
                 
         propList.add("date");
         valueList.add("datetime('now')");
         
-        String sqlQuery     = "INSERT INTO main.scores ( + " +
+        String sqlQuery     = "INSERT INTO main.scores (" +
                                 StringUtils.join(propList,", ") 
                                 + ") VALUES ( " +
                                 StringUtils.join(valueList,", ")

@@ -43,6 +43,8 @@ public class HighScoreScreen implements ScreenController
     
     public HighScoreScreen(Game game)
     {
+        m_game = game;
+        
         switch(game.getSystem())
         {
             case ANDROID:
@@ -51,11 +53,9 @@ public class HighScoreScreen implements ScreenController
                 break;
                 
             case APPLET:
-                m_comm = new AppletCommProvider();
+                m_comm = new AppletCommProvider(game);
                 break;
         }
-        
-        m_game = game;
     }
         
     @Override
@@ -72,10 +72,9 @@ public class HighScoreScreen implements ScreenController
         // TODO Auto-generated method stub
         
     }
-
+    
     @SuppressWarnings("unchecked")
-    @Override
-    public void onStartScreen()
+    public void onStartScreenImpl(Boolean fake)
     {
         System.out.println("Building highscore tables");
         
@@ -84,6 +83,10 @@ public class HighScoreScreen implements ScreenController
         props.setProperty("velocity", m_game.getParam("velocity").toString() );
         props.setProperty("density", m_game.getParam("density").toString() );
         props.setProperty("radius", m_game.getParam("radius").toString() );
+        props.setProperty("score", new Float(m_game.getScore()).toString() );
+        
+        if(!fake)
+            m_comm.publishScore(props);
         
         HighScoreResult result = m_comm.getHighScores(props);
         System.out.println("Score request status: " + result.status );
@@ -116,6 +119,13 @@ public class HighScoreScreen implements ScreenController
         TextField textfield = 
                 m_screen.findNiftyControl("txtfld.username", TextField.class);
         textfield.setText(m_comm.getNick());
+        
+    }
+
+    @Override
+    public void onStartScreen()
+    {
+        onStartScreenImpl(false);
     }
     
     @NiftyEventSubscriber(pattern="highscore.btn.*")
@@ -141,7 +151,7 @@ public class HighScoreScreen implements ScreenController
             if( nickResult.status.compareTo("OK") != 0 )
                 System.out.println("Failed to set nickname: " + nickResult.message );
 
-            onStartScreen();
+            onStartScreenImpl(true);
         }
     }
     

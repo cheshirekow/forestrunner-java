@@ -1,5 +1,6 @@
 package edu.mit.lids.ares.forestrunner.screens;
 
+import java.applet.Applet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -10,71 +11,30 @@ import java.util.Scanner;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.jme3.app.AppletHarness;
+
+import edu.mit.lids.ares.forestrunner.Game;
 
 public class AppletCommProvider
     extends CommProvider
 {
-    @SuppressWarnings("unused")
-    public AppletCommProvider()
+    public AppletCommProvider(Game game)
     {
-        // otherwise, try to get a hash from the server
-        if(false)
+        Applet applet = AppletHarness.getApplet(game);
+        
+        try
         {
-            String urlString    = "http://ares.lids.mit.edu/~jbialk/" 
-                                    + "forest_runner/src/create_user.php";
-            
-            // try to open a stream to the create user page
-            InputStream source;
-            try
-            {
-                source = new URL(urlString).openStream();
-            } 
-            
-            catch (MalformedURLException e)
-            {
-                System.out.println("Failed to connect to server to get a new " +
-                		            "hash, continuing without data");
-                e.printStackTrace(System.out);
-                m_dataOK = false;
-                return;
-            } 
-            
-            catch (IOException e)
-            {
-                System.out.println("Failed to connect to server to get a new " +
-                        "hash, continuing without data");
-                e.printStackTrace(System.out);
-                m_dataOK = false;
-                return;
-            }  
-
-            // read the entire stream into a single string
-            String jsonString = 
-                    new Scanner( source, "UTF-8" )
-                            .useDelimiter("\\A").next();
-            
-            
-            GsonBuilder gsonBuilder = new GsonBuilder();
-            gsonBuilder.registerTypeAdapter(CreateUserResult.class, 
-                                    new JsonCreateUserResultDeserializer());
-            Gson gson = gsonBuilder.create();
-            CreateUserResult createResult = 
-                    gson.fromJson(jsonString, CreateUserResult.class);
-            
-            // verify that the user was created successfully
-            if( createResult.status.compareTo("OK") == 0 )
-            {
-                m_props.setProperty("user_hash", createResult.hash);
-            }
-            else
-            {
-                System.out.println("Failed to create a hash fro the user:\n");
-                System.out.println("   " + createResult.status);
-                System.out.println("   " + createResult.message);
-                m_dataOK = false;
-                return;
-            }
+            m_props.setProperty("user_hash", applet.getParameter("forestrunner_hash") );
+            System.out.println("user hash: " + applet.getParameter("forestrunner_hash"));
         }
+        catch(Exception ex)
+        {
+            m_dataOK = false;
+            System.out.println("Failed to get hash from applet parameter");
+            System.out.println("   " + ex.getMessage());
+            ex.printStackTrace(System.out);
+        }
+        
     }
     
     

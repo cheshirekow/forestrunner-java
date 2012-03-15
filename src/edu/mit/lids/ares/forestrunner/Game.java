@@ -64,6 +64,7 @@ public class Game extends SimpleApplication
     private float   m_acSide;
     private float   m_acRadius;
     private float   m_acTrans;
+    private float   m_score;
     private int     m_patchDimX;
     private int     m_patchDimY;
     
@@ -85,6 +86,11 @@ public class Game extends SimpleApplication
     public SystemContext getSystem()
     {
         return m_system;
+    }
+    
+    public float getScore()
+    {
+        return m_score;
     }
     
     public void setState( State state )
@@ -127,6 +133,7 @@ public class Game extends SimpleApplication
     public Game()
     {
         m_system = SystemContext.APPLET;
+        
         init();
     }
     
@@ -288,6 +295,7 @@ public class Game extends SimpleApplication
         }
         
         m_state = State.PAUSED;
+        m_score = 0;
         m_patchRoot.setLocalTranslation(0,0,0);
         
         System.out.println("initialized a new run");
@@ -421,6 +429,9 @@ public class Game extends SimpleApplication
         // if we're paused or crashed don't update the scene
         if(m_state != State.RUNNING)
             return;
+        
+        // update the score as we've survived for tpf
+        m_score += tpf;
         
         // update the xspeed if necessary
         if(m_leftDown || m_rightDown)
