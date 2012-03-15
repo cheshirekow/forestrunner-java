@@ -11,10 +11,14 @@ public abstract class CommProvider
     protected Boolean     m_dataOK; 
     protected Properties  m_props;
     
+    
+    public Properties getProperties(){ return m_props; }
+    
     public CommProvider()
     {
         m_dataOK            = true;
         m_firstParamEncoded = false;
+        m_props             = new Properties();
         
         // set default properties
         m_props.setProperty("user_hash", "0");
@@ -38,7 +42,12 @@ public abstract class CommProvider
         return string;
     }
     
-    public String getUserNick()
+    public String getHash()
+    {
+        return m_props.getProperty("user_hash");
+    }
+    
+    public String getNick()
     {
         return m_props.getProperty("user_nick");
     }

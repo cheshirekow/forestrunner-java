@@ -45,7 +45,6 @@ public class Game extends SimpleApplication
     private SystemContext                   m_system;
     
     private Map<String,Integer>             m_params;
-    private String                          m_user_hash;
     private FloorPatch[][]                  m_patches;
     private Node                            m_patchRoot;
     private Node                            m_patchRotate;
@@ -78,11 +77,6 @@ public class Game extends SimpleApplication
         m_params.put(param, value);
     }
     
-    public String getUserHash()
-    {
-        return m_user_hash;
-    }
-    
     public State getState()
     {
         return m_state;
@@ -107,8 +101,6 @@ public class Game extends SimpleApplication
         String[] paramNames = {"velocity","density","radius"};
         for( String paramName : paramNames )
             m_params.put(paramName,0);
-                
-        m_user_hash = "d0d20817f7f5b26f3637590e7a2e1621";
                 
         m_leftDown  = false;
         m_rightDown = false;

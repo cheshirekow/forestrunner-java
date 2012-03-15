@@ -1,13 +1,8 @@
 package edu.mit.lids.ares.forestrunner.screens;
 
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Scanner;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.util.Properties;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
@@ -17,6 +12,7 @@ import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.controls.TextFieldChangedEvent;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+
 import edu.mit.lids.ares.forestrunner.Game;
 
 public class HighScoreScreen implements ScreenController
@@ -25,7 +21,7 @@ public class HighScoreScreen implements ScreenController
     Nifty           m_nifty;
     Screen          m_screen;
     Boolean         m_firstParamEncoded;
-    String          m_userName;
+    CommProvider    m_comm;
     
     public String urlAppend( String string, String key, String value )
     {
@@ -47,32 +43,19 @@ public class HighScoreScreen implements ScreenController
     
     public HighScoreScreen(Game game)
     {
-        m_game = game;
-        
-        String getString = "";
-        m_firstParamEncoded=false;
-        getString =  urlAppend(getString,"user_hash",m_game.getUserHash());
-        
-        
-        String urlString    = "http://ares.lids.mit.edu/~jbialk/forest_runner/src/get_nick.php?" + getString;
-        String jsonResult   = "";
-        try {  
-            InputStream source = new URL(urlString).openStream();  
-            
-            jsonResult = 
-                    new Scanner( source, "UTF-8" )
-                            .useDelimiter("\\A").next();
-        }  
-        catch( Exception e ) {  
-            e.printStackTrace();  
+        switch(game.getSystem())
+        {
+            case ANDROID:
+            case DESKTOP:
+                m_comm = new DesktopCommProvider();
+                break;
+                
+            case APPLET:
+                m_comm = new AppletCommProvider();
+                break;
         }
         
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(NickChangeResult.class, new JsonNickChangeResultDeserializer());
-        Gson gson = gsonBuilder.create();
-        NickChangeResult nickResult = 
-                gson.fromJson(jsonResult, NickChangeResult.class);
-        m_userName = nickResult.nick;
+        m_game = game;
     }
         
     @Override
@@ -96,36 +79,13 @@ public class HighScoreScreen implements ScreenController
     {
         System.out.println("Building highscore tables");
         
-        String[] paramNames = {"velocity","density","radius"};
+        Properties props = new Properties();
+        props.setProperty("user_hash", m_comm.getHash() );
+        props.setProperty("velocity", m_game.getParam("velocity").toString() );
+        props.setProperty("density", m_game.getParam("density").toString() );
+        props.setProperty("radius", m_game.getParam("radius").toString() );
         
-        String getString = "";
-        m_firstParamEncoded=false;
-        getString =  urlAppend(getString,"user_hash",m_game.getUserHash());
-        
-        for( String paramName : paramNames )
-            getString = urlAppend(getString,paramName,
-                                    m_game.getParam(paramName).toString());
-                
-        String urlString    = "http://ares.lids.mit.edu/~jbialk/forest_runner/src/get_scores.php?" + getString;
-        String jsonResult   = "";
-        try {  
-            InputStream source = new URL(urlString).openStream();  
-            
-            jsonResult = 
-                    new Scanner( source, "UTF-8" )
-                            .useDelimiter("\\A").next();
-        }  
-        catch( Exception e ) {  
-            e.printStackTrace();  
-        }
-        
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(HighScoreRow.class, new JsonHighScoreRowDeserializer());
-        gsonBuilder.registerTypeAdapter(HighScoreResult.class, new JsonHighScoreDeserializer());
-        Gson gson = gsonBuilder.create();
-        
-        HighScoreResult result= gson.fromJson(jsonResult, HighScoreResult.class);
-        
+        HighScoreResult result = m_comm.getHighScores(props);
         System.out.println("Score request status: " + result.status );
         
         ListBox<HighScoreRow> listBox =(ListBox<HighScoreRow>) 
@@ -155,7 +115,7 @@ public class HighScoreScreen implements ScreenController
         
         TextField textfield = 
                 m_screen.findNiftyControl("txtfld.username", TextField.class);
-        textfield.setText(m_userName);
+        textfield.setText(m_comm.getNick());
     }
     
     @NiftyEventSubscriber(pattern="highscore.btn.*")
@@ -175,32 +135,9 @@ public class HighScoreScreen implements ScreenController
         {
             TextField textfield = 
                     m_screen.findNiftyControl("txtfld.username", TextField.class);
-            m_userName = textfield.getText();
-            
-            String getString = "";
-            m_firstParamEncoded=false;
-            getString =  urlAppend(getString,"user_hash",m_game.getUserHash());
-            getString =  urlAppend(getString,"user_nick",m_userName);
-            
-            String urlString    = "http://ares.lids.mit.edu/~jbialk/forest_runner/src/set_nick.php?" + getString;
-            String jsonResult   = "";
-            try {  
-                InputStream source = new URL(urlString).openStream();  
-                
-                jsonResult = 
-                        new Scanner( source, "UTF-8" )
-                                .useDelimiter("\\A").next();
-            }  
-            catch( Exception e ) {  
-                e.printStackTrace();  
-            }
-            
-            GsonBuilder gsonBuilder = new GsonBuilder();
-            gsonBuilder.registerTypeAdapter(NickChangeResult.class, new JsonNickChangeResultDeserializer());
-            Gson gson = gsonBuilder.create();
-            
             NickChangeResult nickResult = 
-                    gson.fromJson(jsonResult, NickChangeResult.class);
+                    m_comm.setUserNick(textfield.getText());
+            
             if( nickResult.status.compareTo("OK") != 0 )
                 System.out.println("Failed to set nickname: " + nickResult.message );
 
