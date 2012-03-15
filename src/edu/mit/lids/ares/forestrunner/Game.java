@@ -415,8 +415,8 @@ public class Game extends SimpleApplication
         fog.setFogDensity(10f);
         fog.setFogDistance(400f);
         
-        CartoonEdgeProcessor cartoonEdgeProcess = new CartoonEdgeProcessor();
-        viewPort.addProcessor(cartoonEdgeProcess);
+        //CartoonEdgeProcessor cartoonEdgeProcess = new CartoonEdgeProcessor();
+        //viewPort.addProcessor(cartoonEdgeProcess);
         
         //fpp.addFilter(cartoon);
         fpp.addFilter(fog);

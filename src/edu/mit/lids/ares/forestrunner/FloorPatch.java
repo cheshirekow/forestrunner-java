@@ -84,10 +84,26 @@ public class FloorPatch extends Node
             
             Cylinder cylinder   = new Cylinder(25,25,radius,0.5f,true,false);
             Geometry geometry   = new Geometry("cylinder", cylinder);
+            // does not work in mac osx lion
+            /*
             Material material   = assetManager.loadMaterial("Materials/LightBlow/Toon_System/Toon_Base_Specular.j3m");
             material.setBoolean("UseMaterialColors",true);      // Set some parameters, e.g. blue.
             material.setColor("Ambient", s_colors.get(iColor));       // ... color of this object
             material.setColor("Diffuse", s_colors.get(iColor));
+            */
+            // works in mac but is ugly
+            /*
+            Material    material= new Material(assetManager,
+                    "Common/MatDefs/Misc/Unshaded.j3md");
+            material.setColor("Color", s_colors.get(iColor));
+            */
+            Material    material= new Material(assetManager,
+                    "Common/MatDefs/Light/Lighting.j3md");
+            material.setBoolean("UseMaterialColors", true);
+            material.setColor("Diffuse", s_colors.get(iColor));
+            material.setColor("Ambient", s_colors.get(iColor));
+            material.setColor("Specular", ColorRGBA.White);
+            material.setFloat("Shininess", 1.1f);
             geometry.setMaterial(material);
             m_trees.add(geometry);
         }
