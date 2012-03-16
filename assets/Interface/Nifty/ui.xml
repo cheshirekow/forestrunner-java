@@ -14,9 +14,9 @@
   
   <controlDefinition name="highscore-list-line">
 	  <panel childLayout="horizontal" width="100%" align="center">
-	       <control id="#highscore-line-user" name="label" align="left" textHAlign="left" width="33%" wrap="true" />
-	       <control id="#highscore-line-date" name="label" align="left" textHAlign="left" width="33%" wrap="true" />
-	       <control id="#highscore-line-score" name="label" align="left" textHAlign="left" width="33%" wrap="true" />
+	       <control font="Interface/Fonts/SansSerif.fnt" id="#highscore-line-user" name="label" textHAlign="left" width="55%"  />
+	       <control font="Interface/Fonts/SansSerif.fnt" id="#highscore-line-date" name="label" textHAlign="left" width="25%"  />
+	       <control font="Interface/Fonts/SansSerif.fnt" id="#highscore-line-score" name="label" textHAlign="right" width="20%"  />
 	  </panel>
   </controlDefinition>
   
@@ -132,7 +132,7 @@
   <!--  the high score screen, displays high scores -->
   <screen id="highscore" controller="edu.mit.lids.ares.forestrunner.screens.HighScoreScreen">
     <layer id="layer" backgroundColor="#0000" childLayout="center">
-      <panel id="pnl.end" height="80%" width="90%" align="center" valign="center" childLayout="vertical">
+      <panel id="pnl.end" height="80%" width="99%" align="center" valign="center" childLayout="vertical">
         <effect>
           <onStartScreen name="move" mode="in" direction="top" length="300" startDelay="0" inherit="true"/>
           <onEndScreen name="move" mode="out" direction="bottom" length="300" startDelay="0" inherit="true"/>
@@ -152,12 +152,15 @@
             </panel>
         </panel>
         <panel id="pnl.bottom" style="nifty-panel-80" height="20%" width="100%" align="center" childLayout="vertical">
-            <panel id="pnl.username" height="80%" width="80%" align="center" valign="center" childLayout="horizontal">
+            <panel id="pnl.username" height="50%" width="80%" align="center" valign="center" childLayout="horizontal">
                 <text id="txt.username" width="20%" font="aurulent-sans-16.fnt" text="${highscore.usernamePrompt}" color="#ffff" wrap="true" textHAlign="right"/>
                 <control id="txtfld.username" width="60%" name="textfield" text="${highscore.anon}" maxLength="30" />
                 <control id="highscore.btn.savename" width="20%" name="button" label="${highscore.savename}" />
             </panel>
-            <panel id="pnl.endButtons" height="50%" width="50%" align="center" valign="center" childLayout="horizontal">
+            <panel id="pnl.spacer" height="10%" width="100%" childLayout="horizontal">
+            
+            </panel>
+            <panel id="pnl.endButtons" height="40%" width="50%" align="center" valign="center" childLayout="horizontal">
 	            <control id="highscore.btn.again" name="button" width="50%" label="${highscore.again}"/>
 	            <control id="highscore.btn.settings" name="button" width="50%" label="${highscore.settings}"/>
             </panel>        

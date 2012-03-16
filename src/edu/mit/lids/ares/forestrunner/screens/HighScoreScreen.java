@@ -98,7 +98,6 @@ public class HighScoreScreen implements ScreenController
         for( HighScoreRow row : result.user_scores )
         {
             System.out.println("   " + row.user_nick + ", " + row.date + ", " + row.score);
-            row.date = row.date.substring(0,5);
             listBox.addItem(row);
         }
         listBox.refresh();
@@ -110,7 +109,6 @@ public class HighScoreScreen implements ScreenController
         for( HighScoreRow row : result.global_scores)
         {
             System.out.println("   " + row.user_nick + ", " + row.date + ", " + row.score);
-            row.date = row.date.substring(0,5);
             listBox.addItem(row);        
         }
             
