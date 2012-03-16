@@ -26,6 +26,8 @@ public class AppletCommProvider
         {
             m_props.setProperty("user_hash", applet.getParameter("forestrunner_hash") );
             System.out.println("user hash: " + applet.getParameter("forestrunner_hash"));
+            m_props.setProperty("user_nick", applet.getParameter("forestrunner_nick") );
+            System.out.println("user nick: " + applet.getParameter("forestrunner_nick"));
         }
         catch(Exception ex)
         {
@@ -33,8 +35,8 @@ public class AppletCommProvider
             System.out.println("Failed to get hash from applet parameter");
             System.out.println("   " + ex.getMessage());
             ex.printStackTrace(System.out);
+            return;
         }
-        
     }
     
     

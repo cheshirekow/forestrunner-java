@@ -215,8 +215,26 @@ public class DesktopCommProvider
             return result;
         }
         
-        // now attempt to write the new value to the server as well
+        // first store new nick in properties file
+        String userHome     = System.getProperty("user.home");
+        String dataDir      = userHome + File.separator + ".forestrunner";
+        String idFileName = dataDir + File.separator + "user.properties";
+        File   idFile     = new File(idFileName);
+        FileOutputStream outStream;
+        try
+        {
+            outStream = new FileOutputStream(idFile);
+            m_props.store(outStream, "");
+        } 
+        catch (IOException e)
+        {
+            System.out.println("Failed to write properties to" 
+                                + idFileName ); 
+            e.printStackTrace(System.out);
+            m_dataOK = false;
+        }
         
+        // now attempt to write the new value to the server as well
         String getString    = "";
         m_firstParamEncoded =false;
         getString =  urlAppend(getString,"user_hash",
