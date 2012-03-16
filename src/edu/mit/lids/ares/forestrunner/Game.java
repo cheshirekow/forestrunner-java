@@ -25,6 +25,7 @@ import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
+import de.lessvoid.nifty.controls.Label;
 
 import edu.mit.lids.ares.forestrunner.screens.*;
 import edu.mit.lids.ares.forestrunner.toonblow.CartoonEdgeProcessor;
@@ -434,6 +435,12 @@ public class Game extends SimpleApplication
         
         // update the score as we've survived for tpf
         m_score += tpf;
+        
+        // update the gui with the socre
+        Label lbl = m_nifty.getCurrentScreen().
+                        findNiftyControl("lbl.timer", Label.class);
+        if(lbl != null)
+            lbl.setText(String.format("Score: %6.2f",m_score));
         
         // update the xspeed if necessary
         if(m_leftDown || m_rightDown)
