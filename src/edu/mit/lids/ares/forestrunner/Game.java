@@ -272,6 +272,7 @@ public class Game extends SimpleApplication
     {
         m_radius = 0.1f + 0.05f * m_params.get("radius");
         m_ySpeed = 3.0f + 1.0f * m_params.get("velocity");
+        m_xSpeed = 0f;
         m_density= 20f  + 10f  * m_params.get("density");
         
         int   dimx      = m_patchDimX;
@@ -297,6 +298,7 @@ public class Game extends SimpleApplication
         m_state = State.PAUSED;
         m_score = 0;
         m_patchRoot.setLocalTranslation(0,0,0);
+        m_patchRotate.setLocalRotation(Quaternion.IDENTITY);
         
         System.out.println("initialized a new run");
     }
