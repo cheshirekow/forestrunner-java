@@ -493,6 +493,60 @@ public class Game extends SimpleApplication
             }
         }
         
+        if(m_xPos > m_patchSize)
+        {
+            // reduce the xposition by one patch length
+            m_xPos -= m_patchSize;
+            
+            // shuffle patches
+            // shuffle patches
+            int   dimx      = m_patchDimX;
+            int   dimy      = m_patchDimY;
+            float width     = m_patchSize;
+            float height    = m_patchSize;
+            
+            for(int j=0; j < dimy; j++)
+            {
+                FloorPatch temp = m_patches[0][j];
+                FloorPatch patch;
+                for(int i=0; i < dimx-1; i++)
+                {
+                    patch = m_patches[i][j] = m_patches[i+1][j];
+                    patch.setLocalTranslation((i-dimx/2f)*width, 0f, -j*height);
+                }
+                
+                m_patches[dimx-1][j] = temp;
+                temp.setLocalTranslation((dimx/2f-1)*width, 0f, -j*height);
+            }
+        }
+        
+        if(m_xPos < -m_patchSize)
+        {
+            // reduce the xposition by one patch length
+            m_xPos += m_patchSize;
+            
+            // shuffle patches
+            // shuffle patches
+            int   dimx      = m_patchDimX;
+            int   dimy      = m_patchDimY;
+            float width     = m_patchSize;
+            float height    = m_patchSize;
+            
+            for(int j=0; j < dimy; j++)
+            {
+                FloorPatch temp = m_patches[dimx-1][j];
+                FloorPatch patch;
+                for(int i=dimx-1; i > 0; i--)
+                {
+                    patch = m_patches[i][j] = m_patches[i-1][j];
+                    patch.setLocalTranslation((i-dimx/2f)*width, 0f, -j*height);
+                }
+                
+                m_patches[0][j] = temp;
+                temp.setLocalTranslation((-dimx/2f)*width, 0f, -j*height);
+            }
+        }
+        
         m_patchRoot.setLocalTranslation(-m_xPos,0,m_yPos);
         rootNode.updateGeometricState();
         
