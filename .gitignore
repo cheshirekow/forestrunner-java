@@ -11,3 +11,5 @@ dist/
 manifest.mf
 nbproject/
 osx*
+mobile/
+resources/
