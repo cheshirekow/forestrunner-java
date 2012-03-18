@@ -21,6 +21,7 @@ import com.jme3.post.filters.FogFilter;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
+import com.jme3.system.AppSettings;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.ScreenController;
@@ -133,7 +134,7 @@ public class Game extends SimpleApplication
     
     public Game()
     {
-        m_system = SystemContext.APPLET;
+        m_system = SystemContext.ANDROID;
         
         init();
     }
@@ -573,6 +574,28 @@ public class Game extends SimpleApplication
         
         if(collision)
             pauseListener.onAction("Crash", false, tpf);
+    }
+    
+    
+    
+    public static void main(String[] args)
+    {
+        AppSettings settings = new AppSettings(true);
+        settings.put("Width",   640);
+        settings.put("Height",  480);
+        settings.put("Title",   "Forest Runner");
+        settings.put("VSync",   true);
+        settings.setSamples(4);
+        
+        Game app = new Game(SystemContext.DESKTOP);
+        app.setShowSettings(false);
+        app.setSettings(settings);
+        app.setPauseOnLostFocus(true);
+        
+        java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.SEVERE);
+        java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.SEVERE);
+        
+        app.start();
     }
 
 }
