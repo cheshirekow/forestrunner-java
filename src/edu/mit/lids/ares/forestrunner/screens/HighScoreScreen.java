@@ -48,6 +48,9 @@ public class HighScoreScreen implements ScreenController
         switch(game.getSystem())
         {
             case ANDROID:
+                m_comm = new AndroidCommProvider();
+                break;
+                
             case DESKTOP:
                 m_comm = new DesktopCommProvider();
                 break;
