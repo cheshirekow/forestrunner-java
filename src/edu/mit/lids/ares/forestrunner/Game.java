@@ -122,10 +122,10 @@ public class Game extends SimpleApplication
         
         m_xPos      = 0;
         m_yPos      = 0;
-        m_patchSize = 20.1f;
+        m_patchSize = 5.1f; //20.1f;
         
         m_patchDimX = 5;
-        m_patchDimY = 4;
+        m_patchDimY = 8; //4;
         
         m_acSide    = 0.3f;
         m_acRadius  = (m_acSide/2f) * (float)Math.tan(Math.PI/6.0);
@@ -275,7 +275,8 @@ public class Game extends SimpleApplication
         m_radius = 0.1f + 0.05f * m_params.get("radius");
         m_ySpeed = 3.0f + 1.0f * m_params.get("velocity");
         m_xSpeed = 0f;
-        m_density= 20f  + 10f  * m_params.get("density");
+        m_density= 1f  + 1f  * m_params.get("density");
+                    //20f  + 10f  * m_params.get("density");
         
         int   dimx      = m_patchDimX;
         int   dimy      = m_patchDimY;
@@ -563,7 +564,7 @@ public class Game extends SimpleApplication
         Boolean collision = false;
         for( int i=0; i < m_patchDimX && !collision; i++)
         {
-            for(int j=0; j < m_patchDimY && !collision; j++)
+            for(int j=0; j < 2 && !collision; j++)
             {
                 collision 
                     = m_patches[i][j].collisionCheck(m_xPos, m_yPos, m_radius + m_acRadius);
