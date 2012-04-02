@@ -33,7 +33,7 @@ public class DesktopGame extends KeyboardGame
         //viewPort.addProcessor(cartoonEdgeProcess);
         
         //fpp.addFilter(cartoon);
-        //fpp.addFilter(fog);
+        fpp.addFilter(fog);
         viewPort.addProcessor(fpp);
     }
     

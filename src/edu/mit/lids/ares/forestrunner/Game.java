@@ -20,6 +20,7 @@ import com.jme3.post.filters.CartoonEdgeFilter;
 import com.jme3.post.filters.FogFilter;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.debug.Grid;
 import com.jme3.scene.shape.Quad;
 import com.jme3.scene.Spatial;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
@@ -288,6 +289,22 @@ public abstract class Game extends SimpleApplication
         cam.lookAt(new Vector3f(0f,0f,-4f), new Vector3f(0f,1f,0f) );
         
         initPatches();
+        
+        if(true)
+        {
+            int width   = (int)(m_patchWidth*m_patchDimX);
+            int height  = (int)(m_patchHeight*m_patchDimY);
+            Grid        grid    = new Grid( height, width, 1f);
+            Geometry    geometry= new Geometry("wireframe grid", grid );
+            Material    gridMat= new Material(assetManager,
+                    "Common/MatDefs/Misc/Unshaded.j3md");
+            gridMat.getAdditionalRenderState().setWireframe(true);
+            gridMat.setColor("Color", ColorRGBA.Black);
+            geometry.setMaterial(material);
+            geometry.setShadowMode(ShadowMode.Off);
+            geometry.setLocalTranslation(-width/2f, 0f, -height+2f);
+            m_patchRoot.attachChild(geometry);
+        }
         
         // note the quads aren't visible with fogs
         if(true)

@@ -110,7 +110,7 @@ public class FloorPatch extends Node
         
         // clear out children
         detachAllChildren();
-        attachChild(m_floor);
+        //attachChild(m_floor);
         
         // add as many children as was sampled
         for(int i=0; i < m_numTrees; i++)
