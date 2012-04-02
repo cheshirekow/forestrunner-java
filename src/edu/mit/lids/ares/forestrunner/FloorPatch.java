@@ -85,8 +85,13 @@ public class FloorPatch extends Node
                 "Common/MatDefs/Misc/Unshaded.j3md");
         material.setColor("Color", s_colors.get(iColor));
         */
+        // works in mac but is slow
+        /*
         material= new Material(assetManager,
                             "Common/MatDefs/Light/Lighting.j3md");
+        */
+        material= new Material(assetManager,
+                "Common/MatDefs/Misc/Unshaded.j3md");
         setMaterial(material);
     }
     
@@ -139,7 +144,7 @@ public class FloorPatch extends Node
         {
             int iColor      = (int) (Math.random()*(double)s_colors.size() );
             
-            Cylinder cylinder   = new Cylinder(25,25,radius,0.5f,true,false);
+            Cylinder cylinder   = new Cylinder(4,10,radius,0.5f,true,false);
             Geometry geometry   = new Geometry("cylinder", cylinder);
             geometry.setMaterial(m_materials.get(iColor));
             m_trees.add(geometry);

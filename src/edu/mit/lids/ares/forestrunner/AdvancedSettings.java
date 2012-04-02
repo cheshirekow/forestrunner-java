@@ -15,9 +15,10 @@ public class AdvancedSettings
         "lighting",
         "debugGrids",
         "mainGrid",
+        "gradientFloor",
         "verbose"
         };
-    
+      
     public AdvancedSettings()
     {
         super();

@@ -7,6 +7,11 @@ public class DesktopGame extends KeyboardGame
     public DesktopGame()
     {
         super(SystemContext.DESKTOP);
+        m_advancedSettings.put("postProcessor",true);
+        m_advancedSettings.put("fogFilter", true);
+        m_advancedSettings.put("lighting",true);
+        m_advancedSettings.put("mainGrid", true);
+        m_advancedSettings.put("verbose",false);
     }
     
 

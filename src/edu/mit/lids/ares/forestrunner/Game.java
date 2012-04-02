@@ -145,6 +145,9 @@ public abstract class Game extends SimpleApplication
     
     public Game(SystemContext ctx)
     {
+        java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.SEVERE);
+        java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.SEVERE);
+        
         m_system            = ctx;
         m_advancedSettings  = new AdvancedSettings();
         init();
@@ -308,17 +311,15 @@ public abstract class Game extends SimpleApplication
             }
         }
         
-        initRun();
-        
         m_pointLight = new PointLight();
         m_pointLight.setColor(ColorRGBA.White.mult(2f));
         m_pointLight.setRadius(100f);
         m_pointLight.setPosition(new Vector3f(-10f, 2f, 6f));
-        rootNode.addLight(m_pointLight);
+        //rootNode.addLight(m_pointLight);
         
         m_ambientLight = new AmbientLight();
         m_ambientLight.setColor(ColorRGBA.White.mult(0.3f));
-        rootNode.addLight(m_ambientLight);
+        //rootNode.addLight(m_ambientLight);
         
         rootNode.setShadowMode(ShadowMode.CastAndReceive);
     }
@@ -455,12 +456,17 @@ public abstract class Game extends SimpleApplication
             float h = 42f;
             Quad q=new Quad(w, h);
             geom=new Geometry("bg", q);
+            
+            /*
             Material bgMaterial = new Material(assetManager, "Shaders/quadGradient/Gradient.j3md");
             bgMaterial.setColor("FirstColor", new ColorRGBA(0.3f,0.3f,0.3f,1f) );   // dark gray
             bgMaterial.setColor("SecondColor", new ColorRGBA(0.65f,0.65f,0.65f,1f) );  // light gray
-            //Material bgMaterial = new Material(assetManager,
-            //        "Common/MatDefs/Misc/Unshaded.j3md");
-            //bgMaterial.setColor("Color", ColorRGBA.Gray);
+            */
+            
+            Material bgMaterial = new Material(assetManager,
+                    "Common/MatDefs/Misc/Unshaded.j3md");
+            bgMaterial.setColor("Color", ColorRGBA.Gray);
+            
             geom.setMaterial(bgMaterial);
             //geom.setLocalTranslation(0,-30f,-40f);
 
@@ -477,6 +483,10 @@ public abstract class Game extends SimpleApplication
         }
         
         setupProcessor();
+        
+        initRun();
+        
+        changeAdvancedSettings(m_advancedSettings);
     }
     
     protected void setupProcessor()
@@ -497,8 +507,8 @@ public abstract class Game extends SimpleApplication
         m_toonBlow = new CartoonEdgeProcessor();
         
         //fpp.addFilter(cartoon);
-        m_fpp.addFilter(m_fogFilter);
-        viewPort.addProcessor(m_fpp);
+        //m_fpp.addFilter(m_fogFilter);
+        //viewPort.addProcessor(m_fpp);
     }
     
     abstract protected void updateSpeed(float tpf);

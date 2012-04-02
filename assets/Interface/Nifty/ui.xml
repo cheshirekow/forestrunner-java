@@ -161,6 +161,10 @@
 	                <control name="label" width="200px" textHAlign="left" text="Main Grid"  />
 	                <control id="advanced.chk.mainGrid" name="checkbox"  />
 	            </panel>
+	            <panel id="pnl.chk7" width="300px" childLayout="horizontal" align="right">
+                    <control name="label" width="200px" textHAlign="left" text="Gradient Floor"  />
+                    <control id="advanced.chk.gradientFloor" name="checkbox"  />
+                </panel>
 	            <panel id="pnl.chk8" width="300px" childLayout="horizontal" align="right">
                     <control name="label" width="200px" textHAlign="left" text="Verbose"  />
                     <control id="advanced.chk.verbose" name="checkbox"  />
