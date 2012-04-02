@@ -56,7 +56,7 @@ public class FloorPatch extends Node
         m_width     = width;
         m_height    = height;
         
-        Grid        grid    = new Grid( (int)(width), (int)(height), 1f);
+        Grid        grid    = new Grid( (int)(height), (int)(width), 1f);
         Geometry    geometry= new Geometry("wireframe grid", grid );
         Material    material= new Material(assetManager,
                                     "Common/MatDefs/Misc/Unshaded.j3md");

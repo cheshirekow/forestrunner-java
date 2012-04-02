@@ -20,7 +20,10 @@ import com.jme3.post.filters.CartoonEdgeFilter;
 import com.jme3.post.filters.FogFilter;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.shape.Quad;
+import com.jme3.scene.Spatial;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.system.AppSettings;
 
 import de.lessvoid.nifty.Nifty;
@@ -31,7 +34,7 @@ import de.lessvoid.nifty.controls.Label;
 import edu.mit.lids.ares.forestrunner.screens.*;
 import edu.mit.lids.ares.forestrunner.toonblow.CartoonEdgeProcessor;
 
-public class Game extends SimpleApplication
+public abstract class Game extends SimpleApplication
 {
     public enum State
     {
@@ -41,34 +44,32 @@ public class Game extends SimpleApplication
         PAUSED
     }
     
-    private Nifty                           m_nifty;
-    private Map<String,ScreenController>    m_screens;
-    private State                           m_state;
-    private SystemContext                   m_system;
+    protected Nifty                           m_nifty;
+    protected Map<String,ScreenController>    m_screens;
+    protected State                           m_state;
+    protected SystemContext                   m_system;
     
-    private Map<String,Integer>             m_params;
-    private FloorPatch[][]                  m_patches;
-    private Node                            m_patchRoot;
-    private Node                            m_patchRotate;
+    protected Map<String,Integer>             m_params;
+    protected FloorPatch[][]                  m_patches;
+    protected Node                            m_patchRoot;
+    protected Node                            m_patchRotate;
     
-    private Boolean m_leftDown;
-    private Boolean m_rightDown;
-    
-    private float   m_density;
-    private float   m_xAccel;
-    private float   m_xSpeedMax;
-    private float   m_xSpeed;
-    private float   m_ySpeed;
-    private float   m_radius;
-    private float   m_xPos;
-    private float   m_yPos;
-    private float   m_patchSize;
-    private float   m_acSide;
-    private float   m_acRadius;
-    private float   m_acTrans;
-    private float   m_score;
-    private int     m_patchDimX;
-    private int     m_patchDimY;
+    protected float   m_density;
+    protected float   m_xAccel;
+    protected float   m_xSpeedMax;
+    protected float   m_xSpeed;
+    protected float   m_ySpeed;
+    protected float   m_radius;
+    protected float   m_xPos;
+    protected float   m_yPos;
+    protected float   m_patchWidth;
+    protected float   m_patchHeight;
+    protected float   m_acSide;
+    protected float   m_acRadius;
+    protected float   m_acTrans;
+    protected float   m_score;
+    protected int     m_patchDimX;
+    protected int     m_patchDimY;
     
     public Integer getParam(String param)
     {
@@ -100,7 +101,7 @@ public class Game extends SimpleApplication
         m_state = state;
     }
     
-    private void init()
+    protected void init()
     {
         m_screens = new HashMap<String,ScreenController>();
         m_params  = new HashMap<String,Integer>();
@@ -109,9 +110,6 @@ public class Game extends SimpleApplication
         String[] paramNames = {"velocity","density","radius"};
         for( String paramName : paramNames )
             m_params.put(paramName,0);
-                
-        m_leftDown  = false;
-        m_rightDown = false;
                 
         m_xAccel    = 10.0f;
         m_xSpeedMax = 6.0f;
@@ -122,7 +120,8 @@ public class Game extends SimpleApplication
         
         m_xPos      = 0;
         m_yPos      = 0;
-        m_patchSize = 5.1f; //20.1f;
+        m_patchWidth    = 5.1f; //20.1f;
+        m_patchHeight   = 8.1f; //20.1f;
         
         m_patchDimX = 5;
         m_patchDimY = 8; //4;
@@ -132,13 +131,6 @@ public class Game extends SimpleApplication
         m_acTrans   = (float)( m_acSide*Math.sin(Math.PI/3) ) - m_acRadius;
     }
     
-    public Game()
-    {
-        m_system = SystemContext.ANDROID;
-        
-        init();
-    }
-    
     public Game(SystemContext ctx)
     {
         m_system = ctx;
@@ -146,96 +138,15 @@ public class Game extends SimpleApplication
     }
     
     
-    /**
-     * Map hotkeys.
-     */
-    private void initKeys() 
-    {
-        // don't quit on escape
-        inputManager.deleteMapping( SimpleApplication.INPUT_MAPPING_EXIT );
-        
-        //add pause keys which bring up the pause menu
-        inputManager.addMapping("Pause",        new KeyTrigger(KeyInput.KEY_ESCAPE));
-        inputManager.addMapping("Pause",        new KeyTrigger(KeyInput.KEY_SPACE));
-        inputManager.addMapping("Crash",        new KeyTrigger(KeyInput.KEY_Q));
-        
-        inputManager.addMapping("Left",         new KeyTrigger(KeyInput.KEY_A));
-        inputManager.addMapping("Left",         new KeyTrigger(KeyInput.KEY_LEFT));
-        inputManager.addMapping("Right",        new KeyTrigger(KeyInput.KEY_D));
-        inputManager.addMapping("Right",        new KeyTrigger(KeyInput.KEY_RIGHT));
-         
-        //add the names to the action listener
-        inputManager.addListener(pauseListener,new String[]{"Pause", "Crash"});
-        inputManager.addListener(dodgeListener,new String[]{"Left", "Right"});
-    }
-     
-     
-    private ActionListener pauseListener = new ActionListener() 
-    {
-        public void onAction(String name, boolean keyPressed, float tpf) 
-        {
-            // the pause action is only meaning full if the game is active
-            if (name.equals("Pause") && !keyPressed) 
-            {
-                // if we're in the game screen and we're paused then we can
-                // resume, but we may also be in the game screen because we're
-                // crashed so we don't resume then
-                if( m_nifty.getCurrentScreen().getScreenId().compareTo("game")==0 )
-                {
-                    GameScreen screen = 
-                            GameScreen.class.cast( m_screens.get("game") );
-                    
-                    if( m_state==State.PAUSED )
-                        screen.onButton("game.btn.cancel", new ButtonClickedEvent(null));
-                    else
-                        screen.onButton("game.btn.new", new ButtonClickedEvent(null));
-                }
-                    
-                else if( m_nifty.getCurrentScreen().getScreenId().compareTo("empty")==0 )
-                {
-                    m_state = State.PAUSED;
-                    m_nifty.gotoScreen("game");
-                }
-            }
-                
-            
-            if (name.equals("Crash") && !keyPressed )
-            {
-                m_nifty.gotoScreen("crash");
-                m_state = State.CRASHED;
-            }
-        }
-    };
     
-    private ActionListener dodgeListener = new ActionListener() 
-    {
-        public void onAction(String name, boolean keyPressed, float tpf) 
-        {
-            // the pause action is only meaning full if the game is active
-            if (name.equals("Left") ) 
-            {
-                if(keyPressed)
-                    m_leftDown = true;
-                else
-                    m_leftDown = false;
-            }
-                
-            else // (name.equals("Right") )
-            {
-                if(keyPressed)
-                    m_rightDown = true;
-                else
-                    m_rightDown = false;
-            }
-        }
-    };
+     
      
     public void initPatches()
     {
         int   dimx      = m_patchDimX;
         int   dimy      = m_patchDimY;
-        float width     = m_patchSize;
-        float height    = m_patchSize;
+        float width     = m_patchWidth;
+        float height    = m_patchHeight;
         
         m_patchRoot     = new Node("patch_root");
         m_patchRotate   = new Node("patch_rotate");
@@ -280,8 +191,8 @@ public class Game extends SimpleApplication
         
         int   dimx      = m_patchDimX;
         int   dimy      = m_patchDimY;
-        float width     = m_patchSize;
-        float height    = m_patchSize;
+        float width     = m_patchWidth;
+        float height    = m_patchHeight;
         float density   = m_density;
         float radius    = m_radius;
         
@@ -306,39 +217,13 @@ public class Game extends SimpleApplication
         System.out.println("initialized a new run");
     }
 
+    @Override
     public void simpleInitApp() 
     {
         setDisplayFps(false);
         setDisplayStatView(false);
         
-        // the quads aren't visible with fog anyway
-        /*
-        if(true)
-        {
-            Quad q=new Quad(1f, 1f);
-            Geometry geom=new Geometry("bg", q);
-            Material bgMaterial = new Material(assetManager, "Shaders/fixedBg/Gradient.j3md");
-            bgMaterial.setColor("FirstColor", new ColorRGBA(  1f,  1f,  1f,1f) );   // dark gray
-            bgMaterial.setColor("SecondColor", new ColorRGBA(  1f,  1f,  1f,1f) );  // light gray
-            geom.setMaterial(bgMaterial);
-            geom.setQueueBucket(RenderQueue.Bucket.Sky);
-            geom.setCullHint(Spatial.CullHint.Never);
-            rootNode.attachChild(geom);
-        }
-        
-        if(true)
-        {
-            Quad q=new Quad(1f, 0.95f);
-            Geometry geom=new Geometry("bg", q);
-            Material bgMaterial = new Material(assetManager, "Shaders/fixedBg/Gradient.j3md");
-            bgMaterial.setColor("FirstColor", new ColorRGBA(0.3f,0.3f,0.3f,1f) );   // dark gray
-            bgMaterial.setColor("SecondColor", new ColorRGBA(0.65f,0.65f,0.65f,1f) );  // light gray
-            geom.setMaterial(bgMaterial);
-            geom.setQueueBucket(RenderQueue.Bucket.Sky);
-            geom.setCullHint(Spatial.CullHint.Never);
-            rootNode.attachChild(geom);
-        }
-        */
+        viewPort.setBackgroundColor(new ColorRGBA(.9f,.9f,.9f,1f));
         
         AircraftMesh    ac      = new AircraftMesh(m_acSide);
         Geometry        geom    = new Geometry("aircraft",ac);
@@ -399,34 +284,46 @@ public class Game extends SimpleApplication
         // so that cylinders don't get clipped when they get close to the
         // camera
         cam.setLocation(new Vector3f(0f,2.5f,5f));
-        cam.setFrustumPerspective(30f, 640f/480f, 1f, 1000f);
+        cam.setFrustumPerspective(30f, 640f/480f, 1f, 40f);
         cam.lookAt(new Vector3f(0f,0f,-4f), new Vector3f(0f,1f,0f) );
         
         initPatches();
-        initKeys();
+        
+        // note the quads aren't visible with fogs
+        if(true)
+        {
+            float w = 40f;
+            float h = 42f;
+            Quad q=new Quad(w, h);
+            geom=new Geometry("bg", q);
+            Material bgMaterial = new Material(assetManager, "Shaders/quadGradient/Gradient.j3md");
+            bgMaterial.setColor("FirstColor", new ColorRGBA(0.3f,0.3f,0.3f,1f) );   // dark gray
+            bgMaterial.setColor("SecondColor", new ColorRGBA(0.65f,0.65f,0.65f,1f) );  // light gray
+            //Material bgMaterial = new Material(assetManager,
+            //        "Common/MatDefs/Misc/Unshaded.j3md");
+            //bgMaterial.setColor("Color", ColorRGBA.Gray);
+            geom.setMaterial(bgMaterial);
+            //geom.setLocalTranslation(0,-30f,-40f);
+
+            float angle = -(1/2f)*((float)(Math.PI));
+            Quaternion quat = new Quaternion();
+            quat.fromAngleAxis(angle, new Vector3f(1f,0f,0f));
+            
+            geom.setLocalTranslation(-w/2f,-0.01f,2f);
+            geom.setLocalRotation(quat);
+            
+            //geom.setQueueBucket(RenderQueue.Bucket.Sky);
+            //geom.setCullHint(Spatial.CullHint.Never);
+            m_patchRotate.attachChild(geom);
+        }
+        
         setupProcessor();
     }
     
-    private void setupProcessor() {
-        FilterPostProcessor fpp=new FilterPostProcessor(assetManager);
-        CartoonEdgeFilter cartoon=new CartoonEdgeFilter();
-        cartoon.setDepthSensitivity(0f);
-        cartoon.setNormalSensitivity(10f);
-        
-        // if we choose to set the camera to show a lot of the plane, then
-        // we may want a fog filter to make stuff disappear in the distance
-        FogFilter   fog = new FogFilter();
-        fog.setFogColor(new ColorRGBA(0.65f,0.65f,0.65f,1f));
-        fog.setFogDensity(10f);
-        fog.setFogDistance(400f);
-        
-        //CartoonEdgeProcessor cartoonEdgeProcess = new CartoonEdgeProcessor();
-        //viewPort.addProcessor(cartoonEdgeProcess);
-        
-        //fpp.addFilter(cartoon);
-        fpp.addFilter(fog);
-        viewPort.addProcessor(fpp);
-    }
+    abstract protected void setupProcessor();
+    abstract protected void updateSpeed(float tpf);
+    abstract protected void onCrash(float tpf);
+    
     
     @Override
     public void simpleUpdate(float tpf) 
@@ -445,31 +342,7 @@ public class Game extends SimpleApplication
             lbl.setText(String.format("Score: %6.2f",m_score));
         
         // update the xspeed if necessary
-        if(m_leftDown || m_rightDown)
-        {
-            if(m_leftDown)
-                m_xSpeed -= m_xAccel*tpf;
-            if(m_rightDown)
-                m_xSpeed += m_xAccel*tpf;
-        }
-        else
-        {
-            float sign = Math.signum(m_xSpeed); 
-            m_xSpeed -= sign*m_xAccel*tpf;
-            
-            // avoid overshoot
-            if( sign != Math.signum(m_xSpeed) )
-                m_xSpeed = 0;
-        }
-        
-        m_xSpeed = Math.min(m_xSpeed, m_xSpeedMax);
-        m_xSpeed = Math.max(m_xSpeed, -m_xSpeedMax);
-        
-        // rotate the scene according to xspeed
-        float angle = (float)(Math.PI / 9) * m_xSpeed / m_xSpeedMax;
-        Quaternion q = new Quaternion();
-        q.fromAngleAxis(angle, new Vector3f(0f,0f,1f));
-        m_patchRotate.setLocalRotation(q);
+        updateSpeed(tpf);
         
         // update the position
         m_yPos += m_ySpeed*tpf;
@@ -477,16 +350,16 @@ public class Game extends SimpleApplication
         
         // if we've passed the end if the first row, then shuffle it back
         // to the last row
-        if(m_yPos > m_patchSize)
+        if(m_yPos > m_patchHeight)
         {
             // reduce the yposition by one patch length
-            m_yPos -= m_patchSize;
+            m_yPos -= m_patchHeight;
             
             // shuffle patches
             int   dimx      = m_patchDimX;
             int   dimy      = m_patchDimY;
-            float width     = m_patchSize;
-            float height    = m_patchSize;
+            float width     = m_patchWidth;
+            float height    = m_patchHeight;
             
             for(int i=0; i < dimx; i++)
             {
@@ -504,17 +377,17 @@ public class Game extends SimpleApplication
             }
         }
         
-        if(m_xPos > m_patchSize)
+        if(m_xPos > m_patchWidth)
         {
             // reduce the xposition by one patch length
-            m_xPos -= m_patchSize;
+            m_xPos -= m_patchWidth;
             
             // shuffle patches
             // shuffle patches
             int   dimx      = m_patchDimX;
             int   dimy      = m_patchDimY;
-            float width     = m_patchSize;
-            float height    = m_patchSize;
+            float width     = m_patchWidth;
+            float height    = m_patchHeight;
             
             for(int j=0; j < dimy; j++)
             {
@@ -531,17 +404,17 @@ public class Game extends SimpleApplication
             }
         }
         
-        if(m_xPos < -m_patchSize)
+        if(m_xPos < -m_patchWidth)
         {
             // reduce the xposition by one patch length
-            m_xPos += m_patchSize;
+            m_xPos += m_patchWidth;
             
             // shuffle patches
             // shuffle patches
             int   dimx      = m_patchDimX;
             int   dimy      = m_patchDimY;
-            float width     = m_patchSize;
-            float height    = m_patchSize;
+            float width     = m_patchWidth;
+            float height    = m_patchHeight;
             
             for(int j=0; j < dimy; j++)
             {
@@ -574,30 +447,8 @@ public class Game extends SimpleApplication
         }
         
         if(collision)
-            pauseListener.onAction("Crash", false, tpf);
+            onCrash(tpf);
     }
     
-    
-    
-    public static void main(String[] args)
-    {
-        AppSettings settings = new AppSettings(true);
-        settings.put("Width",   640);
-        settings.put("Height",  480);
-        settings.put("Title",   "Forest Runner");
-        settings.put("VSync",   true);
-        settings.setSamples(4);
-        
-        Game app = new Game(SystemContext.DESKTOP);
-        app.setShowSettings(false);
-        app.setSettings(settings);
-        app.setPauseOnLostFocus(true);
-        
-        java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.SEVERE);
-        java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.SEVERE);
-        
-        app.start();
-    }
-
 }
 

@@ -1,0 +1,20 @@
+MaterialDef Gradient {
+ 
+    MaterialParameters {
+        Color FirstColor  : 1.0 0.0 1.0 1.0
+        Color SecondColor : 0.0 0.0 1.0 1.0
+    }
+ 
+    Technique {
+        VertexShader GLSL100:  Shaders/quadGradient/Gradient.vert
+        FragmentShader GLSL100: Shaders/quadGradient/Gradient.frag
+ 
+        WorldParameters {
+            WorldViewProjectionMatrix
+        }
+    }
+ 
+    Technique FixedFunc {
+    }
+ 
+}

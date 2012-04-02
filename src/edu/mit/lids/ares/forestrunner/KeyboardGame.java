@@ -1,0 +1,154 @@
+package edu.mit.lids.ares.forestrunner;
+
+import com.jme3.app.SimpleApplication;
+import com.jme3.input.KeyInput;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.KeyTrigger;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Vector3f;
+
+import de.lessvoid.nifty.controls.ButtonClickedEvent;
+import edu.mit.lids.ares.forestrunner.Game.State;
+import edu.mit.lids.ares.forestrunner.screens.GameScreen;
+
+public abstract class KeyboardGame extends Game
+{
+    protected Boolean m_leftDown;
+    protected Boolean m_rightDown;
+    
+    protected ActionListener dodgeListener = new ActionListener() 
+    {
+        public void onAction(String name, boolean keyPressed, float tpf) 
+        {
+            // the pause action is only meaning full if the game is active
+            if (name.equals("Left") ) 
+            {
+                if(keyPressed)
+                    m_leftDown = true;
+                else
+                    m_leftDown = false;
+            }
+                
+            else // (name.equals("Right") )
+            {
+                if(keyPressed)
+                    m_rightDown = true;
+                else
+                    m_rightDown = false;
+            }
+        }
+    };
+    
+    protected ActionListener pauseListener = new ActionListener() 
+    {
+        public void onAction(String name, boolean keyPressed, float tpf) 
+        {
+            // the pause action is only meaning full if the game is active
+            if (name.equals("Pause") && !keyPressed) 
+            {
+                // if we're in the game screen and we're paused then we can
+                // resume, but we may also be in the game screen because we're
+                // crashed so we don't resume then
+                if( m_nifty.getCurrentScreen().getScreenId().compareTo("game")==0 )
+                {
+                    GameScreen screen = 
+                            GameScreen.class.cast( m_screens.get("game") );
+                    
+                    if( m_state==State.PAUSED )
+                        screen.onButton("game.btn.cancel", new ButtonClickedEvent(null));
+                    else
+                        screen.onButton("game.btn.new", new ButtonClickedEvent(null));
+                }
+                    
+                else if( m_nifty.getCurrentScreen().getScreenId().compareTo("empty")==0 )
+                {
+                    m_state = State.PAUSED;
+                    m_nifty.gotoScreen("game");
+                }
+            }
+                
+            
+            if (name.equals("Crash") && !keyPressed )
+            {
+                m_nifty.gotoScreen("crash");
+                m_state = State.CRASHED;
+            }
+        }
+    };
+    
+    public KeyboardGame( SystemContext ctx )
+    {
+        super(ctx);
+        
+        m_leftDown  = false;
+        m_rightDown = false;
+    }
+    
+    /**
+     * Map hotkeys.
+     */
+    protected void initKeys() 
+    {
+        // don't quit on escape
+        inputManager.deleteMapping( SimpleApplication.INPUT_MAPPING_EXIT );
+        
+        //add pause keys which bring up the pause menu
+        inputManager.addMapping("Pause",        new KeyTrigger(KeyInput.KEY_ESCAPE));
+        inputManager.addMapping("Pause",        new KeyTrigger(KeyInput.KEY_SPACE));
+        inputManager.addMapping("Crash",        new KeyTrigger(KeyInput.KEY_Q));
+        
+        inputManager.addMapping("Left",         new KeyTrigger(KeyInput.KEY_A));
+        inputManager.addMapping("Left",         new KeyTrigger(KeyInput.KEY_LEFT));
+        inputManager.addMapping("Right",        new KeyTrigger(KeyInput.KEY_D));
+        inputManager.addMapping("Right",        new KeyTrigger(KeyInput.KEY_RIGHT));
+         
+        //add the names to the action listener
+        inputManager.addListener(pauseListener,new String[]{"Pause", "Crash"});
+        inputManager.addListener(dodgeListener,new String[]{"Left", "Right"});
+    }
+    
+    protected void updateSpeed(float tpf)
+    {
+        // update the xspeed if necessary
+        if(m_leftDown || m_rightDown)
+        {
+            if(m_leftDown)
+                m_xSpeed -= m_xAccel*tpf;
+            if(m_rightDown)
+                m_xSpeed += m_xAccel*tpf;
+        }
+        else
+        {
+            float sign = Math.signum(m_xSpeed); 
+            m_xSpeed -= sign*m_xAccel*tpf;
+            
+            // avoid overshoot
+            if( sign != Math.signum(m_xSpeed) )
+                m_xSpeed = 0;
+        }
+        
+        m_xSpeed = Math.min(m_xSpeed, m_xSpeedMax);
+        m_xSpeed = Math.max(m_xSpeed, -m_xSpeedMax);
+        
+        // on a PC, we rotate the scene according to xspeed
+        // on android, we do the opposite
+        float angle = (float)(Math.PI / 9) * m_xSpeed / m_xSpeedMax;
+        Quaternion q = new Quaternion();
+        q.fromAngleAxis(angle, new Vector3f(0f,0f,1f));
+        m_patchRotate.setLocalRotation(q);
+    }
+    
+    @Override
+    public void simpleInitApp() 
+    {
+        super.simpleInitApp();
+        initKeys();
+    }
+    
+    @Override
+    protected void onCrash(float tpf)
+    {
+        pauseListener.onAction("Crash", false, tpf);
+    }
+    
+}
