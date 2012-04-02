@@ -46,28 +46,13 @@ public abstract class KeyboardGame extends Game
             // the pause action is only meaning full if the game is active
             if (name.equals("Pause") && !keyPressed) 
             {
-                // if we're in the game screen and we're paused then we can
-                // resume, but we may also be in the game screen because we're
-                // crashed so we don't resume then
-                if( m_nifty.getCurrentScreen().getScreenId().compareTo("game")==0 )
-                {
-                    GameScreen screen = 
-                            GameScreen.class.cast( m_screens.get("game") );
-                    
-                    if( m_state==State.PAUSED )
-                        screen.onButton("game.btn.cancel", new ButtonClickedEvent(null));
-                    else
-                        screen.onButton("game.btn.new", new ButtonClickedEvent(null));
-                }
-                    
-                else if( m_nifty.getCurrentScreen().getScreenId().compareTo("empty")==0 )
+                if( m_nifty.getCurrentScreen().getScreenId().compareTo("empty")==0 )
                 {
                     m_state = State.PAUSED;
                     m_nifty.gotoScreen("game");
                 }
             }
                 
-            
             if (name.equals("Crash") && !keyPressed )
             {
                 m_nifty.gotoScreen("crash");

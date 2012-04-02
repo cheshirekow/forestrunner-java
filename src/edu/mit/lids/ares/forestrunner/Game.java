@@ -166,37 +166,37 @@ public abstract class Game extends SimpleApplication
         viewPort.removeProcessor(m_toonBlow);
         viewPort.removeProcessor(m_fpp);
         
-        System.out.println("Here 0");
-        
         // remove the grid if it's attached
         m_gridNode.removeFromParent();
        
-        System.out.println("Here 1");
-        
         // remove lights
         rootNode.removeLight(m_ambientLight);
         rootNode.removeLight(m_pointLight);
         
-        System.out.println("Here 2");
+        // remove logging
+        java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.SEVERE);
+        java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.SEVERE);
+        
         
         // set patches to use default material and grid
         Material    material= new Material(assetManager,
                                     "Common/MatDefs/Misc/Unshaded.j3md");
-        System.out.println("Here 3");
-        
         for(int i=0; i < m_patchDimX; i++)
         {
-            System.out.println("Here 4: " + i);
             for(int j=0; j < m_patchDimY; j++)
             {
-                System.out.println("Here 5 (" + i + "," + j + ")");
                 FloorPatch patch = m_patches[i][j];
                 patch.setUseGrid(false);
                 patch.setMaterial(material);
             }
         }
         
-        System.out.println("Here 6");
+        
+        if(newSettings.get("verbose"))
+        {
+            java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.ALL);
+            java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.ALL);
+        }
         
         // now add them one by one according to the settings
         if(newSettings.get("toonBlow"))
@@ -249,7 +249,7 @@ public abstract class Game extends SimpleApplication
             if(newSettings.get("toonBlow"))
             {
                 System.out.println("setting cylinders to toonblow material");
-                material= new Material(assetManager,
+                material= assetManager.loadMaterial(
                     "Materials/LightBlow/Toon_System/Toon_Base_Specular.j3m");
             }
             else

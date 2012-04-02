@@ -14,7 +14,8 @@ public class AdvancedSettings
         "toonBlow",
         "lighting",
         "debugGrids",
-        "mainGrid"
+        "mainGrid",
+        "verbose"
         };
     
     public AdvancedSettings()
