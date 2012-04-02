@@ -63,6 +63,10 @@ public class GameScreen implements ScreenController
             m_game.initRun();
             m_nifty.gotoScreen("countdown3");
         }
+        else if( id.compareTo("game.btn.advanced")==0 )
+        {
+            m_nifty.gotoScreen("advanced");
+        }
         else
         {
             if(m_game.getState() == State.PAUSED)

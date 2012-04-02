@@ -54,6 +54,15 @@ public abstract class Game extends SimpleApplication
     protected FloorPatch[][]                  m_patches;
     protected Node                            m_patchRoot;
     protected Node                            m_patchRotate;
+   
+    protected PointLight        m_pointLight;
+    protected AmbientLight      m_ambientLight;
+    
+    FilterPostProcessor         m_fpp;
+    CartoonEdgeFilter           m_cartoonFilter;
+    FogFilter                   m_fogFilter;
+    CartoonEdgeProcessor        m_toonBlow;
+    Geometry                    m_gridNode;
     
     protected float   m_density;
     protected float   m_xAccel;
@@ -71,6 +80,8 @@ public abstract class Game extends SimpleApplication
     protected float   m_score;
     protected int     m_patchDimX;
     protected int     m_patchDimY;
+    
+    protected AdvancedSettings   m_advancedSettings;
     
     public Integer getParam(String param)
     {
@@ -134,14 +145,144 @@ public abstract class Game extends SimpleApplication
     
     public Game(SystemContext ctx)
     {
-        m_system = ctx;
+        m_system            = ctx;
+        m_advancedSettings  = new AdvancedSettings();
         init();
     }
     
+    public AdvancedSettings getAdvancedSettings()
+    {
+        return m_advancedSettings;
+    }
     
+    public void changeAdvancedSettings(AdvancedSettings newSettings)
+    {
+        System.out.println("Updating advanced settings\n------------------");
+        
+        m_advancedSettings = newSettings;
+        
+        // first, clear out all extra processors and post processing filters
+        m_fpp.removeAllFilters();
+        viewPort.removeProcessor(m_toonBlow);
+        viewPort.removeProcessor(m_fpp);
+        
+        System.out.println("Here 0");
+        
+        // remove the grid if it's attached
+        m_gridNode.removeFromParent();
+       
+        System.out.println("Here 1");
+        
+        // remove lights
+        rootNode.removeLight(m_ambientLight);
+        rootNode.removeLight(m_pointLight);
+        
+        System.out.println("Here 2");
+        
+        // set patches to use default material and grid
+        Material    material= new Material(assetManager,
+                                    "Common/MatDefs/Misc/Unshaded.j3md");
+        System.out.println("Here 3");
+        
+        for(int i=0; i < m_patchDimX; i++)
+        {
+            System.out.println("Here 4: " + i);
+            for(int j=0; j < m_patchDimY; j++)
+            {
+                System.out.println("Here 5 (" + i + "," + j + ")");
+                FloorPatch patch = m_patches[i][j];
+                patch.setUseGrid(false);
+                patch.setMaterial(material);
+            }
+        }
+        
+        System.out.println("Here 6");
+        
+        // now add them one by one according to the settings
+        if(newSettings.get("toonBlow"))
+        {
+            System.out.println("Adding toonblow processor");
+            viewPort.addProcessor(m_toonBlow);
+        }
+        
+        if(newSettings.get("postProcessor"))
+        {
+            System.out.println("Adding post processor");
+            viewPort.addProcessor(m_fpp);
+            
+            if(newSettings.get("cartoonFilter"))
+            {
+                System.out.println("Adding cartoon edge filter");
+                m_fpp.addFilter(m_cartoonFilter);
+            }
+                
+            
+            if(newSettings.get("fogFilter"))
+            {
+                System.out.println("Adding fog filter");
+                m_fpp.addFilter(m_fogFilter);
+            }
+                
+        }
+        
+        if(newSettings.get("mainGrid"))
+        {
+            System.out.println("Adding main grid");
+            m_patchRoot.attachChild(m_gridNode);
+        }
+        
+        if(newSettings.get("debugGrids"))
+        {
+            System.out.println("Adding debug grids");
+            for(int i=0; i < m_patchDimX; i++)
+            {
+                for(int j=0; j < m_patchDimY; j++)
+                {
+                    FloorPatch patch = m_patches[i][j];
+                    patch.setUseGrid(true);
+                }
+            }
+        }
+        
+        if(newSettings.get("lighting"))
+        {
+            if(newSettings.get("toonBlow"))
+            {
+                System.out.println("setting cylinders to toonblow material");
+                material= new Material(assetManager,
+                    "Materials/LightBlow/Toon_System/Toon_Base_Specular.j3m");
+            }
+            else
+            {
+                System.out.println("setting cylinders to lighting material");
+                material= new Material(assetManager,
+                                    "Common/MatDefs/Light/Lighting.j3md");
+            }
+            for(int i=0; i < m_patchDimX; i++)
+            {
+                for(int j=0; j < m_patchDimY; j++)
+                {
+                    FloorPatch patch = m_patches[i][j];
+                    patch.setMaterial(material);
+                }
+            }
+            
+            System.out.println("adding lights");
+            rootNode.addLight(m_ambientLight);
+            rootNode.addLight(m_pointLight);
+        }
+        
+        System.out.println("rebuilding patches");
+        for(int i=0; i < m_patchDimX; i++)
+        {
+            for(int j=0; j < m_patchDimY; j++)
+            {
+                FloorPatch patch = m_patches[i][j];
+                patch.rebuild();
+            }
+        }
+    }
     
-     
-     
     public void initPatches()
     {
         int   dimx      = m_patchDimX;
@@ -169,15 +310,15 @@ public abstract class Game extends SimpleApplication
         
         initRun();
         
-        PointLight lamp_light = new PointLight();
-        lamp_light.setColor(ColorRGBA.White.mult(2f));
-        lamp_light.setRadius(100f);
-        lamp_light.setPosition(new Vector3f(-10f, 2f, 6f));
-        rootNode.addLight(lamp_light);
+        m_pointLight = new PointLight();
+        m_pointLight.setColor(ColorRGBA.White.mult(2f));
+        m_pointLight.setRadius(100f);
+        m_pointLight.setPosition(new Vector3f(-10f, 2f, 6f));
+        rootNode.addLight(m_pointLight);
         
-        AmbientLight al = new AmbientLight();
-        al.setColor(ColorRGBA.White.mult(0.3f));
-        rootNode.addLight(al);
+        m_ambientLight = new AmbientLight();
+        m_ambientLight.setColor(ColorRGBA.White.mult(0.3f));
+        rootNode.addLight(m_ambientLight);
         
         rootNode.setShadowMode(ShadowMode.CastAndReceive);
     }
@@ -263,6 +404,7 @@ public abstract class Game extends SimpleApplication
         m_screens.put("countdown",  new CountdownScreen(this));
         m_screens.put("empty",      new EmptyScreen(this));
         m_screens.put("crash",      new CrashScreen(this));
+        m_screens.put("advanced",   new AdvancedScreen(this));
         
         for( ScreenController sc : m_screens.values() )
         {
@@ -294,16 +436,16 @@ public abstract class Game extends SimpleApplication
         {
             int width   = (int)(m_patchWidth*m_patchDimX);
             int height  = (int)(m_patchHeight*m_patchDimY);
-            Grid        grid    = new Grid( height, width, 1f);
-            Geometry    geometry= new Geometry("wireframe grid", grid );
-            Material    gridMat= new Material(assetManager,
-                    "Common/MatDefs/Misc/Unshaded.j3md");
+            Grid        grid        = new Grid( height, width, 1f);
+                        m_gridNode  = new Geometry("wireframe grid", grid );
+            Material    gridMat     = new Material(assetManager,
+                                        "Common/MatDefs/Misc/Unshaded.j3md");
             gridMat.getAdditionalRenderState().setWireframe(true);
             gridMat.setColor("Color", ColorRGBA.Black);
-            geometry.setMaterial(material);
-            geometry.setShadowMode(ShadowMode.Off);
-            geometry.setLocalTranslation(-width/2f, 0f, -height+2f);
-            m_patchRoot.attachChild(geometry);
+            m_gridNode.setMaterial(material);
+            m_gridNode.setShadowMode(ShadowMode.Off);
+            m_gridNode.setLocalTranslation(-width/2f, 0f, -height+2f);
+            m_patchRoot.attachChild(m_gridNode);
         }
         
         // note the quads aren't visible with fogs
@@ -337,7 +479,28 @@ public abstract class Game extends SimpleApplication
         setupProcessor();
     }
     
-    abstract protected void setupProcessor();
+    protected void setupProcessor()
+    {
+        m_fpp=new FilterPostProcessor(assetManager);
+        
+        m_cartoonFilter=new CartoonEdgeFilter();
+        m_cartoonFilter.setDepthSensitivity(0f);
+        m_cartoonFilter.setNormalSensitivity(10f);
+        
+        // if we choose to set the camera to show a lot of the plane, then
+        // we may want a fog filter to make stuff disappear in the distance
+        m_fogFilter = new FogFilter();
+        m_fogFilter.setFogColor(new ColorRGBA(0.65f,0.65f,0.65f,1f));
+        m_fogFilter.setFogDensity(10f);
+        m_fogFilter.setFogDistance(1000f);
+        
+        m_toonBlow = new CartoonEdgeProcessor();
+        
+        //fpp.addFilter(cartoon);
+        m_fpp.addFilter(m_fogFilter);
+        viewPort.addProcessor(m_fpp);
+    }
+    
     abstract protected void updateSpeed(float tpf);
     abstract protected void onCrash(float tpf);
     

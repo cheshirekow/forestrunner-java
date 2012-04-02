@@ -34,6 +34,9 @@ public class FloorPatch extends Node
     Geometry            m_floor;
     int                 m_numTrees;
     
+    Boolean             m_useGrid;
+    ArrayList<Material> m_materials;
+    
     public static int getPoisson(double lambda) 
     {
         double L = Math.exp(-lambda);
@@ -55,6 +58,8 @@ public class FloorPatch extends Node
         m_trees     = new LinkedList<Geometry>();
         m_width     = width;
         m_height    = height;
+        m_useGrid   = false;
+        m_materials = new ArrayList<Material>();
         
         Grid        grid    = new Grid( (int)(height), (int)(width), 1f);
         Geometry    geometry= new Geometry("wireframe grid", grid );
@@ -65,6 +70,58 @@ public class FloorPatch extends Node
         geometry.setMaterial(material);
         m_floor = geometry;
         m_floor.setShadowMode(ShadowMode.Off);
+        
+        // does not work in mac osx lion
+        /*
+        Material material   = assetManager.loadMaterial("Materials/LightBlow/Toon_System/Toon_Base_Specular.j3m");
+        material.setBoolean("UseMaterialColors",true);      // Set some parameters, e.g. blue.
+        material.setColor("Ambient", s_colors.get(iColor));       // ... color of this object
+        material.setColor("Diffuse", s_colors.get(iColor));
+        material.setColor("Specular",ColorRGBA.White);
+        */
+        // works in mac but is ugly
+        /*
+        Material    material= new Material(assetManager,
+                "Common/MatDefs/Misc/Unshaded.j3md");
+        material.setColor("Color", s_colors.get(iColor));
+        */
+        material= new Material(assetManager,
+                            "Common/MatDefs/Light/Lighting.j3md");
+        setMaterial(material);
+    }
+    
+    public void setUseGrid(Boolean use)
+    {
+        m_useGrid = use;
+    }
+    
+    public void setMaterial(Material newMaterial)
+    {
+        m_materials.clear();
+        for(int i=0; i < s_colors.size(); i++)
+        {
+            ColorRGBA color     = s_colors.get(i);
+            Material  material  = newMaterial.clone();
+            
+            try
+            {
+                material.setBoolean("UseMaterialColors", true);
+                material.setColor("Diffuse", color);
+                material.setColor("Ambient", color);
+                material.setColor("Specular", ColorRGBA.White);
+                material.setFloat("Shininess", 1.1f);
+            }
+            catch(Exception e){}
+            
+            try
+            {
+                material.setColor("Color", color);
+            }
+            catch(Exception e){}
+            
+            m_materials.add(material);
+        }
+        
     }
     
     public void fullRegenerate(AssetManager assetManager, float density, float radius)
@@ -84,39 +141,15 @@ public class FloorPatch extends Node
             
             Cylinder cylinder   = new Cylinder(25,25,radius,0.5f,true,false);
             Geometry geometry   = new Geometry("cylinder", cylinder);
-            // does not work in mac osx lion
-            /*
-            Material material   = assetManager.loadMaterial("Materials/LightBlow/Toon_System/Toon_Base_Specular.j3m");
-            material.setBoolean("UseMaterialColors",true);      // Set some parameters, e.g. blue.
-            material.setColor("Ambient", s_colors.get(iColor));       // ... color of this object
-            material.setColor("Diffuse", s_colors.get(iColor));
-            */
-            // works in mac but is ugly
-            /*
-            Material    material= new Material(assetManager,
-                    "Common/MatDefs/Misc/Unshaded.j3md");
-            material.setColor("Color", s_colors.get(iColor));
-            */
-            Material    material= new Material(assetManager,
-                    "Common/MatDefs/Light/Lighting.j3md");
-            material.setBoolean("UseMaterialColors", true);
-            material.setColor("Diffuse", s_colors.get(iColor));
-            material.setColor("Ambient", s_colors.get(iColor));
-            material.setColor("Specular", ColorRGBA.White);
-            material.setFloat("Shininess", 1.1f);
-            geometry.setMaterial(material);
+            geometry.setMaterial(m_materials.get(iColor));
             m_trees.add(geometry);
         }
-        
-        // clear out children
-        detachAllChildren();
-        //attachChild(m_floor);
         
         // add as many children as was sampled
         for(int i=0; i < m_numTrees; i++)
         {
             assert( i < m_trees.size() );
-            attachChild(m_trees.get(i));
+            //attachChild(m_trees.get(i));
             
             // translate it to some point, uniformly distributed
             float x = (float)Math.random()*m_width;
@@ -134,6 +167,24 @@ public class FloorPatch extends Node
             m_trees.get(i).setLocalTranslation(x, 
                                 0.25f + (float)(Math.random()*0.001), y);
             m_trees.get(i).setLocalRotation(rotation);
+        }
+        
+        rebuild();
+    }
+    
+    public void rebuild()
+    {
+        // clear out children
+        detachAllChildren();
+        if(m_useGrid)
+            attachChild(m_floor);
+        
+        // add as many children as was sampled
+        for(int i=0; i < m_numTrees; i++)
+        {
+            int iColor = (int) (Math.random()*(double)s_colors.size() );
+            m_trees.get(i).setMaterial(m_materials.get(iColor));
+            attachChild(m_trees.get(i));
         }
     }
     
