@@ -11,37 +11,131 @@ import com.jme3.math.Matrix3f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.debug.Grid;
 
 public class FloorPatch extends Node
 {
     static ArrayList<ColorRGBA> s_colors;
+    static ArrayList<Material>  s_litMaterials;
+    static ArrayList<Material>  s_unlitMaterials;
+    static Material             s_blackMaterial;
+    static Material             s_wireMaterial;
     static float                m_pad;
+    
+    static Mesh     s_cylinderMesh;
+    static Mesh     s_outlineMesh;
+    static Mesh     s_wireframeMesh;
+    static Mesh     s_gridMesh;
+    
+    static float    s_width;
+    static float    s_height;
+    
+    static Boolean  s_useGrid;
+    static Boolean  s_useOutline;
+    static Boolean  s_useLighting;
+   
+    static int      s_maxTrees;
+    static Matrix3f s_rotation;
     
     static
     {
-        s_colors = new ArrayList<ColorRGBA>();
+        s_colors            = new ArrayList<ColorRGBA>();
+        s_litMaterials      = new ArrayList<Material>();
+        s_unlitMaterials    = new ArrayList<Material>();
+        
         s_colors.add( new ColorRGBA(1.0f,0f,0f,1f) );   // red
         //s_colors.add( new ColorRGBA(0f,1.0f,0f,1f) );   // green
         //s_colors.add( new ColorRGBA(0f,0f,1.0f,1f) );   // blue
         s_colors.add( new ColorRGBA(1.0f,1.0f,0f,1f) ); // yellow;
         
+        float cosx  = 0;
+        float sinx  = 1;
+        
+        s_rotation = new Matrix3f(  1f,     0f,     0f,
+                                    0f,     cosx,   sinx,
+                                    0f,     -sinx,  cosx);
+        
+        s_useGrid       = false;
+        s_useOutline    = true;
+        s_useLighting   = true;
+        s_maxTrees      = 100;
+        
         m_pad = 0.03f;
+    }
+    
+    static void setDim( float width, float height )
+    {
+        s_width     = width;
+        s_height    = height;
+        
+        s_gridMesh = new Grid( (int)(s_height), (int)(s_width), 1f);
+    }
+    
+    static void setMeshes(
+            Mesh cylinder,
+            Mesh outline,
+            Mesh wireframe )
+    {
+        s_cylinderMesh  = cylinder;
+        s_outlineMesh   = outline;
+        s_wireframeMesh = wireframe;
+    }
+    
+    static void buildMaterialList( AssetManager mgr )
+    {
+        Material unlitMat   = new Material(mgr, 
+                                "Common/MatDefs/Misc/Unshaded.j3md");
+        Material litMat     = new Material(mgr, 
+                                "Common/MatDefs/Light/Lighting.j3md");
+        
+        s_blackMaterial = unlitMat.clone();
+        s_blackMaterial.setColor("Color", ColorRGBA.Black);
+        
+        s_wireMaterial  = unlitMat.clone();
+        s_wireMaterial.setColor("Color", ColorRGBA.Black);
+        s_wireMaterial.getAdditionalRenderState().setWireframe(true);
+        
+        for(int i=0; i < s_colors.size(); i++)
+        {
+            Material um         = unlitMat.clone();
+            Material lm         = litMat.clone();
+            ColorRGBA color     = s_colors.get(i);
+            
+            um.setColor("Color",color);
+            lm.setBoolean("UseMaterialColors",true);
+            lm.setColor("Ambient", color);
+            lm.setColor("Diffuse", color);
+            lm.setColor("Specular",ColorRGBA.White);
+            lm.setFloat("Shininess", 1.1f);
+            
+            s_unlitMaterials.add(um);
+            s_litMaterials.add(lm);
+        }
+    }
+    
+    static void setUseGrid( Boolean use )
+    {
+        s_useGrid = use;
+    }
+    
+    static void setUseOutline( Boolean use )
+    {
+        s_useOutline = use;
+    }
+    
+    static void setUseLighting( Boolean use )
+    {
+        s_useLighting = use;
     }
     
     List<Geometry>      m_trees;
     List<Geometry>      m_outlines;
-    float               m_width;
-    float               m_height;
-    Geometry            m_floor;
+    List<Geometry>      m_wireframes;
+    Geometry            m_grid;
     int                 m_numTrees;
-    
-    Boolean             m_useGrid;
-    Boolean             m_useCartoon;
-    ArrayList<Material> m_materials;
-    Material            m_blackMaterial;
-    
+
     public static int getPoisson(double lambda) 
     {
         double L = Math.exp(-lambda);
@@ -57,167 +151,83 @@ public class FloorPatch extends Node
         return k - 1;
     }
     
-    public FloorPatch(String name, float width, float height, AssetManager assetManager)
+    public FloorPatch(String name )
+    {
+        this(name,100);
+    }
+    
+    public FloorPatch(String name, int maxObstacles)
     {
         super(name);
         m_trees     = new LinkedList<Geometry>();
         m_outlines  = new LinkedList<Geometry>();
-        m_width     = width;
-        m_height    = height;
-        m_useGrid   = false;
-        m_useCartoon= true;
-        m_materials = new ArrayList<Material>();
+        m_wireframes= new LinkedList<Geometry>();
         
-        Grid        grid    = new Grid( (int)(height), (int)(width), 1f);
-        Geometry    geometry= new Geometry("wireframe grid", grid );
-        Material    material= new Material(assetManager,
-                                    "Common/MatDefs/Misc/Unshaded.j3md");
-        material.getAdditionalRenderState().setWireframe(true);
-        material.setColor("Color", ColorRGBA.Black);
+        m_grid = new Geometry("wireframe grid", s_gridMesh );
+        m_grid.setMaterial(s_wireMaterial);
         
-        m_blackMaterial= new Material(assetManager,
-                          "Common/MatDefs/Misc/Unshaded.j3md");
-        m_blackMaterial.setColor("Color", ColorRGBA.Black);
-        
-        geometry.setMaterial(material);
-        m_floor = geometry;
-        m_floor.setShadowMode(ShadowMode.Off);
-        
-        // does not work in mac osx lion
-        /*
-        Material material   = assetManager.loadMaterial("Materials/LightBlow/Toon_System/Toon_Base_Specular.j3m");
-        material.setBoolean("UseMaterialColors",true);      // Set some parameters, e.g. blue.
-        material.setColor("Ambient", s_colors.get(iColor));       // ... color of this object
-        material.setColor("Diffuse", s_colors.get(iColor));
-        material.setColor("Specular",ColorRGBA.White);
-        */
-        // works in mac but is ugly
-        /*
-        Material    material= new Material(assetManager,
-                "Common/MatDefs/Misc/Unshaded.j3md");
-        material.setColor("Color", s_colors.get(iColor));
-        */
-        // works in mac but is slow
-        /*
-        material= new Material(assetManager,
-                            "Common/MatDefs/Light/Lighting.j3md");
-        */
-        material= new Material(assetManager,
-                                "Common/MatDefs/Misc/Unshaded.j3md");
-        setMaterial(material);
-    }
-    
-    public void setUseGrid(Boolean use)
-    {
-        m_useGrid = use;
-    }
-    
-    public void setUseCartoon(Boolean use)
-    {
-        m_useCartoon = use;
-    }
-    
-    public void setMaterial(Material newMaterial)
-    {
-        m_materials.clear();
-        for(int i=0; i < s_colors.size(); i++)
+        for( int i=0; i < maxObstacles; i++)
         {
-            ColorRGBA color     = s_colors.get(i);
-            Material  material  = newMaterial.clone();
+            int iColor = (int) (Math.random()*(double)s_colors.size() );
+            Geometry geometry;
             
-            try
-            {
-                material.setBoolean("UseMaterialColors", true);
-                material.setColor("Diffuse", color);
-                material.setColor("Ambient", color);
-                material.setColor("Specular", ColorRGBA.White);
-                material.setFloat("Shininess", 1.1f);
-            }
-            catch(Exception e){}
-            
-            try
-            {
-                material.setColor("Color", color);
-            }
-            catch(Exception e){}
-            
-            m_materials.add(material);
-        }
-        
-    }
-    
-    public void fullRegenerate(AssetManager assetManager, float density, float radius)
-    {
-        m_trees.clear();
-        m_outlines.clear();
-        regenerate(assetManager,density,radius);
-    }
-    
-    public void regenerate(AssetManager assetManager, float density, float radius)
-    {
-        m_numTrees    = getPoisson(density);
-        
-        // if we don't have enough trees in the queue, then generate some more
-        while(m_trees.size() < m_numTrees)
-        {
-            int iColor      = (int) (Math.random()*(double)s_colors.size() );
-            
-            Cylinder cylinder   = new Cylinder(4,10,radius,0.5f,true,false);
-            Geometry geometry   = new Geometry("cylinder", cylinder);
-            geometry.setMaterial(m_materials.get(iColor));
-            
-            Cylinder outline    = new Cylinder(4,10,radius+m_pad,0.5f+m_pad,true,true);
-            Geometry outlineGeo = new Geometry("cylinderOutline",outline);
-            outlineGeo.setMaterial(m_blackMaterial);
-            
+            geometry = new Geometry("cylinder",s_cylinderMesh);
+            geometry.setMaterial(s_unlitMaterials.get(iColor));
+            geometry.setLocalRotation(s_rotation);
             m_trees.add(geometry);
-            m_outlines.add(outlineGeo);
+            
+            geometry = new Geometry("cylinderOutline",s_outlineMesh);
+            geometry.setMaterial(s_blackMaterial);
+            geometry.setLocalRotation(s_rotation);
+            m_outlines.add(geometry);
+            
+            geometry = new Geometry("cylinderWireframe",s_wireframeMesh);
+            geometry.setMaterial(s_wireMaterial);
+            geometry.setLocalRotation(s_rotation);
+            m_wireframes.add(geometry);
         }
+    }
+    
+    public void shuffle(float density, float radius)
+    {
+        m_numTrees    = Math.min(getPoisson(density), s_maxTrees);
         
-        // add as many children as was sampled
+        // set position for as many children as we sampled
         for(int i=0; i < m_numTrees; i++)
         {
-            assert( i < m_trees.size() );
-            //attachChild(m_trees.get(i));
-            
             // translate it to some point, uniformly distributed
-            float x = (float)Math.random()*m_width;
-            float y = (float)Math.random()*m_height;
-            float z = 0.25f + (float)(Math.random()*0.001);
-            
-            float cosx  = 0;
-            float sinx  = 1;
-            
-            Matrix3f rotation = new Matrix3f(   1f,     0f,     0f,
-                                                0f,     cosx,   sinx,
-                                                0f,     -sinx,  cosx);
+            float x = (float)Math.random()*s_width;
+            float y = (float)Math.random()*s_height;
             
             // random height eliminates jittering in image of overlapping
             // cylinders
+            float z = 0.25f + (float)(Math.random()*0.001);
+            
             m_trees.get(i).setLocalTranslation(x, z, y);
             m_outlines.get(i).setLocalTranslation(x,z, y);
-            
-            m_trees.get(i).setLocalRotation(rotation);
-            m_outlines.get(i).setLocalRotation(rotation);
+            m_wireframes.get(i).setLocalTranslation(x,z, y);
         }
         
-        rebuild();
+        reattach();
     }
     
-    public void rebuild()
+    public void reattach()
     {
         // clear out children
         detachAllChildren();
-        if(m_useGrid)
-            attachChild(m_floor);
+        if(s_useGrid)
+            attachChild(m_grid);
         
-        // add as many children as was sampled
+        // attach as many children as was sampled
         for(int i=0; i < m_numTrees; i++)
         {
-            int iColor = (int) (Math.random()*(double)s_colors.size() );
-            m_trees.get(i).setMaterial(m_materials.get(iColor));
             attachChild(m_trees.get(i));
-            attachChild(m_outlines.get(i));
+            
+            if(s_useOutline)
+            {
+                attachChild(m_wireframes.get(i));
+                attachChild(m_outlines.get(i));
+            }
         }
     }
     

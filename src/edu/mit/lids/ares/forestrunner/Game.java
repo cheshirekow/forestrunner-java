@@ -81,6 +81,18 @@ public abstract class Game extends SimpleApplication
     protected int     m_patchDimX;
     protected int     m_patchDimY;
     
+    protected AircraftMesh  m_acBaseMesh;
+    protected AircraftMesh  m_acOutlineMesh;
+    protected AircraftMesh  m_acWireMesh;
+    
+    protected Geometry      m_acBaseNode;
+    protected Geometry      m_acOutlineNode;
+    protected Geometry      m_acWireNode;
+    
+    protected Cylinder      m_cylinderBaseMesh;
+    protected Cylinder      m_cylinderOutlineMesh;
+    protected Cylinder      m_cylinderWireMesh;
+    
     protected AdvancedSettings   m_advancedSettings;
     
     public Integer getParam(String param)
@@ -184,17 +196,6 @@ public abstract class Game extends SimpleApplication
         // set patches to use default material and grid
         Material    material= new Material(assetManager,
                                     "Common/MatDefs/Misc/Unshaded.j3md");
-        for(int i=0; i < m_patchDimX; i++)
-        {
-            for(int j=0; j < m_patchDimY; j++)
-            {
-                FloorPatch patch = m_patches[i][j];
-                patch.setUseGrid(false);
-                patch.setUseCartoon(false);
-                patch.setMaterial(material);
-            }
-        }
-        
         
         if(newSettings.get("verbose"))
         {
@@ -222,48 +223,14 @@ public abstract class Game extends SimpleApplication
             m_patchRoot.attachChild(m_gridNode);
         }
         
-        if(newSettings.get("debugGrids"))
-        {
-            System.out.println("Adding debug grids");
-            for(int i=0; i < m_patchDimX; i++)
-            {
-                for(int j=0; j < m_patchDimY; j++)
-                {
-                    FloorPatch patch = m_patches[i][j];
-                    patch.setUseGrid(true);
-                }
-            }
-        }
         
-        if(newSettings.get("cartoon"))
-        {
-            System.out.println("Adding cartoon outlines");
-            for(int i=0; i < m_patchDimX; i++)
-            {
-                for(int j=0; j < m_patchDimY; j++)
-                {
-                    FloorPatch patch = m_patches[i][j];
-                    patch.setUseCartoon(true);
-                }
-            }
-        }
+        FloorPatch.setUseGrid( newSettings.get("debugGrids") );
+        FloorPatch.setUseOutline( newSettings.get("cartoon") );
         
+        FloorPatch.setUseLighting( newSettings.get("lighting") );
         if(newSettings.get("lighting"))
         {
             System.out.println("setting cylinders to lighting material");
-            material= new Material(assetManager,
-                                "Common/MatDefs/Light/Lighting.j3md");
-
-            for(int i=0; i < m_patchDimX; i++)
-            {
-                for(int j=0; j < m_patchDimY; j++)
-                {
-                    FloorPatch patch = m_patches[i][j];
-                    patch.setMaterial(material);
-                }
-            }
-            
-            System.out.println("adding lights");
             rootNode.addLight(m_ambientLight);
             rootNode.addLight(m_pointLight);
         }
@@ -274,36 +241,130 @@ public abstract class Game extends SimpleApplication
             for(int j=0; j < m_patchDimY; j++)
             {
                 FloorPatch patch = m_patches[i][j];
-                patch.rebuild();
+                patch.reattach();
             }
         }
     }
     
-    public void initPatches()
+    public void initStaticMeshes()
     {
-        int   dimx      = m_patchDimX;
-        int   dimy      = m_patchDimY;
-        float width     = m_patchWidth;
-        float height    = m_patchHeight;
+        float m_pad  = 0.01f;
+        float m_cPad = 0.03f;
         
+        m_cylinderBaseMesh      = new Cylinder(4,10,m_radius,0.5f,true,false);
+        m_cylinderWireMesh      = new Cylinder(4,10,m_radius,0.5f,true,false);
+        m_cylinderOutlineMesh   = new Cylinder(4,10,m_radius+m_cPad,0.5f+m_cPad,true,true);
+        
+        m_acBaseMesh    = new AircraftMesh(m_acSide);
+        m_acWireMesh    = new AircraftMesh(m_acSide);
+        m_acOutlineMesh = new AircraftMesh(m_acSide+m_pad,true);
+
+        m_acBaseNode    = new Geometry("aircraft",          m_acBaseMesh);
+        m_acWireNode    = new Geometry("aircraft_wireframe",m_acWireMesh);
+        m_acOutlineNode = new Geometry("aircraft_outline",  m_acOutlineMesh);
+        
+        m_acBaseNode.setLocalTranslation(0f, 0f, -m_acTrans);
+        m_acOutlineNode.setLocalTranslation(0f, 0f, -m_acTrans-m_pad/2f);
+        m_acWireNode.setLocalScale(1.1f);
+        m_acWireNode.setLocalTranslation(0f, 0f, -m_acTrans-0.01f);
+        
+        Material material   = new Material(assetManager,
+                                    "Common/MatDefs/Misc/Unshaded.j3md");
+        material.setColor("Color", ColorRGBA.Gray);
+        m_acBaseNode.setMaterial(material);
+        
+        material = material.clone();
+        material.setColor("Color", ColorRGBA.Black);
+        m_acOutlineNode.setMaterial(material);
+        
+        material = material.clone();
+        material.getAdditionalRenderState().setWireframe(true);
+        m_acWireNode.setMaterial(material);
+        
+        int width   = (int)(m_patchWidth*m_patchDimX);
+        int height  = (int)(m_patchHeight*m_patchDimY);
+        m_gridNode  = new Geometry("wireframe grid", 
+                                        new Grid( height, width, 1f) );
+        material = material.clone();
+        m_gridNode.setMaterial(material);
+        m_gridNode.setLocalTranslation(-width/2f, 0f, -height+2f);
+        
+        rootNode.attachChild(m_acBaseNode);
+        rootNode.attachChild(m_acOutlineNode);
+        rootNode.attachChild(m_acWireNode);
+        
+        m_patchRoot.attachChild(m_gridNode);
+        
+        // note the quads aren't visible with fogs
+        /*
+        if(false)
+        {
+            float w = 40f;
+            float h = 42f;
+            Quad q=new Quad(w, h);
+            Geometry geom=new Geometry("bg", q);
+            
+            //Material bgMaterial = new Material(assetManager, "Shaders/quadGradient/Gradient.j3md");
+            //bgMaterial.setColor("FirstColor", new ColorRGBA(0.3f,0.3f,0.3f,1f) );   // dark gray
+            //bgMaterial.setColor("SecondColor", new ColorRGBA(0.65f,0.65f,0.65f,1f) );  // light gray
+            
+            Material bgMaterial = new Material(assetManager,
+                    "Common/MatDefs/Misc/Unshaded.j3md");
+            bgMaterial.setColor("Color", ColorRGBA.Gray);
+            
+            geom.setMaterial(bgMaterial);
+            //geom.setLocalTranslation(0,-30f,-40f);
+
+            float angle = -(1/2f)*((float)(Math.PI));
+            Quaternion quat = new Quaternion();
+            quat.fromAngleAxis(angle, new Vector3f(1f,0f,0f));
+            
+            geom.setLocalTranslation(-w/2f,-0.05f,2f);
+            geom.setLocalRotation(quat);
+            
+            //geom.setQueueBucket(RenderQueue.Bucket.Sky);
+            //geom.setCullHint(Spatial.CullHint.Never);
+            m_patchRotate.attachChild(geom);
+        }
+        */
+    }
+    
+    public void initSceneGraph()
+    {
         m_patchRoot     = new Node("patch_root");
         m_patchRotate   = new Node("patch_rotate");
-        m_patches       = new FloorPatch[dimx][dimy];
         
         m_patchRotate.attachChild(m_patchRoot);
         rootNode.attachChild(m_patchRotate);
+    }
+    
+    public void initPatches()
+    {
+        FloorPatch.buildMaterialList(assetManager);
+        FloorPatch.setDim(m_patchWidth, m_patchHeight);
+        FloorPatch.setMeshes(m_cylinderBaseMesh, 
+                                m_cylinderOutlineMesh, 
+                                m_cylinderWireMesh);
+        
+        int   dimx      = m_patchDimX;
+        int   dimy      = m_patchDimY;
+        
+        m_patches       = new FloorPatch[dimx][dimy];
         
         for(int i=0; i < dimx; i++)
         {
             for(int j=0; j < dimy; j++)
             {
                 String      patchName   = "floorpatch_" + i + "_" + j;
-                FloorPatch  patch       = new FloorPatch(patchName,width,height,assetManager); 
+                FloorPatch  patch       = new FloorPatch(patchName); 
                 m_patches[i][j]         = patch; 
                 m_patchRoot.attachChild(patch);
             }
         }
-        
+    }
+    
+    public void setupLights()
+    {
         m_pointLight = new PointLight();
         m_pointLight.setColor(ColorRGBA.White.mult(2f));
         m_pointLight.setRadius(100f);
@@ -341,7 +402,7 @@ public abstract class Game extends SimpleApplication
             {
                 FloorPatch patch = m_patches[i][j];
                 patch.setLocalTranslation((i-dimx/2f)*width, 0f, -j*height);
-                patch.fullRegenerate(assetManager,density,radius);
+                patch.shuffle(density,radius);
             }
         }
         
@@ -352,55 +413,13 @@ public abstract class Game extends SimpleApplication
         
         System.out.println("initialized a new run");
     }
-
-    @Override
-    public void simpleInitApp() 
+    
+    public void setupNifty()
     {
-        setDisplayFps(false);
-        setDisplayStatView(false);
-        
-        viewPort.setBackgroundColor(new ColorRGBA(.9f,.9f,.9f,1f));
-        
-        AircraftMesh    ac      = new AircraftMesh(m_acSide);
-        Geometry        geom    = new Geometry("aircraft",ac);
-        /*
-        Material material   = new Material(assetManager,                
-                                    "Common/MatDefs/Light/Lighting.j3md");
-        material.setBoolean("UseMaterialColors",true);    
-        material.setColor("Ambient", ColorRGBA.Gray);     
-        material.setColor("Diffuse", ColorRGBA.Gray);
-        */
-        Material material   = new Material(assetManager,
-                                    "Common/MatDefs/Misc/Unshaded.j3md");
-        material.setColor("Color", ColorRGBA.Gray);
-        geom.setMaterial(material);
-        geom.setLocalTranslation(0f, 0f, -m_acTrans);
-        rootNode.attachChild(geom);
-        
-        
-        geom = new Geometry("aircraft_wf",ac);
-        material = material.clone();
-        material.setColor("Color", ColorRGBA.Black);
-        material.getAdditionalRenderState().setWireframe(true);
-        geom.setMaterial(material);
-        geom.setLocalScale(1.1f);
-        geom.setLocalTranslation(0f, 0f, -m_acTrans-0.01f);
-        rootNode.attachChild(geom);
-        
-        float pad = 0.1f;
-        ac      = new AircraftMesh(m_acSide+pad,true);
-        geom    = new Geometry("aircraft_outline",ac);
-        material= new Material(assetManager,
-                                    "Common/MatDefs/Misc/Unshaded.j3md");
-        material.setColor("Color", ColorRGBA.Black);
-        geom.setMaterial(material);
-        geom.setLocalTranslation(0f, 0f, -m_acTrans-pad/2f);
-        rootNode.attachChild(geom);
-        
         NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(assetManager,
-                                                          inputManager,
-                                                          audioRenderer,
-                                                          guiViewPort);
+                inputManager,
+                audioRenderer,
+                guiViewPort);
         m_nifty = niftyDisplay.getNifty();
         
         m_screens.put("disclaimer", new DisclaimerScreen(this));
@@ -413,16 +432,19 @@ public abstract class Game extends SimpleApplication
         
         for( ScreenController sc : m_screens.values() )
         {
-            m_nifty.registerScreenController(sc);
-            // apparently registerScreenController also subscribes annotations
-            //m_nifty.subscribeAnnotations(sc);
+        m_nifty.registerScreenController(sc);
+        // apparently registerScreenController also subscribes annotations
+        //m_nifty.subscribeAnnotations(sc);
         }
         
         m_nifty.fromXml("Interface/Nifty/ui.xml", "disclaimer");
         
         // attach the nifty display to the gui view port as a processor
         guiViewPort.addProcessor(niftyDisplay);
-
+    }
+    
+    public void setupCamera()
+    {
         // disable the fly cam
         flyCam.setEnabled(false);
         flyCam.setDragToRotate(true);
@@ -434,60 +456,23 @@ public abstract class Game extends SimpleApplication
         cam.setLocation(new Vector3f(0f,2.5f,5f));
         cam.setFrustumPerspective(30f, 640f/480f, 1f, 40f);
         cam.lookAt(new Vector3f(0f,0f,-4f), new Vector3f(0f,1f,0f) );
-        
-        initPatches();
-        
-        if(true)
-        {
-            int width   = (int)(m_patchWidth*m_patchDimX);
-            int height  = (int)(m_patchHeight*m_patchDimY);
-            Grid        grid        = new Grid( height, width, 1f);
-                        m_gridNode  = new Geometry("wireframe grid", grid );
-            Material    gridMat     = new Material(assetManager,
-                                        "Common/MatDefs/Misc/Unshaded.j3md");
-            gridMat.getAdditionalRenderState().setWireframe(true);
-            gridMat.setColor("Color", ColorRGBA.Black);
-            m_gridNode.setMaterial(material);
-            m_gridNode.setShadowMode(ShadowMode.Off);
-            m_gridNode.setLocalTranslation(-width/2f, 0f, -height+2f);
-            m_patchRoot.attachChild(m_gridNode);
-        }
-        
-        // note the quads aren't visible with fogs
-        if(true)
-        {
-            float w = 40f;
-            float h = 42f;
-            Quad q=new Quad(w, h);
-            geom=new Geometry("bg", q);
-            
-            /*
-            Material bgMaterial = new Material(assetManager, "Shaders/quadGradient/Gradient.j3md");
-            bgMaterial.setColor("FirstColor", new ColorRGBA(0.3f,0.3f,0.3f,1f) );   // dark gray
-            bgMaterial.setColor("SecondColor", new ColorRGBA(0.65f,0.65f,0.65f,1f) );  // light gray
-            */
-            
-            Material bgMaterial = new Material(assetManager,
-                    "Common/MatDefs/Misc/Unshaded.j3md");
-            bgMaterial.setColor("Color", ColorRGBA.Gray);
-            
-            geom.setMaterial(bgMaterial);
-            //geom.setLocalTranslation(0,-30f,-40f);
+    }
 
-            float angle = -(1/2f)*((float)(Math.PI));
-            Quaternion quat = new Quaternion();
-            quat.fromAngleAxis(angle, new Vector3f(1f,0f,0f));
-            
-            geom.setLocalTranslation(-w/2f,-0.05f,2f);
-            geom.setLocalRotation(quat);
-            
-            //geom.setQueueBucket(RenderQueue.Bucket.Sky);
-            //geom.setCullHint(Spatial.CullHint.Never);
-            m_patchRotate.attachChild(geom);
-        }
+    @Override
+    public void simpleInitApp() 
+    {
+        setDisplayFps(false);
+        setDisplayStatView(false);
         
+        viewPort.setBackgroundColor(new ColorRGBA(.9f,.9f,.9f,1f));
+        
+        initSceneGraph();
+        initStaticMeshes();
+        initPatches();
+        setupLights();
+        setupNifty();
+        setupCamera();
         setupProcessor();
-        
         initRun();
         
         changeAdvancedSettings(m_advancedSettings);
@@ -567,7 +552,7 @@ public abstract class Game extends SimpleApplication
                 
                 m_patches[i][dimy-1] = temp;
                 temp.setLocalTranslation((i-dimx/2f)*width, 0f, -(dimy-1)*height);
-                temp.regenerate(assetManager, m_density, m_radius);
+                temp.shuffle(m_density, m_radius);
             }
         }
         
