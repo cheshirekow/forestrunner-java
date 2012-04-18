@@ -91,7 +91,7 @@ public abstract class Game extends SimpleApplication
     
     protected Cylinder      m_cylinderBaseMesh;
     protected Cylinder      m_cylinderOutlineMesh;
-    protected Cylinder      m_cylinderWireMesh;
+    protected CylinderOutline      m_cylinderWireMesh;
     
     protected AdvancedSettings   m_advancedSettings;
     
@@ -252,7 +252,7 @@ public abstract class Game extends SimpleApplication
         float m_cPad = 0.03f;
         
         m_cylinderBaseMesh      = new Cylinder(4,10,m_radius,0.5f,true,false);
-        m_cylinderWireMesh      = new Cylinder(4,10,m_radius,0.5f,true,false);
+        m_cylinderWireMesh      = new CylinderOutline(10,m_radius,0.5f);
         m_cylinderOutlineMesh   = new Cylinder(4,10,m_radius+m_cPad,0.5f+m_cPad,true,true);
         
         m_acBaseMesh    = new AircraftMesh(m_acSide);
