@@ -13,11 +13,11 @@ import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.debug.Grid;
-import com.jme3.scene.shape.Cylinder;
 
 public class FloorPatch extends Node
 {
-    static ArrayList<ColorRGBA>  s_colors;
+    static ArrayList<ColorRGBA> s_colors;
+    static float                m_pad;
     
     static
     {
@@ -26,9 +26,12 @@ public class FloorPatch extends Node
         //s_colors.add( new ColorRGBA(0f,1.0f,0f,1f) );   // green
         //s_colors.add( new ColorRGBA(0f,0f,1.0f,1f) );   // blue
         s_colors.add( new ColorRGBA(1.0f,1.0f,0f,1f) ); // yellow;
+        
+        m_pad = 0.03f;
     }
     
     List<Geometry>      m_trees;
+    List<Geometry>      m_outlines;
     float               m_width;
     float               m_height;
     Geometry            m_floor;
@@ -36,6 +39,7 @@ public class FloorPatch extends Node
     
     Boolean             m_useGrid;
     ArrayList<Material> m_materials;
+    Material            m_blackMaterial;
     
     public static int getPoisson(double lambda) 
     {
@@ -56,6 +60,7 @@ public class FloorPatch extends Node
     {
         super(name);
         m_trees     = new LinkedList<Geometry>();
+        m_outlines  = new LinkedList<Geometry>();
         m_width     = width;
         m_height    = height;
         m_useGrid   = false;
@@ -67,6 +72,11 @@ public class FloorPatch extends Node
                                     "Common/MatDefs/Misc/Unshaded.j3md");
         material.getAdditionalRenderState().setWireframe(true);
         material.setColor("Color", ColorRGBA.Black);
+        
+        m_blackMaterial= new Material(assetManager,
+                          "Common/MatDefs/Misc/Unshaded.j3md");
+        m_blackMaterial.setColor("Color", ColorRGBA.Black);
+        
         geometry.setMaterial(material);
         m_floor = geometry;
         m_floor.setShadowMode(ShadowMode.Off);
@@ -91,7 +101,7 @@ public class FloorPatch extends Node
                             "Common/MatDefs/Light/Lighting.j3md");
         */
         material= new Material(assetManager,
-                "Common/MatDefs/Misc/Unshaded.j3md");
+                                "Common/MatDefs/Misc/Unshaded.j3md");
         setMaterial(material);
     }
     
@@ -132,6 +142,7 @@ public class FloorPatch extends Node
     public void fullRegenerate(AssetManager assetManager, float density, float radius)
     {
         m_trees.clear();
+        m_outlines.clear();
         regenerate(assetManager,density,radius);
     }
     
@@ -147,7 +158,13 @@ public class FloorPatch extends Node
             Cylinder cylinder   = new Cylinder(4,10,radius,0.5f,true,false);
             Geometry geometry   = new Geometry("cylinder", cylinder);
             geometry.setMaterial(m_materials.get(iColor));
+            
+            Cylinder outline    = new Cylinder(4,10,radius+m_pad,0.5f+m_pad,true,true);
+            Geometry outlineGeo = new Geometry("cylinderOutline",outline);
+            outlineGeo.setMaterial(m_blackMaterial);
+            
             m_trees.add(geometry);
+            m_outlines.add(outlineGeo);
         }
         
         // add as many children as was sampled
@@ -159,6 +176,7 @@ public class FloorPatch extends Node
             // translate it to some point, uniformly distributed
             float x = (float)Math.random()*m_width;
             float y = (float)Math.random()*m_height;
+            float z = 0.25f + (float)(Math.random()*0.001);
             
             float cosx  = 0;
             float sinx  = 1;
@@ -169,9 +187,11 @@ public class FloorPatch extends Node
             
             // random height eliminates jittering in image of overlapping
             // cylinders
-            m_trees.get(i).setLocalTranslation(x, 
-                                0.25f + (float)(Math.random()*0.001), y);
+            m_trees.get(i).setLocalTranslation(x, z, y);
+            m_outlines.get(i).setLocalTranslation(x,z, y);
+            
             m_trees.get(i).setLocalRotation(rotation);
+            m_outlines.get(i).setLocalRotation(rotation);
         }
         
         rebuild();
@@ -190,6 +210,7 @@ public class FloorPatch extends Node
             int iColor = (int) (Math.random()*(double)s_colors.size() );
             m_trees.get(i).setMaterial(m_materials.get(iColor));
             attachChild(m_trees.get(i));
+            attachChild(m_outlines.get(i));
         }
     }
     

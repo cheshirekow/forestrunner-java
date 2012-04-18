@@ -384,6 +384,7 @@ public abstract class Game extends SimpleApplication
         geom.setLocalTranslation(0f, 0f, -m_acTrans);
         rootNode.attachChild(geom);
         
+        
         geom = new Geometry("aircraft_wf",ac);
         material = material.clone();
         material.setColor("Color", ColorRGBA.Black);
@@ -391,6 +392,16 @@ public abstract class Game extends SimpleApplication
         geom.setMaterial(material);
         geom.setLocalScale(1.1f);
         geom.setLocalTranslation(0f, 0f, -m_acTrans-0.01f);
+        rootNode.attachChild(geom);
+        
+        float pad = 0.1f;
+        ac      = new AircraftMesh(m_acSide+pad,true);
+        geom    = new Geometry("aircraft_outline",ac);
+        material= new Material(assetManager,
+                                    "Common/MatDefs/Misc/Unshaded.j3md");
+        material.setColor("Color", ColorRGBA.Black);
+        geom.setMaterial(material);
+        geom.setLocalTranslation(0f, 0f, -m_acTrans-pad/2f);
         rootNode.attachChild(geom);
         
         NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(assetManager,
@@ -474,7 +485,7 @@ public abstract class Game extends SimpleApplication
             Quaternion quat = new Quaternion();
             quat.fromAngleAxis(angle, new Vector3f(1f,0f,0f));
             
-            geom.setLocalTranslation(-w/2f,-0.01f,2f);
+            geom.setLocalTranslation(-w/2f,-0.05f,2f);
             geom.setLocalRotation(quat);
             
             //geom.setQueueBucket(RenderQueue.Bucket.Sky);

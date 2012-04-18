@@ -9,6 +9,11 @@ public class AircraftMesh extends Mesh
 {
     public AircraftMesh(float sideLen)
     {
+        this(sideLen, false);
+    }
+    
+    public AircraftMesh(float sideLen, Boolean inverted)
+    {
         float y       = (float) Math.sqrt( sideLen*sideLen 
                                     - (sideLen/2f)*(sideLen/2f) );
         float x       = sideLen/2f;
@@ -20,10 +25,16 @@ public class AircraftMesh extends Mesh
         vertices[2] = new Vector3f(x,0,y);
         vertices[3] = new Vector3f(0,height,y);
         
-        int[]      indexes  = { 0,2,1, 0,1,3, 1,2,3, 2,0,3 };
+        int[] indexes1  = { 0,2,1, 0,1,3, 1,2,3, 2,0,3 };
+        int[] indexes2  = { 0,1,2, 0,3,1, 1,3,2, 2,3,0 };
         
         setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices) );
-        setBuffer(Type.Index,    3, BufferUtils.createIntBuffer(indexes) );
+        
+        if(inverted)
+            setBuffer(Type.Index, 3, BufferUtils.createIntBuffer(indexes2) );
+        else
+            setBuffer(Type.Index, 3, BufferUtils.createIntBuffer(indexes1) );
+        
         updateBound();
     }
     
