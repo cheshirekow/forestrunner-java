@@ -38,6 +38,7 @@ public class FloorPatch extends Node
     int                 m_numTrees;
     
     Boolean             m_useGrid;
+    Boolean             m_useCartoon;
     ArrayList<Material> m_materials;
     Material            m_blackMaterial;
     
@@ -64,6 +65,7 @@ public class FloorPatch extends Node
         m_width     = width;
         m_height    = height;
         m_useGrid   = false;
+        m_useCartoon= true;
         m_materials = new ArrayList<Material>();
         
         Grid        grid    = new Grid( (int)(height), (int)(width), 1f);
@@ -108,6 +110,11 @@ public class FloorPatch extends Node
     public void setUseGrid(Boolean use)
     {
         m_useGrid = use;
+    }
+    
+    public void setUseCartoon(Boolean use)
+    {
+        m_useCartoon = use;
     }
     
     public void setMaterial(Material newMaterial)

@@ -10,8 +10,7 @@ public class AdvancedSettings
         {
         "postProcessor",
         "fogFilter",
-        "cartoonFilter",
-        "toonBlow",
+        "cartoon",
         "lighting",
         "debugGrids",
         "mainGrid",

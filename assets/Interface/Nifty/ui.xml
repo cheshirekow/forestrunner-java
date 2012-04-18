@@ -141,14 +141,10 @@
                     <control name="label" width="175px" textHAlign="left" text="Fog Filter:"  />
                     <control id="advanced.chk.fogFilter" name="checkbox"  />
                 </panel>
-                <panel id="pnl.chk3" width="275px" childLayout="horizontal" align="right">
-                    <control name="label" width="175px" textHAlign="left" text="Cartoon Edge Filter:"  />
-                    <control id="advanced.chk.cartoonFilter" name="checkbox"  />
-                </panel>	            
-	            <panel id="pnl.chk4" width="300px" childLayout="horizontal" align="right">
-	                <control name="label" width="200px" textHAlign="left"  text="ToonBlow Processor"  />
-	                <control id="advanced.chk.toonBlow" name="checkbox"  />
-	            </panel>
+                <panel id="pnl.chk3" width="300px" childLayout="horizontal" align="right">
+                    <control name="label" width="200px" textHAlign="left" text="Cartoon"  />
+                    <control id="advanced.chk.cartoon" name="checkbox"  />
+                </panel>
 	            <panel id="pnl.chk5" width="300px" childLayout="horizontal" align="right">
 	                <control name="label" width="200px" textHAlign="left" text="Lighting"  />
 	                <control id="advanced.chk.lighting" name="checkbox"  />

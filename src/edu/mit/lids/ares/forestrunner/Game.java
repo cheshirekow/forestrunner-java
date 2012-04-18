@@ -190,6 +190,7 @@ public abstract class Game extends SimpleApplication
             {
                 FloorPatch patch = m_patches[i][j];
                 patch.setUseGrid(false);
+                patch.setUseCartoon(false);
                 patch.setMaterial(material);
             }
         }
@@ -202,23 +203,10 @@ public abstract class Game extends SimpleApplication
         }
         
         // now add them one by one according to the settings
-        if(newSettings.get("toonBlow"))
-        {
-            System.out.println("Adding toonblow processor");
-            viewPort.addProcessor(m_toonBlow);
-        }
-        
         if(newSettings.get("postProcessor"))
         {
             System.out.println("Adding post processor");
             viewPort.addProcessor(m_fpp);
-            
-            if(newSettings.get("cartoonFilter"))
-            {
-                System.out.println("Adding cartoon edge filter");
-                m_fpp.addFilter(m_cartoonFilter);
-            }
-                
             
             if(newSettings.get("fogFilter"))
             {
@@ -247,20 +235,25 @@ public abstract class Game extends SimpleApplication
             }
         }
         
+        if(newSettings.get("cartoon"))
+        {
+            System.out.println("Adding cartoon outlines");
+            for(int i=0; i < m_patchDimX; i++)
+            {
+                for(int j=0; j < m_patchDimY; j++)
+                {
+                    FloorPatch patch = m_patches[i][j];
+                    patch.setUseCartoon(true);
+                }
+            }
+        }
+        
         if(newSettings.get("lighting"))
         {
-            if(newSettings.get("toonBlow"))
-            {
-                System.out.println("setting cylinders to toonblow material");
-                material= assetManager.loadMaterial(
-                    "Materials/LightBlow/Toon_System/Toon_Base_Specular.j3m");
-            }
-            else
-            {
-                System.out.println("setting cylinders to lighting material");
-                material= new Material(assetManager,
-                                    "Common/MatDefs/Light/Lighting.j3md");
-            }
+            System.out.println("setting cylinders to lighting material");
+            material= new Material(assetManager,
+                                "Common/MatDefs/Light/Lighting.j3md");
+
             for(int i=0; i < m_patchDimX; i++)
             {
                 for(int j=0; j < m_patchDimY; j++)
