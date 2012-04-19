@@ -184,6 +184,7 @@ public abstract class Game extends SimpleApplication
         
         // remove the grid if it's attached
         m_gridNode.removeFromParent();
+        m_gradientNode.removeFromParent();
        
         // remove lights
         rootNode.removeLight(m_ambientLight);
@@ -217,6 +218,12 @@ public abstract class Game extends SimpleApplication
         {
             System.out.println("Adding main grid");
             m_patchRoot.attachChild(m_gridNode);
+        }
+        
+        if(newSettings.get("gradientFloor"))
+        {
+            System.out.println("Adding gradient floor");
+            m_patchRotate.attachChild(m_gradientNode);
         }
         
         
