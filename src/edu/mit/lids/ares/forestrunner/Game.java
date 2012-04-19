@@ -185,6 +185,7 @@ public abstract class Game extends SimpleApplication
         // remove the grid if it's attached
         m_gridNode.removeFromParent();
         m_gradientNode.removeFromParent();
+        m_acOutlineNode.removeFromParent();
        
         // remove lights
         rootNode.removeLight(m_ambientLight);
@@ -229,6 +230,9 @@ public abstract class Game extends SimpleApplication
         
         FloorPatch.setUseGrid( newSettings.get("debugGrids") );
         FloorPatch.setUseOutline( newSettings.get("cartoon") );
+        
+        if(newSettings.get("cartoon"))
+            rootNode.attachChild(m_acOutlineNode);
         
         FloorPatch.setUseLighting( newSettings.get("lighting") );
         if(newSettings.get("lighting"))
