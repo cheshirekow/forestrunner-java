@@ -137,7 +137,7 @@ public abstract class Game extends SimpleApplication
         for( String paramName : paramNames )
             m_params.put(paramName,0);
                 
-        m_xAccel    = 10.0f;
+        m_xAccel    = 20.0f;
         m_xSpeedMax = 6.0f;
         m_xSpeed    = 0f;
         m_ySpeed    = 3.0f;

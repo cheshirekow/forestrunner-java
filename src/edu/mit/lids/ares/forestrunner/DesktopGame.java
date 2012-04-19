@@ -1,5 +1,7 @@
 package edu.mit.lids.ares.forestrunner;
 
+import java.util.prefs.BackingStoreException;
+
 import com.jme3.system.AppSettings;
 
 public class DesktopGame extends KeyboardGame
@@ -23,6 +25,12 @@ public class DesktopGame extends KeyboardGame
         settings.put("Title",   "Forest Runner");
         settings.put("VSync",   false);
         settings.setSamples(1);
+        
+        try { settings.save("edu.lids.mit.ares.forestrunner"); } 
+        catch (BackingStoreException ex) 
+        { 
+            System.err.println("Failed to save settings to file");
+        }
         
         DesktopGame app = new DesktopGame();
         app.setShowSettings(false);
