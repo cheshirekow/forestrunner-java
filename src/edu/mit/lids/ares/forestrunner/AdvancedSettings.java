@@ -7,7 +7,7 @@ public class AdvancedSettings
     extends HashMap<String,Boolean>
 {
     public static final String[] parameters = 
-        {
+    {
         "postProcessor",
         "fogFilter",
         "cartoon",
@@ -16,8 +16,17 @@ public class AdvancedSettings
         "mainGrid",
         "gradientFloor",
         "verbose"
-        };
-      
+    };
+    
+    public static AdvancedSettings s_default;
+    
+    static
+    {
+        s_default = new AdvancedSettings();
+        s_default.put("cartoon", true);
+        s_default.put("mainGrid", true);
+    }
+    
     public AdvancedSettings()
     {
         super();

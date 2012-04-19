@@ -5,9 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.input.KeyInput;
-import com.jme3.input.controls.ActionListener;
-import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.PointLight;
 import com.jme3.material.Material;
@@ -21,15 +18,10 @@ import com.jme3.post.filters.FogFilter;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.debug.Grid;
-import com.jme3.scene.shape.Quad;
-import com.jme3.scene.Spatial;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
-import com.jme3.renderer.queue.RenderQueue;
-import com.jme3.system.AppSettings;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.ScreenController;
-import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.Label;
 
 import edu.mit.lids.ares.forestrunner.screens.*;
@@ -375,7 +367,7 @@ public abstract class Game extends SimpleApplication
         m_ambientLight.setColor(ColorRGBA.White.mult(0.3f));
         //rootNode.addLight(m_ambientLight);
         
-        rootNode.setShadowMode(ShadowMode.CastAndReceive);
+        rootNode.setShadowMode(ShadowMode.Off);
     }
     
     public void initRun()
@@ -475,7 +467,7 @@ public abstract class Game extends SimpleApplication
         setupProcessor();
         initRun();
         
-        changeAdvancedSettings(m_advancedSettings);
+        changeAdvancedSettings(AdvancedSettings.s_default);
     }
     
     protected void setupProcessor()

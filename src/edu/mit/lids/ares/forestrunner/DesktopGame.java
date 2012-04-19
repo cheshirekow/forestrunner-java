@@ -21,7 +21,7 @@ public class DesktopGame extends KeyboardGame
         settings.put("Width",   640);
         settings.put("Height",  480);
         settings.put("Title",   "Forest Runner");
-        settings.put("VSync",   true);
+        settings.put("VSync",   false);
         settings.setSamples(1);
         
         DesktopGame app = new DesktopGame();
