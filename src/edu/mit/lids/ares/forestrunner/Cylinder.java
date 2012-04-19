@@ -39,6 +39,7 @@ import com.jme3.export.OutputCapsule;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
+import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.mesh.IndexBuffer;
 import com.jme3.util.BufferUtils;
@@ -149,7 +150,25 @@ public class Cylinder extends Mesh {
     public Cylinder(int axisSamples, int radialSamples,
             float radius, float radius2, float height, boolean closed, boolean inverted) {
         super();
+        
+     // Vertices
+        int vertCount = axisSamples * (radialSamples + 1) + (closed ? 2 : 0);
+
+        setBuffer(Type.Position, 3, createVector3Buffer(getFloatBuffer(Type.Position), vertCount));
+
+        // Normals
+        setBuffer(Type.Normal, 3, createVector3Buffer(getFloatBuffer(Type.Normal), vertCount));
+
+        // Texture co-ordinates
+        setBuffer(Type.TexCoord, 2, createVector2Buffer(vertCount));
+
+        int triCount = ((closed ? 2 : 0) + 2 * (axisSamples - 1)) * radialSamples;
+        
+        setBuffer(Type.Index, 3, createShortBuffer(getShortBuffer(Type.Index), 3 * triCount));
+        
         updateGeometry(axisSamples, radialSamples, radius, radius2, height, closed, inverted);
+        
+        setDynamic();
     }
 
     /**
@@ -200,7 +219,7 @@ public class Cylinder extends Mesh {
     
     public void updateGeometry( float radius )
     {
-        updateGeometry( axisSamples, radialSamples, 
+        updateGeometry( axisSamples - (closed ? 2:0), radialSamples, 
                         radius, radius,
                         height, closed,
                         inverted );
@@ -233,18 +252,7 @@ public class Cylinder extends Mesh {
 
         // Vertices
         int vertCount = axisSamples * (radialSamples + 1) + (closed ? 2 : 0);
-
-        setBuffer(Type.Position, 3, createVector3Buffer(getFloatBuffer(Type.Position), vertCount));
-
-        // Normals
-        setBuffer(Type.Normal, 3, createVector3Buffer(getFloatBuffer(Type.Normal), vertCount));
-
-        // Texture co-ordinates
-        setBuffer(Type.TexCoord, 2, createVector2Buffer(vertCount));
-
         int triCount = ((closed ? 2 : 0) + 2 * (axisSamples - 1)) * radialSamples;
-        
-        setBuffer(Type.Index, 3, createShortBuffer(getShortBuffer(Type.Index), 3 * triCount));
 
         // generate geometry
         float inverseRadial = 1.0f / radialSamples;
@@ -287,6 +295,9 @@ public class Cylinder extends Mesh {
         FloatBuffer nb = getFloatBuffer(Type.Normal);
         FloatBuffer pb = getFloatBuffer(Type.Position);
         FloatBuffer tb = getFloatBuffer(Type.TexCoord);
+        nb.rewind();
+        pb.rewind();
+        tb.rewind();
 
         // generate the cylinder itself
         Vector3f tempNormal = new Vector3f();
@@ -396,6 +407,14 @@ public class Cylinder extends Mesh {
             }
         }
 
+        VertexBuffer vb;
+        
+        vb = getBuffer(Type.Normal);
+        vb.setUpdateNeeded();
+        
+        vb = getBuffer(Type.Position);
+        vb.setUpdateNeeded();
+        
         updateBound();
     }
 

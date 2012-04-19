@@ -159,8 +159,11 @@ public abstract class Game extends SimpleApplication
     
     public Game(SystemContext ctx)
     {
-        java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.SEVERE);
-        java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.SEVERE);
+        if( ctx != SystemContext.APPLET)
+        {
+            java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.SEVERE);
+            java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.SEVERE);
+        }
         
         m_system            = ctx;
         m_advancedSettings  = new AdvancedSettings();
@@ -193,13 +196,16 @@ public abstract class Game extends SimpleApplication
         rootNode.removeLight(m_pointLight);
         
         // remove logging
-        java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.SEVERE);
-        java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.SEVERE);
-        
-        if(newSettings.get("verbose"))
+        if( m_system != SystemContext.APPLET)
         {
-            java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.ALL);
-            java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.ALL);
+            java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.SEVERE);
+            java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.SEVERE);
+            
+            if(newSettings.get("verbose"))
+            {
+                java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.ALL);
+                java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.ALL);
+            }
         }
         
         // now add them one by one according to the settings

@@ -33,6 +33,7 @@
 package edu.mit.lids.ares.forestrunner;
 
 import com.jme3.math.FastMath;
+import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.mesh.IndexBuffer;
 import com.jme3.scene.shape.Line;
@@ -74,6 +75,16 @@ public class CylinderOutline extends Line
     public CylinderOutline(int radialSamples, float radius, float height) 
     {
         super();
+        
+     // Vertices
+        int vertCount = 2 * (radialSamples ) ;
+        int lineCount = 2 * (radialSamples );
+
+        setBuffer(Type.Position, 3, createVector3Buffer(getFloatBuffer(Type.Position), vertCount));
+
+        // Index buffer
+        setBuffer(Type.Index, 2, createShortBuffer(getShortBuffer(Type.Index), 2 * lineCount));
+        
         updateGeometry(radialSamples, radius, height);
     }
 
@@ -126,14 +137,7 @@ public class CylinderOutline extends Line
 //        VertexBuffer nvb = getBuffer(Type.Normal);
 //        VertexBuffer tvb = getBuffer(Type.TexCoord);
 
-        // Vertices
-        int vertCount = 2 * (radialSamples ) ;
-        int lineCount = 2 * (radialSamples );
-
-        setBuffer(Type.Position, 3, createVector3Buffer(getFloatBuffer(Type.Position), vertCount));
-
-        // Index buffer
-        setBuffer(Type.Index, 2, createShortBuffer(getShortBuffer(Type.Index), 2 * lineCount));
+        
 
         // generate geometry
         float inverseRadial = 1.0f / radialSamples;
@@ -156,6 +160,9 @@ public class CylinderOutline extends Line
 
         FloatBuffer pb = getFloatBuffer(Type.Position);
         IndexBuffer ib = getIndexBuffer();
+        
+        pb.rewind();
+        
         int idx = 0;
         
         // bottom
@@ -182,6 +189,9 @@ public class CylinderOutline extends Line
             ib  .put( idx++, offset + radialCount+1 );
         }
         ib.put(idx-1, offset);
+        
+        VertexBuffer vb = getBuffer(Type.Position);
+        vb.setUpdateNeeded();
         
         updateBound();
     }
