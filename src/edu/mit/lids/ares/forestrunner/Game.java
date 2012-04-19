@@ -38,9 +38,10 @@ public abstract class Game extends SimpleApplication
         PAUSED
     }
     
-    static final float m_pad        = 0.01f;
-    static final float m_cPad       = 0.03f;
-    static final float s_farPlane   = 35f;
+    public static final float s_pad        = 0.01f;
+    public static final float s_cPad       = 0.03f;
+    public static final float s_farPlane   = 35f;
+    public static final float s_treeHeight = 0.5f;
     
     protected Nifty                           m_nifty;
     protected Map<String,ScreenController>    m_screens;
@@ -243,20 +244,20 @@ public abstract class Game extends SimpleApplication
     
     public void initStaticMeshes()
     {
-        m_cylinderBaseMesh      = new Cylinder(4,10,m_radius,0.5f,true,false);
-        m_cylinderWireMesh      = new CylinderOutline(10,m_radius,0.5f);
-        m_cylinderOutlineMesh   = new Cylinder(4,10,m_radius+m_cPad,0.5f+m_cPad,true,true);
+        m_cylinderBaseMesh      = new Cylinder(4,10,m_radius,s_treeHeight,true,false);
+        m_cylinderWireMesh      = new CylinderOutline(10,m_radius,s_treeHeight);
+        m_cylinderOutlineMesh   = new Cylinder(4,10,m_radius+s_cPad,s_treeHeight+s_cPad,true,true);
         
         m_acBaseMesh    = new AircraftMesh(m_acSide);
         m_acWireMesh    = new AircraftMesh(m_acSide);
-        m_acOutlineMesh = new AircraftMesh(m_acSide+m_pad,true);
+        m_acOutlineMesh = new AircraftMesh(m_acSide+s_pad,true);
 
         m_acBaseNode    = new Geometry("aircraft",          m_acBaseMesh);
         m_acWireNode    = new Geometry("aircraft_wireframe",m_acWireMesh);
         m_acOutlineNode = new Geometry("aircraft_outline",  m_acOutlineMesh);
         
         m_acBaseNode.setLocalTranslation(0f, 0f, -m_acTrans);
-        m_acOutlineNode.setLocalTranslation(0f, 0f, -m_acTrans-m_pad/2f);
+        m_acOutlineNode.setLocalTranslation(0f, 0f, -m_acTrans-s_pad/2f);
         m_acWireNode.setLocalScale(1.1f);
         m_acWireNode.setLocalTranslation(0f, 0f, -m_acTrans-0.01f);
         
@@ -276,7 +277,7 @@ public abstract class Game extends SimpleApplication
         int     width   = (int)(m_patchWidth*m_patchDimX);
         int     height  = (int)(m_patchHeight*m_patchDimY);
         float   backup  = 1f;
-        float   drop    = 0.1f;
+        float   drop    = 0.01f;
         
         m_gridNode  = new Geometry("wireframe grid", 
                                         new Grid( height, width, 1f) );
@@ -301,38 +302,6 @@ public abstract class Game extends SimpleApplication
         m_patchRoot.attachChild(m_gridNode);
         m_patchRotate.attachChild(m_gradientNode);
         
-        // note the quads aren't visible with fogs
-        /*
-        if(false)
-        {
-            float w = 40f;
-            float h = 42f;
-            Quad q=new Quad(w, h);
-            Geometry geom=new Geometry("bg", q);
-            
-            //Material bgMaterial = new Material(assetManager, "Shaders/quadGradient/Gradient.j3md");
-            //bgMaterial.setColor("FirstColor", new ColorRGBA(0.3f,0.3f,0.3f,1f) );   // dark gray
-            //bgMaterial.setColor("SecondColor", new ColorRGBA(0.65f,0.65f,0.65f,1f) );  // light gray
-            
-            Material bgMaterial = new Material(assetManager,
-                    "Common/MatDefs/Misc/Unshaded.j3md");
-            bgMaterial.setColor("Color", ColorRGBA.Gray);
-            
-            geom.setMaterial(bgMaterial);
-            //geom.setLocalTranslation(0,-30f,-40f);
-
-            float angle = -(1/2f)*((float)(Math.PI));
-            Quaternion quat = new Quaternion();
-            quat.fromAngleAxis(angle, new Vector3f(1f,0f,0f));
-            
-            geom.setLocalTranslation(-w/2f,-0.05f,2f);
-            geom.setLocalRotation(quat);
-            
-            //geom.setQueueBucket(RenderQueue.Bucket.Sky);
-            //geom.setCullHint(Spatial.CullHint.Never);
-            m_patchRotate.attachChild(geom);
-        }
-        */
     }
     
     public void initSceneGraph()
@@ -387,7 +356,7 @@ public abstract class Game extends SimpleApplication
     public void initRun()
     {
         m_radius = 0.1f + 0.03f * m_params.get("radius");
-        m_ySpeed = 3.0f + 1.0f * m_params.get("velocity");
+        m_ySpeed = 4.0f + 1.0f * m_params.get("velocity");
         m_xSpeed = 0f;
         m_density= 1f  + 1f  * m_params.get("density");
                     //20f  + 10f  * m_params.get("density");
@@ -400,7 +369,7 @@ public abstract class Game extends SimpleApplication
         
         m_cylinderBaseMesh.updateGeometry(m_radius);
         m_cylinderWireMesh.updateGeometry(m_radius);
-        m_cylinderOutlineMesh.updateGeometry(m_radius+m_cPad);
+        m_cylinderOutlineMesh.updateGeometry(m_radius+s_cPad);
         
         
         m_yPos = 0;
@@ -499,7 +468,7 @@ public abstract class Game extends SimpleApplication
         // if we choose to set the camera to show a lot of the plane, then
         // we may want a fog filter to make stuff disappear in the distance
         m_fogFilter = new FogFilter();
-        m_fogFilter.setFogColor(new ColorRGBA(0.65f,0.65f,0.65f,1f));
+        m_fogFilter.setFogColor(new ColorRGBA(0.75f,0.75f,0.75f,1f));
         m_fogFilter.setFogDensity(10f);
         m_fogFilter.setFogDistance(1000f);
         

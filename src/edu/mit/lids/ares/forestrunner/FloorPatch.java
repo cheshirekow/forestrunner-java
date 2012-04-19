@@ -212,7 +212,7 @@ public class FloorPatch extends Node
             
             // random height eliminates jittering in image of overlapping
             // cylinders
-            float z = 0.25f + (float)(Math.random()*0.001);
+            float z = (Game.s_treeHeight+Game.s_cPad)/2f + (float)(Math.random()*0.001);
             
             m_trees.get(i).setLocalTranslation(x, z, y);
             m_outlines.get(i).setLocalTranslation(x,z, y);
