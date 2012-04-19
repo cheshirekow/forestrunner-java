@@ -13,13 +13,12 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.post.FilterPostProcessor;
-import com.jme3.post.filters.CartoonEdgeFilter;
+//import com.jme3.post.filters.CartoonEdgeFilter;
 import com.jme3.post.filters.FogFilter;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.debug.Grid;
-import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 
 import de.lessvoid.nifty.Nifty;
@@ -27,7 +26,7 @@ import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.controls.Label;
 
 import edu.mit.lids.ares.forestrunner.screens.*;
-import edu.mit.lids.ares.forestrunner.toonblow.CartoonEdgeProcessor;
+//import edu.mit.lids.ares.forestrunner.toonblow.CartoonEdgeProcessor;
 
 public abstract class Game extends SimpleApplication
 {
@@ -58,9 +57,9 @@ public abstract class Game extends SimpleApplication
     protected AmbientLight      m_ambientLight;
     
     FilterPostProcessor         m_fpp;
-    CartoonEdgeFilter           m_cartoonFilter;
+    //CartoonEdgeFilter           m_cartoonFilter;
     FogFilter                   m_fogFilter;
-    CartoonEdgeProcessor        m_toonBlow;
+    //CartoonEdgeProcessor        m_toonBlow;
     Geometry                    m_gridNode;
     
     protected float   m_density;
@@ -183,7 +182,7 @@ public abstract class Game extends SimpleApplication
         
         // first, clear out all extra processors and post processing filters
         m_fpp.removeAllFilters();
-        viewPort.removeProcessor(m_toonBlow);
+        //viewPort.removeProcessor(m_toonBlow);
         viewPort.removeProcessor(m_fpp);
         
         // remove the grid if it's attached
@@ -480,9 +479,10 @@ public abstract class Game extends SimpleApplication
     {
         m_fpp=new FilterPostProcessor(assetManager);
         
-        m_cartoonFilter=new CartoonEdgeFilter();
-        m_cartoonFilter.setDepthSensitivity(0f);
-        m_cartoonFilter.setNormalSensitivity(10f);
+        
+        //m_cartoonFilter=new CartoonEdgeFilter();
+        //m_cartoonFilter.setDepthSensitivity(0f);
+        //m_cartoonFilter.setNormalSensitivity(10f);
         
         // if we choose to set the camera to show a lot of the plane, then
         // we may want a fog filter to make stuff disappear in the distance
@@ -491,7 +491,7 @@ public abstract class Game extends SimpleApplication
         m_fogFilter.setFogDensity(10f);
         m_fogFilter.setFogDistance(1000f);
         
-        m_toonBlow = new CartoonEdgeProcessor();
+        //m_toonBlow = new CartoonEdgeProcessor();
         
         //fpp.addFilter(cartoon);
         //m_fpp.addFilter(m_fogFilter);

@@ -41,23 +41,53 @@ public class HighScoreScreen implements ScreenController
         return string;
     }
     
-    public HighScoreScreen(Game game)
+    public HighScoreScreen(Game game) 
     {
         m_game = game;
+        
+        String pkg          = "edu.mit.lids.ares.forestrunner.screens.";
+        String className    ;
         
         switch(game.getSystem())
         {
             case ANDROID:
-                m_comm = new AndroidCommProvider();
+            {
+                className = pkg + "AndroidCommProvider";
                 break;
+            }
                 
             case DESKTOP:
-                m_comm = new DesktopCommProvider();
+            {
+                className = pkg + "DesktopCommProvider";
                 break;
+            }
                 
             case APPLET:
-                m_comm = new AppletCommProvider(game);
+            {
+                className = pkg + "AppletCommProvider";
                 break;
+            }
+            
+            default:
+            {
+                className = pkg + "DesktopCommProvider";
+                break;
+            } 
+        }
+        
+        try
+        {
+            Class<?> providerClass = Class.forName(className);
+            m_comm = (CommProvider) providerClass.newInstance();
+        } catch (ClassNotFoundException e)
+        {
+            e.printStackTrace();
+        } catch (InstantiationException e)
+        {
+            e.printStackTrace();
+        } catch (IllegalAccessException e)
+        {
+            e.printStackTrace();
         }
     }
         
