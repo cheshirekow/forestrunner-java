@@ -38,8 +38,9 @@ public abstract class Game extends SimpleApplication
         PAUSED
     }
     
-    static final float m_pad  = 0.01f;
-    static final float m_cPad = 0.03f;
+    static final float m_pad        = 0.01f;
+    static final float m_cPad       = 0.03f;
+    static final float s_farPlane   = 35f;
     
     protected Nifty                           m_nifty;
     protected Map<String,ScreenController>    m_screens;
@@ -272,17 +273,20 @@ public abstract class Game extends SimpleApplication
         material.getAdditionalRenderState().setWireframe(true);
         m_acWireNode.setMaterial(material);
         
-        int width   = (int)(m_patchWidth*m_patchDimX);
-        int height  = (int)(m_patchHeight*m_patchDimY);
+        int     width   = (int)(m_patchWidth*m_patchDimX);
+        int     height  = (int)(m_patchHeight*m_patchDimY);
+        float   backup  = 1f;
+        float   drop    = 0.1f;
+        
         m_gridNode  = new Geometry("wireframe grid", 
                                         new Grid( height, width, 1f) );
         material = material.clone();
         m_gridNode.setMaterial(material);
-        m_gridNode.setLocalTranslation(-width/2f, 0f, -height+2f);
+        m_gridNode.setLocalTranslation(-width/2f, 0f, -height+backup);
         
-        m_gradient      = new GradientQuad(width,height+1f);
+        m_gradient      = new GradientQuad(width,s_farPlane+backup);
         m_gradientNode  = new Geometry("gradient",m_gradient);
-        m_gradientNode.setLocalTranslation(-width/2f, 0, 1f);
+        m_gradientNode.setLocalTranslation(-width/2f, -drop, backup);
         m_gradientNode.setCullHint(CullHint.Never);
         
         material = new Material(assetManager,
@@ -382,7 +386,7 @@ public abstract class Game extends SimpleApplication
     
     public void initRun()
     {
-        m_radius = 0.1f + 0.05f * m_params.get("radius");
+        m_radius = 0.1f + 0.03f * m_params.get("radius");
         m_ySpeed = 3.0f + 1.0f * m_params.get("velocity");
         m_xSpeed = 0f;
         m_density= 1f  + 1f  * m_params.get("density");
@@ -393,7 +397,6 @@ public abstract class Game extends SimpleApplication
         float width     = m_patchWidth;
         float height    = m_patchHeight;
         float density   = m_density;
-        float radius    = m_radius;
         
         m_cylinderBaseMesh.updateGeometry(m_radius);
         m_cylinderWireMesh.updateGeometry(m_radius);
@@ -409,7 +412,7 @@ public abstract class Game extends SimpleApplication
             {
                 FloorPatch patch = m_patches[i][j];
                 patch.setLocalTranslation((i-dimx/2f)*width, 0f, -j*height);
-                patch.shuffle(density,radius);
+                patch.shuffle(density, j<2);
             }
         }
         
@@ -461,7 +464,7 @@ public abstract class Game extends SimpleApplication
         // so that cylinders don't get clipped when they get close to the
         // camera
         cam.setLocation(new Vector3f(0f,2.5f,5f));
-        cam.setFrustumPerspective(30f, 640f/480f, 1f, 35f);
+        cam.setFrustumPerspective(30f, 640f/480f, 1f, s_farPlane);
         cam.lookAt(new Vector3f(0f,0f,-4f), new Vector3f(0f,1f,0f) );
     }
 
@@ -559,7 +562,7 @@ public abstract class Game extends SimpleApplication
                 
                 m_patches[i][dimy-1] = temp;
                 temp.setLocalTranslation((i-dimx/2f)*width, 0f, -(dimy-1)*height);
-                temp.shuffle(m_density, m_radius);
+                temp.shuffle(m_density);
             }
         }
         

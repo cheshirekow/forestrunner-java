@@ -188,9 +188,20 @@ public class FloorPatch extends Node
         }
     }
     
-    public void shuffle(float density, float radius)
+    public void shuffle(float density)
     {
-        m_numTrees    = Math.min(getPoisson(density), s_maxTrees);
+        shuffle(density,false);
+    }
+    
+    public void shuffle(float density, Boolean override)
+    {
+        if( override )
+        {
+            System.out.println("override shuffle");
+            m_numTrees = 0;
+        }
+        else
+            m_numTrees = Math.min(getPoisson(density), s_maxTrees);
         
         // set position for as many children as we sampled
         for(int i=0; i < m_numTrees; i++)
