@@ -37,6 +37,9 @@ public abstract class Game extends SimpleApplication
         PAUSED
     }
     
+    static final float m_pad  = 0.01f;
+    static final float m_cPad = 0.03f;
+    
     protected Nifty                           m_nifty;
     protected Map<String,ScreenController>    m_screens;
     protected State                           m_state;
@@ -184,11 +187,6 @@ public abstract class Game extends SimpleApplication
         java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.SEVERE);
         java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.SEVERE);
         
-        
-        // set patches to use default material and grid
-        Material    material= new Material(assetManager,
-                                    "Common/MatDefs/Misc/Unshaded.j3md");
-        
         if(newSettings.get("verbose"))
         {
             java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.ALL);
@@ -240,9 +238,6 @@ public abstract class Game extends SimpleApplication
     
     public void initStaticMeshes()
     {
-        float m_pad  = 0.01f;
-        float m_cPad = 0.03f;
-        
         m_cylinderBaseMesh      = new Cylinder(4,10,m_radius,0.5f,true,false);
         m_cylinderWireMesh      = new CylinderOutline(10,m_radius,0.5f);
         m_cylinderOutlineMesh   = new Cylinder(4,10,m_radius+m_cPad,0.5f+m_cPad,true,true);
@@ -385,6 +380,11 @@ public abstract class Game extends SimpleApplication
         float density   = m_density;
         float radius    = m_radius;
         
+        m_cylinderBaseMesh.updateGeometry(m_radius);
+        m_cylinderWireMesh.updateGeometry(m_radius);
+        m_cylinderOutlineMesh.updateGeometry(m_radius+m_cPad);
+        
+        
         m_yPos = 0;
         m_xPos = 0;
         
@@ -446,7 +446,7 @@ public abstract class Game extends SimpleApplication
         // so that cylinders don't get clipped when they get close to the
         // camera
         cam.setLocation(new Vector3f(0f,2.5f,5f));
-        cam.setFrustumPerspective(30f, 640f/480f, 1f, 40f);
+        cam.setFrustumPerspective(30f, 640f/480f, 1f, 35f);
         cam.lookAt(new Vector3f(0f,0f,-4f), new Vector3f(0f,1f,0f) );
     }
 

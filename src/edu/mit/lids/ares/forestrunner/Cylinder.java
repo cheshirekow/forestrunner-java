@@ -197,6 +197,14 @@ public class Cylinder extends Mesh {
     public boolean isInverted() {
         return inverted;
     }
+    
+    public void updateGeometry( float radius )
+    {
+        updateGeometry( axisSamples, radialSamples, 
+                        radius, radius,
+                        height, closed,
+                        inverted );
+    }
 
     /**
      * Rebuilds the cylinder based on a new set of parameters.

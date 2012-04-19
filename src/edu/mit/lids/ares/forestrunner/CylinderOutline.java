@@ -32,20 +32,11 @@
 
 package edu.mit.lids.ares.forestrunner;
 
-import com.jme3.animation.LoopMode;
-import com.jme3.export.InputCapsule;
-import com.jme3.export.JmeExporter;
-import com.jme3.export.JmeImporter;
-import com.jme3.export.OutputCapsule;
 import com.jme3.math.FastMath;
-import com.jme3.math.Vector3f;
-import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.mesh.IndexBuffer;
 import com.jme3.scene.shape.Line;
-import com.jme3.util.BufferUtils;
 import static com.jme3.util.BufferUtils.*;
-import java.io.IOException;
 import java.nio.FloatBuffer;
 
 /**
@@ -107,7 +98,11 @@ public class CylinderOutline extends Line
         return radius;
     }
 
-
+    public void updateGeometry(float radius)
+    {
+        updateGeometry(radialSamples,radius,height);
+    }
+    
     /**
      * Rebuilds the cylinder based on a new set of parameters.
      *
