@@ -12,10 +12,11 @@ import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
 
+/*
 import com.almworks.sqlite4java.SQLiteConnection;
 import com.almworks.sqlite4java.SQLiteException;
 import com.almworks.sqlite4java.SQLiteStatement;
-
+*/
 
 public class AndroidCommProvider
     extends CommProvider
@@ -110,6 +111,7 @@ public class AndroidCommProvider
         
         if(!dbFile.exists())
         {
+            /*
             SQLiteConnection db = new SQLiteConnection(dbFile);
             
             try
@@ -135,6 +137,7 @@ public class AndroidCommProvider
                 m_dataOK = false;
                 return;
             }
+            */
         }
     }
     
@@ -213,7 +216,7 @@ public class AndroidCommProvider
         String dataDir      = userHome + File.separator + ".forestrunner";
         String dbFileName   = dataDir + File.separator + "scores.sqlite";
         File   dbFile       = new File(dbFileName);
-        SQLiteConnection db = new SQLiteConnection(dbFile);
+        //SQLiteConnection db = new SQLiteConnection(dbFile);
 
         // build lists of properties and values
         String[] propNames2 = {"velocity","density","radius"};
@@ -228,6 +231,7 @@ public class AndroidCommProvider
                                 StringUtils.join(conditions, " AND ") + 
                                 " ORDER BY score DESC LIMIT 20 ";
         
+        /*
         try
         {
             db.open();
@@ -250,7 +254,7 @@ public class AndroidCommProvider
                                     "local databse:");
             e.printStackTrace(System.out);
         }
-        
+        */
         
         return result;
     }
@@ -273,7 +277,7 @@ public class AndroidCommProvider
         String dataDir      = userHome + File.separator + ".forestrunner";
         String dbFileName   = dataDir + File.separator + "scores.sqlite";
         File   dbFile       = new File(dbFileName);
-        SQLiteConnection db = new SQLiteConnection(dbFile);
+        //SQLiteConnection db = new SQLiteConnection(dbFile);
 
         // build lists of properties and values
         String[] propNames2 = {"velocity","density","radius","score"};
@@ -294,7 +298,7 @@ public class AndroidCommProvider
                                 + ") VALUES ( " +
                                 StringUtils.join(valueList,", ")
                                 + ")";
-        
+        /*
         try
         {
             db.open();
@@ -310,6 +314,7 @@ public class AndroidCommProvider
             		                "local databse:");
             e.printStackTrace(System.out);
         }
+        */
         
         return result;
     }
