@@ -375,7 +375,7 @@ public abstract class Game extends SimpleApplication
     public void initRun()
     {
         m_radius = 0.1f + 0.03f * m_params.get("radius");
-        m_ySpeed = 4.0f + 1.0f * m_params.get("velocity");
+        m_ySpeed = 10.0f + 1.0f * m_params.get("velocity");
         m_xSpeed = 0f;
         m_density= 1f  + 1f  * m_params.get("density");
                     //20f  + 10f  * m_params.get("density");
