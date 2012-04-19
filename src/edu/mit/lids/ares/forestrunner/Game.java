@@ -38,7 +38,7 @@ public abstract class Game extends SimpleApplication
         PAUSED
     }
     
-    public static final float s_pad        = 0.01f;
+    public static final float s_pad        = 0.08f;
     public static final float s_cPad       = 0.03f;
     public static final float s_farPlane   = 35f;
     public static final float s_treeHeight = 0.5f;
