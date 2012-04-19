@@ -20,6 +20,7 @@ import com.jme3.post.filters.CartoonEdgeFilter;
 import com.jme3.post.filters.FogFilter;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.debug.Grid;
 import com.jme3.scene.shape.Quad;
 import com.jme3.scene.Spatial;
@@ -89,9 +90,12 @@ public abstract class Game extends SimpleApplication
     protected Geometry      m_acOutlineNode;
     protected Geometry      m_acWireNode;
     
-    protected Cylinder      m_cylinderBaseMesh;
-    protected Cylinder      m_cylinderOutlineMesh;
-    protected CylinderOutline      m_cylinderWireMesh;
+    protected Cylinder          m_cylinderBaseMesh;
+    protected Cylinder          m_cylinderOutlineMesh;
+    protected CylinderOutline   m_cylinderWireMesh;
+    
+    protected GradientQuad      m_gradient;
+    protected Geometry          m_gradientNode;
     
     protected AdvancedSettings   m_advancedSettings;
     
@@ -289,11 +293,22 @@ public abstract class Game extends SimpleApplication
         m_gridNode.setMaterial(material);
         m_gridNode.setLocalTranslation(-width/2f, 0f, -height+2f);
         
+        m_gradient      = new GradientQuad(width,height+1f);
+        m_gradientNode  = new Geometry("gradient",m_gradient);
+        m_gradientNode.setLocalTranslation(-width/2f, 0, 1f);
+        m_gradientNode.setCullHint(CullHint.Never);
+        
+        material = new Material(assetManager,
+                        "Common/MatDefs/Misc/Unshaded.j3md");
+        material.setBoolean("VertexColor", true);
+        m_gradientNode.setMaterial(material);
+        
         rootNode.attachChild(m_acBaseNode);
         rootNode.attachChild(m_acOutlineNode);
         rootNode.attachChild(m_acWireNode);
         
         m_patchRoot.attachChild(m_gridNode);
+        m_patchRotate.attachChild(m_gradientNode);
         
         // note the quads aren't visible with fogs
         /*
