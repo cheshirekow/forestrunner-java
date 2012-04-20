@@ -19,6 +19,8 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.debug.Grid;
+import com.jme3.system.JmeSystem;
+import com.jme3.system.Platform;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 
 import de.lessvoid.nifty.Nifty;
@@ -295,11 +297,17 @@ public abstract class Game extends SimpleApplication
         int     height  = (int)(m_patchHeight*m_patchDimY);
         float   backup  = 1f;
         float   drop    = 0.01f;
+
+        Platform platform = JmeSystem.getPlatform();
+        
         
         m_gridNode  = new Geometry("wireframe grid", 
                                         new Grid( height, width, 1f) );
         material = material.clone();
-        material.getAdditionalRenderState().setDepthWrite(false);
+        
+        if(  platform.ordinal() < Platform.MacOSX32.ordinal() ||
+                platform.ordinal() > Platform.MacOSX_PPC64.ordinal() )
+            material.getAdditionalRenderState().setDepthWrite(false);
         m_gridNode.setMaterial(material);
         m_gridNode.setLocalTranslation(-width/2f, 0f, -height+backup);
         
