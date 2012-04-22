@@ -8,16 +8,88 @@
   <resourceBundle id="game"         filename = "Interface/Nifty/game" />
   <resourceBundle id="highscore"    filename = "Interface/Nifty/highscore" />
   <resourceBundle id="advanced"     filename = "Interface/Nifty/advanced" />
+  <resourceBundle id="nick"         filename = "Interface/Nifty/nick" />
   
   <style id="nifty-panel-80">
     <attributes padding="8px,16px,24px,16px" backgroundImage="Interface/Nifty/nifty-panel-80.png" imageMode="resize:28,184,28,28,28,184,28,154,28,184,28,58" />
   </style>
   
+  <style id="forestrunner-textfield#panel" base="nifty-textfield#panel"/>
+  <style id="forestrunner-textfield#field" base="nifty-textfield#field" />
+  <style id="forestrunner-textfield#text">
+    <attributes font="Interface/Fonts/SansSerif-20.fnt" color="#000f" selectionColor="#f00f" visibleToMouse="false" align="left" valign="center" textHAlign="left" />
+    <effect>
+      <onFocus name="textColor" post="false" color="#cccf" />
+    </effect>
+  </style>
+  <style id="forestrunner-textfield#cursor-panel" base="nifty-textfield#cursor-panel" />
+  <style id="forestrunner-textfield#cursor" base="nifty-textfield#cursor" />
+
+  <style id="forestrunner-button#panel" base="nifty-button#panel"/>
+  <style id="forestrunner-button#text" >
+    <attributes font="Interface/Fonts/SansSerif-20.fnt" align="center" valign="center" textHAlign="center" textVAlign="center" visibleToMouse="false"/>
+    <effect>
+      <onEnabled name="textColorAnimated" startColor="#8886" endColor="#eeef" post="false" length="150" />
+      <onDisabled name="textColorAnimated" startColor="#eeef" endColor="#8886" post="false" length="150" />
+    </effect>
+  </style>
+  
+  <style id="forestrunner-horizontal-slider#panel">
+    <attributes childLayout="horizontal" height="30px" align="center" focusable="true" />
+  </style>
+  
+  <style id="forestrunner-horizontal-slider#left">
+    <attributes filename="slider/slider.png" width="30px" height="30px" imageMode="sprite:23,23,6"/>
+    <effect>
+      <onClick name="focus" targetElement="#parent" />
+      <onClick name="imageOverlay" filename="slider/slider.png" imageMode="sprite:23,23,8" post="true" />
+      <onFocus name="imageOverlay" filename="slider/slider.png" imageMode="sprite:23,23,7" post="true" />
+      <onHover name="border" color="#822f" post="true" />
+      <onEnabled name="renderQuad" startColor="#2228" endColor="#2220" post="true" length="150" />
+      <onDisabled name="renderQuad" startColor="#2220" endColor="#2228" post="true" length="150" />
+    </effect>
+  </style>
+  
+  <style id="forestrunner-horizontal-slider#right">
+    <attributes filename="slider/slider.png" width="30px" height="30px" imageMode="sprite:23,23,9"/>
+    <effect>
+      <onClick name="focus" targetElement="#parent" />
+      <onClick name="imageOverlay" filename="slider/slider.png" imageMode="sprite:23,23,11" post="true" />
+      <onFocus name="imageOverlay" filename="slider/slider.png" imageMode="sprite:23,23,10" post="true" />
+      <onHover name="border" color="#822f" post="true" />
+      <onEnabled name="renderQuad" startColor="#2228" endColor="#2220" post="true" length="150" />
+      <onDisabled name="renderQuad" startColor="#2220" endColor="#2228" post="true" length="150" />
+    </effect>
+  </style>
+  
+  <style id="forestrunner-horizontal-slider#background">
+    <attributes filename="slider/slider.png" width="*" height="30px" childLayout="absolute" imageMode="sprite-resize:23,23,16,4,15,4,4,4,15,4,15,4,15,4,4" />
+    <effect>
+      <onClick name="focus" targetElement="#parent" />
+    </effect>
+  </style>
+  
+  <style id="forestrunner-horizontal-slider#position">
+    <attributes filename="slider/slider.png" x="0px" y="0px" width="30px" height="30px" imageMode="sprite-resize:23,23,17,4,15,4,4,4,15,4,15,4,15,4,4" />
+    <effect>
+      <onClick name="focus" targetElement="#parent#parent" />
+      <onFocus name="imageOverlay" filename="slider/slider.png" imageMode="sprite-resize:23,23,19,4,15,4,4,4,15,4,15,4,15,4,4" post="true" />
+      <onHover name="imageOverlay" filename="slider/slider.png" imageMode="sprite-resize:23,23,18,4,15,4,4,4,15,4,15,4,15,4,4" post="true" />
+      <onEnabled name="renderQuad" startColor="#2228" endColor="#2220" post="true" length="150" />
+      <onDisabled name="renderQuad" startColor="#2220" endColor="#2228" post="true" length="150" />
+    </effect>
+  </style>
+ 
+ 
+ 
+ 
+ 
+  
   <controlDefinition name="highscore-list-line">
 	  <panel childLayout="horizontal" width="100%" align="center">
-	       <control font="Interface/Fonts/SansSerif.fnt" id="#highscore-line-user" name="label" textHAlign="left" width="55%"  />
-	       <control font="Interface/Fonts/SansSerif.fnt" id="#highscore-line-date" name="label" textHAlign="left" width="25%"  />
-	       <control font="Interface/Fonts/SansSerif.fnt" id="#highscore-line-score" name="label" textHAlign="right" width="20%"  />
+	       <control font="Interface/Fonts/SansSerif-8.fnt" id="#highscore-line-user" name="label" textHAlign="left" width="55%"  />
+	       <control font="Interface/Fonts/SansSerif-8.fnt" id="#highscore-line-date" name="label" textHAlign="left" width="25%"  />
+	       <control font="Interface/Fonts/SansSerif-8.fnt" id="#highscore-line-score" name="label" textHAlign="right" width="20%"  />
 	  </panel>
   </controlDefinition>
   
@@ -30,9 +102,27 @@
           <onEndScreen name="move" mode="out" direction="bottom" length="300" startDelay="0" inherit="true"/>
         </effect>
         <text id="text1" width="85%" font="aurulent-sans-16.fnt" text="${disclaimer.text}" color="#ffff" wrap="true" textHAlign="left"/>
-        <panel id="button-panel" width="40%" height="20px" align="center" childLayout="horizontal">
-            <control id="disclaimer.btn.agree" width="50%" name="button" label="${disclaimer.agree_txt}" />
-            <control id="disclaimer.btn.disagree" width="50%"  name="button" label="${disclaimer.disagree_txt}" />
+        <panel id="button-panel" width="60%" height="40px" align="center" childLayout="horizontal">
+            <control id="disclaimer.btn.agree" width="50%" height="100%" name="button" style="forestrunner-button" label="${disclaimer.agree_txt}" />
+            <control id="disclaimer.btn.disagree" width="50%" height="100%"  name="button" style="forestrunner-button" label="${disclaimer.disagree_txt}" />
+        </panel>
+      </panel>
+    </layer>
+  </screen>
+  
+  <screen id="nick" controller="edu.mit.lids.ares.forestrunner.screens.NickScreen">
+    <layer id="layer" backgroundColor="#0000" childLayout="center">
+      <panel id="panel" style="nifty-panel-80" height="80%" width="80%" align="center" valign="center" childLayout="vertical" visibleToMouse="true">
+        <effect>
+          <onStartScreen name="move" mode="in" direction="top" length="300" startDelay="0" inherit="true"/>
+          <onEndScreen name="move" mode="out" direction="bottom" length="300" startDelay="0" inherit="true"/>
+        </effect>
+        <text id="text1" width="85%" font="Interface/Fonts/SansSerif-20.fnt" text="${nick.text}" color="#ffff" wrap="true" textHAlign="left"/>
+        <panel id="button-panel" width="80%" height="100%" align="center" childLayout="vertical">
+	        <control id="txtfld.username" style="forestrunner-textfield" width="100%" height="40px" name="textfield" text="${nick.default}" maxLength="30" />
+	        <panel id="spacer" height="20px" childLayout="vertical">
+	        </panel>
+	        <control id="nick.btn.finished" height="40px" width="60%" align="center" name="button" style="forestrunner-button" label="${nick.finished}" />
         </panel>
       </panel>
     </layer>
@@ -95,28 +185,25 @@
 	          <onStartScreen name="move" mode="in" direction="top" length="300" startDelay="0" inherit="true"/>
 	          <onEndScreen name="move" mode="out" direction="bottom" length="300" startDelay="0" inherit="true" onEndEffect="onEndScreenEffect()"/>
 	        </effect>
-            <panel id="pnl.title" style="nifty-panel-80" height="25%" width="80%" align="center" childLayout="center">
-                <text id="txt.title" width="100%" font="aurulent-sans-16.fnt" text="${game.title}" color="#ffff"/>
-            </panel>
-            <panel id="pnl.split" width="100%" height="75%" childLayout="horizontal">
+            <panel id="pnl.split" width="100%" height="100%" childLayout="horizontal">
                 <panel id="pnl.instructions" style="nifty-panel-80" width="50%" height="50%" childLayout="vertical">
-                    <text id="txt.instructions" width="90%" font="aurulent-sans-16.fnt" text="${game.instructions}" color="#ffff" wrap="true" textHAlign="left"/>
-                    <panel id="pnl.spacer2" width="100%" height="5px">
+                    <text id="txt.instructions" width="90%" font="Interface/Fonts/SansSerif-20.fnt" text="${game.instructions}" color="#ffff" wrap="true" textHAlign="left"/>
+                    <panel id="pnl.spacer2" width="100%" height="20px">
                     </panel>
-                    <control id="game.btn.advanced" width="50%" align="center" name="button" label="${game.advanced}"/>
+                    <control id="game.btn.advanced" width="90%" height="40px" align="center" name="button" style="forestrunner-button" label="${game.advanced}"/>
                 </panel>
                 <panel id="pnl.options" style="nifty-panel-80" width="50%" height="80%" childLayout="vertical">
-                    <text id="txt.speed" width="90%" font="aurulent-sans-16.fnt" text="${game.speed}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
-                    <control id="game.sldr.velocity"  name="horizontalSlider" width="100%" min="0" max="9" initial="0" stepSize="1" buttonStepSize="1" />
-                    <text id="txt.density" width="90%" font="aurulent-sans-16.fnt" text="${game.density}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
-                    <control id="game.sldr.density"  name="horizontalSlider" width="100%" min="0" max="9" initial="0" stepSize="1" buttonStepSize="1" />
-                    <text id="txt.radius" width="90%" font="aurulent-sans-16.fnt" text="${game.radius}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
-                    <control id="game.sldr.radius"   name="horizontalSlider" width="100%" min="0" max="9" initial="0" stepSize="1" buttonStepSize="1" />
+                    <text id="txt.speed" width="90%" font="Interface/Fonts/SansSerif-20.fnt" text="${game.speed}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
+                    <control id="game.sldr.velocity"  name="horizontalSlider" width="100%" height="30px" min="0" max="9" initial="0" stepSize="1" buttonStepSize="1" />
+                    <text id="txt.density" width="90%" font="Interface/Fonts/SansSerif-20.fnt" text="${game.density}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
+                    <control id="game.sldr.density"  name="horizontalSlider" width="100%" height="30px" min="0" max="9" initial="0" stepSize="1" buttonStepSize="1" />
+                    <text id="txt.radius" width="90%" font="Interface/Fonts/SansSerif-20.fnt" text="${game.radius}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
+                    <control id="game.sldr.radius"   name="horizontalSlider" width="100%" height="30px" min="0" max="9" initial="0" stepSize="1" buttonStepSize="1" />
                     <panel id="pnl.spacer" width="100%" height="20px">
                     </panel>
-                    <panel id="pnl.buttons" width="80%" childLayout="horizontal" align="center">
-                        <control id="game.btn.new" width="50%" name="button" label="${game.newgame}"/>
-                        <control id="game.btn.cancel" width="50%" name="button" label="${game.cancel}"/>
+                    <panel id="pnl.buttons" width="90%" childLayout="horizontal" align="center">
+                        <control id="game.btn.new" width="50%" height="40px" name="button" style="forestrunner-button" label="${game.newgame}"/>
+                        <control id="game.btn.cancel" width="50%"  height="40px" name="button" style="forestrunner-button" label="${game.cancel}"/>
                     </panel>
                 </panel>
             </panel>
@@ -132,45 +219,45 @@
               <onStartScreen name="move" mode="in" direction="top" length="300" startDelay="0" inherit="true"/>
               <onEndScreen name="move" mode="out" direction="bottom" length="300" startDelay="0" inherit="true"/>
             </effect>
-            <panel id="pnl.center" width="80%" childLayout="vertical" align="center">
-	            <panel id="pnl.chk1" width="300px" childLayout="horizontal" align="right">
-	                <control name="label" width="200px" textHAlign="left" text="Post Processor:"  />
+            <panel id="pnl.center" width="90%" childLayout="vertical" align="center">
+	            <panel id="pnl.chk1" width="400px" childLayout="horizontal" align="right">
+	                <control name="label" font="Interface/Fonts/SansSerif-20.fnt" width="300px" textHAlign="left" text="Post Processor:"  />
 	                <control id="advanced.chk.postProcessor" name="checkbox" align="right"  />
 	            </panel>
-                <panel id="pnl.chk2" width="275px" childLayout="horizontal" align="right">
-                    <control name="label" width="175px" textHAlign="left" text="Fog Filter:"  />
+                <panel id="pnl.chk2" width="375px" childLayout="horizontal" align="right">
+                    <control name="label" font="Interface/Fonts/SansSerif-20.fnt" width="275px" textHAlign="left" text="Fog Filter:"  />
                     <control id="advanced.chk.fogFilter" name="checkbox"  />
                 </panel>
-                <panel id="pnl.chk3" width="300px" childLayout="horizontal" align="right">
-                    <control name="label" width="200px" textHAlign="left" text="Cartoon"  />
+                <panel id="pnl.chk3" width="400px" childLayout="horizontal" align="right">
+                    <control name="label" font="Interface/Fonts/SansSerif-20.fnt" width="300px" textHAlign="left" text="Cartoon"  />
                     <control id="advanced.chk.cartoon" name="checkbox"  />
                 </panel>
-	            <panel id="pnl.chk5" width="300px" childLayout="horizontal" align="right">
-	                <control name="label" width="200px" textHAlign="left" text="Lighting"  />
+	            <panel id="pnl.chk5" width="400px" childLayout="horizontal" align="right">
+	                <control name="label" font="Interface/Fonts/SansSerif-20.fnt" width="300px" textHAlign="left" text="Lighting"  />
 	                <control id="advanced.chk.lighting" name="checkbox"  />
 	            </panel>
-	            <panel id="pnl.chk6" width="300px" childLayout="horizontal" align="right">
-	                <control name="label" width="200px" textHAlign="left" text="Debug Grids"  />
+	            <panel id="pnl.chk6" width="400px" childLayout="horizontal" align="right">
+	                <control name="label" font="Interface/Fonts/SansSerif-20.fnt" width="300px" textHAlign="left" text="Debug Grids"  />
 	                <control id="advanced.chk.debugGrids" name="checkbox"  />
 	            </panel>
-	            <panel id="pnl.chk7" width="300px" childLayout="horizontal" align="right">
-	                <control name="label" width="200px" textHAlign="left" text="Main Grid"  />
+	            <panel id="pnl.chk7" width="400px" childLayout="horizontal" align="right">
+	                <control name="label" font="Interface/Fonts/SansSerif-20.fnt" width="300px" textHAlign="left" text="Main Grid"  />
 	                <control id="advanced.chk.mainGrid" name="checkbox"  />
 	            </panel>
-	            <panel id="pnl.chk7" width="300px" childLayout="horizontal" align="right">
-                    <control name="label" width="200px" textHAlign="left" text="Gradient Floor"  />
+	            <panel id="pnl.chk7" width="400px" childLayout="horizontal" align="right">
+                    <control name="label" font="Interface/Fonts/SansSerif-20.fnt" width="300px" textHAlign="left" text="Gradient Floor"  />
                     <control id="advanced.chk.gradientFloor" name="checkbox"  />
                 </panel>
-	            <panel id="pnl.chk8" width="300px" childLayout="horizontal" align="right">
-                    <control name="label" width="200px" textHAlign="left" text="Verbose"  />
+	            <panel id="pnl.chk8" width="400px" childLayout="horizontal" align="right">
+                    <control name="label" font="Interface/Fonts/SansSerif-20.fnt" width="300px" textHAlign="left" text="Verbose"  />
                     <control id="advanced.chk.verbose" name="checkbox"  />
                 </panel>
             </panel>
-            <panel id="pnl.spacer" width="100%" height="10px" childLayout="horizontal">
+            <panel id="pnl.spacer" width="100%" height="20px" childLayout="horizontal">
             </panel>
             <panel id="pnl.buttons" width="50%" childLayout="horizontal" align="center">
-                <control id="advanced.btn.ok"     width="50%"  name="button" label="${advanced.ok}"/>
-                <control id="advanced.btn.cancel" width="50%"  name="button" label="${advanced.cancel}"/>
+                <control id="advanced.btn.ok"     width="50%" height="40px"  name="button" style="forestrunner-button" label="${advanced.ok}"/>
+                <control id="advanced.btn.cancel" width="50%" height="40px"  name="button" style="forestrunner-button" label="${advanced.cancel}"/>
             </panel>            
       </panel>
     </layer>  
@@ -207,19 +294,9 @@
                 </control>
             </panel>
         </panel>
-        <panel id="pnl.bottom" style="nifty-panel-80" height="20%" width="100%" align="center" childLayout="vertical">
-            <panel id="pnl.username" height="50%" width="80%" align="center" valign="center" childLayout="horizontal">
-                <text id="txt.username" width="20%" font="aurulent-sans-16.fnt" text="${highscore.usernamePrompt}" color="#ffff" wrap="true" textHAlign="right"/>
-                <control id="txtfld.username" width="60%" name="textfield" text="${highscore.anon}" maxLength="30" />
-                <control id="highscore.btn.savename" width="20%" name="button" label="${highscore.savename}" />
-            </panel>
-            <panel id="pnl.spacer" height="10%" width="100%" childLayout="horizontal">
-            
-            </panel>
-            <panel id="pnl.endButtons" height="40%" width="50%" align="center" valign="center" childLayout="horizontal">
-	            <control id="highscore.btn.again" name="button" width="50%" label="${highscore.again}"/>
-	            <control id="highscore.btn.settings" name="button" width="50%" label="${highscore.settings}"/>
-            </panel>        
+        <panel id="pnl.bottom" style="nifty-panel-80" height="20%" width="80%" align="center" childLayout="horizontal">
+            <control id="highscore.btn.again" name="button" height="100%" width="50%" style="forestrunner-button" label="${highscore.again}"/>
+            <control id="highscore.btn.settings" name="button" height="100%" width="50%" style="forestrunner-button" label="${highscore.settings}"/>
         </panel>
       </panel>
     </layer>

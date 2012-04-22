@@ -46,7 +46,7 @@ public class DisclaimerScreen implements ScreenController
         System.out.println("disclaimer button [" + id +"] pressed ");
         if( id.compareTo("disclaimer.btn.disagree")==0 )
             System.exit(0);
-        m_nifty.gotoScreen("game");
+        m_nifty.gotoScreen("nick");
     }
 
 }

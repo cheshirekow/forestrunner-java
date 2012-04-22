@@ -162,8 +162,8 @@ public abstract class Game extends SimpleApplication
     {
         if( ctx != SystemContext.APPLET)
         {
-            java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.SEVERE);
-            java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.SEVERE);
+            java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.WARNING);
+            java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.WARNING);
         }
         
         m_system            = ctx;
@@ -422,6 +422,7 @@ public abstract class Game extends SimpleApplication
         m_nifty = niftyDisplay.getNifty();
         
         m_screens.put("disclaimer", new DisclaimerScreen(this));
+        m_screens.put("nick",       new NickScreen(this));
         m_screens.put("game",       new GameScreen(this));
         m_screens.put("highscore",  new HighScoreScreen(this));
         m_screens.put("countdown",  new CountdownScreen(this));
@@ -431,9 +432,9 @@ public abstract class Game extends SimpleApplication
         
         for( ScreenController sc : m_screens.values() )
         {
-        m_nifty.registerScreenController(sc);
-        // apparently registerScreenController also subscribes annotations
-        //m_nifty.subscribeAnnotations(sc);
+            m_nifty.registerScreenController(sc);
+            // apparently registerScreenController also subscribes annotations
+            //m_nifty.subscribeAnnotations(sc);
         }
         
         m_nifty.fromXml("Interface/Nifty/ui.xml", "disclaimer");

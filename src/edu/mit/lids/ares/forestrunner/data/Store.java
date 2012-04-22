@@ -1,12 +1,21 @@
 package edu.mit.lids.ares.forestrunner.data;
 
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
 
 import edu.mit.lids.ares.forestrunner.AdvancedSettings;
-import edu.mit.lids.ares.forestrunner.screens.HighScoreRow;
 
-public interface Store
+public abstract class Store
 {
+    protected String                            m_user_nick;
+    protected String                            m_user_hash;
+    protected AdvancedSettings                  m_advancedSettings;
+    protected Map<Triple,Set<HighScoreRow>>     m_user_scores;
+    protected Map<Triple,Set<HighScoreRow>>     m_global_scores;
+    protected LinkedList<HighScoreRow>          m_unwritten_scores;
+    
     /**
      * Performs different initialization stuff depending on which game is
      * being run:
@@ -48,24 +57,29 @@ public interface Store
      * 
      *  @return return the current value of the user's nickname
      */
-    String getNick();
+    abstract String getNick();
     
     /**
      *  @return return the current list of the user's high scores for the
      *          game just played
      */
-    Collection<HighScoreRow>    getUserHighScores();
+    abstract Collection<HighScoreRow>    getUserHighScores();
     
     /**
      *  @return return the current list of the global high scores for the
      *          game just played
      */
-    Collection<HighScoreRow>    getGlobalHighScores();
+    abstract Collection<HighScoreRow>    getGlobalHighScores();
+    
+    /**
+     *  update the advanced settings
+     */
+    abstract void setAdvancedSettings( AdvancedSettings newSettings );
 
     /**
      *  update the user's nickname
      */
-    void  setNick(String nick);
+    abstract void  setNick(String nick);
     
     /**
      *  record a new score for the user, also updates internal caches of
@@ -76,11 +90,11 @@ public interface Store
      *  @param radius
      *  @param score
      */
-    void  writeScore( int speed, int density, int radius, float score );  
+    abstract void  writeScore( int speed, int density, int radius, float score );  
     
     /**
      *  attempts to write local updates to the server (note that on desktop
      *  and android games these may be quite large).
      */
-    void flush();
+    abstract void flush();
 }
