@@ -7,10 +7,6 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 
-import de.lessvoid.nifty.controls.ButtonClickedEvent;
-import edu.mit.lids.ares.forestrunner.Game.State;
-import edu.mit.lids.ares.forestrunner.screens.GameScreen;
-
 public abstract class KeyboardGame extends Game
 {
     protected Boolean m_leftDown;

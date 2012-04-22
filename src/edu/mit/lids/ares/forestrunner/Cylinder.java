@@ -252,7 +252,6 @@ public class Cylinder extends Mesh {
 
         // Vertices
         int vertCount = axisSamples * (radialSamples + 1) + (closed ? 2 : 0);
-        int triCount = ((closed ? 2 : 0) + 2 * (axisSamples - 1)) * radialSamples;
 
         // generate geometry
         float inverseRadial = 1.0f / radialSamples;

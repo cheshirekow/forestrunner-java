@@ -4,13 +4,10 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.CheckBox;
-import de.lessvoid.nifty.controls.Slider;
-import de.lessvoid.nifty.controls.SliderChangedEvent;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import edu.mit.lids.ares.forestrunner.AdvancedSettings;
 import edu.mit.lids.ares.forestrunner.Game;
-import edu.mit.lids.ares.forestrunner.Game.State;
 
 public class AdvancedScreen implements ScreenController
 {

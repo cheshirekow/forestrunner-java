@@ -6,6 +6,8 @@ import java.util.HashMap;
 public class AdvancedSettings 
     extends HashMap<String,Boolean>
 {
+    static final long serialVersionUID = 1L;
+
     public static final String[] parameters = 
     {
         "postProcessor",
