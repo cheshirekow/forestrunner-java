@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty xmlns="http://nifty-gui.sourceforge.net/nifty-1.3.xsd" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="http://nifty-gui.sourceforge.net/nifty-1.3.xsd">
+  
+  
+  <!--  the advanced settings, displays instructions and settings -->
+  <screen id="advanced" controller="edu.mit.lids.ares.forestrunner.screens.AdvancedScreen">
+    <layer id="layer" backgroundColor="#0000" childLayout="center">
+        <panel id="pnl.advanced" style="nifty-panel-80" height="90%" width="90%" align="center" valign="center" childLayout="vertical">
+            <effect>
+              <onStartScreen name="move" mode="in" direction="top" length="300" startDelay="0" inherit="true"/>
+              <onEndScreen name="move" mode="out" direction="bottom" length="300" startDelay="0" inherit="true"/>
+            </effect>
+            <panel id="pnl.center" width="90%" childLayout="vertical" align="center">
+                <panel id="pnl.chk1" width="400px" childLayout="horizontal" align="right">
+                    <control name="label" font="Interface/Fonts/SansSerif-20.fnt" width="300px" textHAlign="left" text="Post Processor:"  />
+                    <control id="advanced.chk.postProcessor" name="checkbox" align="right"  />
+                </panel>
+                <panel id="pnl.chk2" width="375px" childLayout="horizontal" align="right">
+                    <control name="label" font="Interface/Fonts/SansSerif-20.fnt" width="275px" textHAlign="left" text="Fog Filter:"  />
+                    <control id="advanced.chk.fogFilter" name="checkbox"  />
+                </panel>
+                <panel id="pnl.chk3" width="400px" childLayout="horizontal" align="right">
+                    <control name="label" font="Interface/Fonts/SansSerif-20.fnt" width="300px" textHAlign="left" text="Cartoon"  />
+                    <control id="advanced.chk.cartoon" name="checkbox"  />
+                </panel>
+                <panel id="pnl.chk5" width="400px" childLayout="horizontal" align="right">
+                    <control name="label" font="Interface/Fonts/SansSerif-20.fnt" width="300px" textHAlign="left" text="Lighting"  />
+                    <control id="advanced.chk.lighting" name="checkbox"  />
+                </panel>
+                <panel id="pnl.chk6" width="400px" childLayout="horizontal" align="right">
+                    <control name="label" font="Interface/Fonts/SansSerif-20.fnt" width="300px" textHAlign="left" text="Debug Grids"  />
+                    <control id="advanced.chk.debugGrids" name="checkbox"  />
+                </panel>
+                <panel id="pnl.chk7" width="400px" childLayout="horizontal" align="right">
+                    <control name="label" font="Interface/Fonts/SansSerif-20.fnt" width="300px" textHAlign="left" text="Main Grid"  />
+                    <control id="advanced.chk.mainGrid" name="checkbox"  />
+                </panel>
+                <panel id="pnl.chk7" width="400px" childLayout="horizontal" align="right">
+                    <control name="label" font="Interface/Fonts/SansSerif-20.fnt" width="300px" textHAlign="left" text="Gradient Floor"  />
+                    <control id="advanced.chk.gradientFloor" name="checkbox"  />
+                </panel>
+                <panel id="pnl.chk8" width="400px" childLayout="horizontal" align="right">
+                    <control name="label" font="Interface/Fonts/SansSerif-20.fnt" width="300px" textHAlign="left" text="Verbose"  />
+                    <control id="advanced.chk.verbose" name="checkbox"  />
+                </panel>
+            </panel>
+            <panel id="pnl.spacer" width="100%" height="20px" childLayout="horizontal">
+            </panel>
+            <panel id="pnl.buttons" width="50%" childLayout="horizontal" align="center">
+                <control id="advanced.btn.ok"     width="50%" height="40px"  name="button" style="forestrunner-button" label="${advanced.ok}"/>
+                <control id="advanced.btn.cancel" width="50%" height="40px"  name="button" style="forestrunner-button" label="${advanced.cancel}"/>
+            </panel>            
+      </panel>
+    </layer>  
+  </screen>
+  
+  
+  
+</nifty>

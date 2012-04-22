@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty xmlns="http://nifty-gui.sourceforge.net/nifty-1.3.xsd" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="http://nifty-gui.sourceforge.net/nifty-1.3.xsd">
+  
+    
+  <screen id="crash" controller="edu.mit.lids.ares.forestrunner.screens.CrashScreen">
+    <layer id="layer" backgroundColor="#0000" childLayout="center">
+        <panel childLayout="center">
+            <effect>
+                <onStartScreen name="fade" start="#00" end="#ff" length="100" startDelay="0" inherit="true" onEndEffect="onEndEffect()" />
+                <onEndScreen name="fade" start="#ff" end="#00" length="1000" startDelay="0" inherit="true"/>
+            </effect>
+            <image filename="Interface/Nifty/crash.png" />
+        </panel>
+    </layer>
+  </screen>
+  
+</nifty>

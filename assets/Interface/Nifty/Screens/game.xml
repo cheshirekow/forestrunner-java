@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty xmlns="http://nifty-gui.sourceforge.net/nifty-1.3.xsd" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="http://nifty-gui.sourceforge.net/nifty-1.3.xsd">
+
+
+  
+  <!--  the game screen, displays instructions and settings -->
+  <screen id="game" controller="edu.mit.lids.ares.forestrunner.screens.GameScreen">
+    <layer id="layer" backgroundColor="#0000" childLayout="center">
+        <panel id="pnl.game" height="90%" width="90%" align="center" valign="center" childLayout="vertical">
+            <effect>
+              <onStartScreen name="move" mode="in" direction="top" length="300" startDelay="0" inherit="true"/>
+              <onEndScreen name="move" mode="out" direction="bottom" length="300" startDelay="0" inherit="true" onEndEffect="onEndScreenEffect()"/>
+            </effect>
+            <panel id="pnl.split" width="100%" height="100%" childLayout="horizontal">
+                <panel id="pnl.instructions" style="nifty-panel-80" width="50%" height="50%" childLayout="vertical">
+                    <text id="txt.instructions" width="90%" font="Interface/Fonts/SansSerif-20.fnt" text="${game.instructions}" color="#ffff" wrap="true" textHAlign="left"/>
+                    <panel id="pnl.spacer2" width="100%" height="20px">
+                    </panel>
+                    <control id="game.btn.advanced" width="90%" height="40px" align="center" name="button" style="forestrunner-button" label="${game.advanced}"/>
+                </panel>
+                <panel id="pnl.options" style="nifty-panel-80" width="50%" height="80%" childLayout="vertical">
+                    <text id="txt.speed" width="90%" font="Interface/Fonts/SansSerif-20.fnt" text="${game.speed}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
+                    <control id="game.sldr.velocity"  name="horizontalSlider" width="100%" height="30px" min="0" max="9" initial="0" stepSize="1" buttonStepSize="1" />
+                    <text id="txt.density" width="90%" font="Interface/Fonts/SansSerif-20.fnt" text="${game.density}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
+                    <control id="game.sldr.density"  name="horizontalSlider" width="100%" height="30px" min="0" max="9" initial="0" stepSize="1" buttonStepSize="1" />
+                    <text id="txt.radius" width="90%" font="Interface/Fonts/SansSerif-20.fnt" text="${game.radius}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
+                    <control id="game.sldr.radius"   name="horizontalSlider" width="100%" height="30px" min="0" max="9" initial="0" stepSize="1" buttonStepSize="1" />
+                    <panel id="pnl.spacer" width="100%" height="20px">
+                    </panel>
+                    <panel id="pnl.buttons" width="90%" childLayout="horizontal" align="center">
+                        <control id="game.btn.new" width="50%" height="40px" name="button" style="forestrunner-button" label="${game.newgame}"/>
+                        <control id="game.btn.cancel" width="50%"  height="40px" name="button" style="forestrunner-button" label="${game.cancel}"/>
+                    </panel>
+                </panel>
+            </panel>
+      </panel>
+    </layer>  
+  </screen>
+  
+  
+  
+</nifty>

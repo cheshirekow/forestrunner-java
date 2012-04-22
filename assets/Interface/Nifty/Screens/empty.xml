@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty xmlns="http://nifty-gui.sourceforge.net/nifty-1.3.xsd" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="http://nifty-gui.sourceforge.net/nifty-1.3.xsd">
+  
+  
+
+  <!--  the high score screen, displays high scores -->
+  <screen id="empty" controller="edu.mit.lids.ares.forestrunner.screens.EmptyScreen">
+    <layer id="layer" backgroundColor="#0000" childLayout="vertical">
+        <panel id="pnl.hud" width="100%" childLayout="vertical">
+            <control id="lbl.timer" align="right" name="label" text="Score: 00000.00" color="#000f" />
+        </panel>
+    </layer>
+  </screen>
+  
+  
+  
+  
+  
+</nifty>

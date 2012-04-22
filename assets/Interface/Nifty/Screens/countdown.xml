@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty xmlns="http://nifty-gui.sourceforge.net/nifty-1.3.xsd" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="http://nifty-gui.sourceforge.net/nifty-1.3.xsd">
+  
+    
+  <screen id="countdown3" controller="edu.mit.lids.ares.forestrunner.screens.CountdownScreen">
+    <layer id="layer" backgroundColor="#0000" childLayout="center">
+        <panel childLayout="center">
+            <effect>
+                <onStartScreen name="fade" start="#00" end="#ff" length="500" startDelay="0" inherit="true" onEndEffect="onStep(3)" />
+                <onEndScreen name="fade" start="#ff" end="#00" length="500" startDelay="0" inherit="true"/>
+            </effect>
+            <image filename="Interface/Nifty/countdown-3.png" />
+        </panel>
+    </layer>
+  </screen>
+  
+  <screen id="countdown2" controller="edu.mit.lids.ares.forestrunner.screens.CountdownScreen">
+    <layer id="layer" backgroundColor="#0000" childLayout="center">
+        <panel childLayout="center">
+            <effect>
+                <onStartScreen name="fade" start="#00" end="#ff" length="500" startDelay="0" inherit="true" onEndEffect="onStep(2)" />
+                <onEndScreen name="fade" start="#ff" end="#00" length="500" startDelay="0" inherit="true"/>
+            </effect>
+            <image filename="Interface/Nifty/countdown-2.png" />
+        </panel>
+    </layer>
+  </screen>
+  
+  <screen id="countdown1" controller="edu.mit.lids.ares.forestrunner.screens.CountdownScreen">
+    <layer id="layer" backgroundColor="#0000" childLayout="center">
+        <panel childLayout="center">
+            <effect>
+                <onStartScreen name="fade" start="#00" end="#ff" length="500" startDelay="0" inherit="true" onEndEffect="onStep(1)" />
+                <onEndScreen name="fade" start="#ff" end="#00" length="500" startDelay="0" inherit="true"/>
+            </effect>
+            <image filename="Interface/Nifty/countdown-1.png" />
+        </panel>
+    </layer>
+  </screen>
+  
+</nifty>

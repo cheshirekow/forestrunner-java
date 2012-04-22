@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty-controls>
+  <useControls filename="Interface/Nifty/Controls/highscore-list-line.xml" />
+</nifty-controls>

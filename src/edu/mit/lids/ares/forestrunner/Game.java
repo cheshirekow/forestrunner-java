@@ -431,13 +431,14 @@ public abstract class Game extends SimpleApplication
         m_screens.put("advanced",   new AdvancedScreen(this));
         
         for( ScreenController sc : m_screens.values() )
-        {
             m_nifty.registerScreenController(sc);
-            // apparently registerScreenController also subscribes annotations
-            //m_nifty.subscribeAnnotations(sc);
-        }
         
-        m_nifty.fromXml("Interface/Nifty/ui.xml", "disclaimer");
+        m_nifty.addXml("Interface/Nifty/ui.xml");
+
+        for( String screenName : m_screens.keySet() )
+            m_nifty.addXml( "Interface/Nifty/Screens/" + screenName + ".xml" );
+        
+        m_nifty.gotoScreen("disclaimer");
         
         // attach the nifty display to the gui view port as a processor
         guiViewPort.addProcessor(niftyDisplay);

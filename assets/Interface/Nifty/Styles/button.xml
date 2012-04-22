@@ -1,0 +1,10 @@
+<nifty-styles>
+	<style id="forestrunner-button#panel" base="nifty-button#panel"/>
+	<style id="forestrunner-button#text" >
+	  <attributes font="Interface/Fonts/SansSerif-20.fnt" align="center" valign="center" textHAlign="center" textVAlign="center" visibleToMouse="false"/>
+	  <effect>
+	    <onEnabled name="textColorAnimated" startColor="#8886" endColor="#eeef" post="false" length="150" />
+	    <onDisabled name="textColorAnimated" startColor="#eeef" endColor="#8886" post="false" length="150" />
+	  </effect>
+	</style>
+</nifty-styles>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty-styles>
+  <useStyles filename="Interface/Nifty/Styles/button.xml" />
+  <useStyles filename="Interface/Nifty/Styles/textfield.xml" />
+  <useStyles filename="Interface/Nifty/Styles/slider.xml" />
+  
+  <style id="nifty-panel-80">
+    <attributes padding="8px,16px,24px,16px" backgroundImage="Interface/Nifty/nifty-panel-80.png" imageMode="resize:28,184,28,28,28,184,28,154,28,184,28,58" />
+  </style>
+  
+</nifty-styles>

@@ -1,0 +1,12 @@
+<nifty-styles>
+  <style id="forestrunner-textfield#panel" base="nifty-textfield#panel"/>
+  <style id="forestrunner-textfield#field" base="nifty-textfield#field" />
+  <style id="forestrunner-textfield#text">
+    <attributes font="Interface/Fonts/SansSerif-20.fnt" color="#000f" selectionColor="#f00f" visibleToMouse="false" align="left" valign="center" textHAlign="left" />
+    <effect>
+      <onFocus name="textColor" post="false" color="#cccf" />
+    </effect>
+  </style>
+  <style id="forestrunner-textfield#cursor-panel" base="nifty-textfield#cursor-panel" />
+  <style id="forestrunner-textfield#cursor" base="nifty-textfield#cursor" />
+</nifty-styles>

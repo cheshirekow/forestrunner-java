@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty xmlns="http://nifty-gui.sourceforge.net/nifty-1.3.xsd" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="http://nifty-gui.sourceforge.net/nifty-1.3.xsd">
+  
+  
+  <!--  the high score screen, displays high scores -->
+  <screen id="highscore" controller="edu.mit.lids.ares.forestrunner.screens.HighScoreScreen">
+    <layer id="layer" backgroundColor="#0000" childLayout="center">
+      <panel id="pnl.end" height="80%" width="99%" align="center" valign="center" childLayout="vertical">
+        <effect>
+          <onStartScreen name="move" mode="in" direction="top" length="300" startDelay="0" inherit="true"/>
+          <onEndScreen name="move" mode="out" direction="bottom" length="300" startDelay="0" inherit="true"/>
+        </effect>
+        <panel id="pnl.highscore" height="90%" width="100%" align="center" valign="center" childLayout="horizontal">
+            <panel id="pnl.personalHigh" style="nifty-panel-80" height="100%" width="50%" childLayout="vertical">
+                <text id="txt.personalHigh" font="aurulent-sans-16.fnt" text="${highscore.userHigh}" color="#ffff" wrap="true" textHAlign="left"/>
+                <control id="lb.personalHigh" name="listBox" vertical="optional" horizontal="optional" displayItems="13" selection="Multiple" viewConverterClass="edu.mit.lids.ares.forestrunner.screens.HighScoreViewConverter">
+                    <control name="highscore-list-line" />
+                </control>
+            </panel>
+            <panel id="pnl.globalHigh" style="nifty-panel-80" height="100%" width="50%" childLayout="vertical"> 
+                <text id="txt.globalHigh" font="aurulent-sans-16.fnt" text="${highscore.globalHigh}" color="#ffff" wrap="true" textHAlign="left"/>
+                <control id="lb.globalHigh" name="listBox" vertical="optional" horizontal="optional" displayItems="13" selection="Multiple" viewConverterClass="edu.mit.lids.ares.forestrunner.screens.HighScoreViewConverter">
+                    <control name="highscore-list-line" />
+                </control>
+            </panel>
+        </panel>
+        <panel id="pnl.bottom" style="nifty-panel-80" height="20%" width="80%" align="center" childLayout="horizontal">
+            <control id="highscore.btn.again" name="button" height="100%" width="50%" style="forestrunner-button" label="${highscore.again}"/>
+            <control id="highscore.btn.settings" name="button" height="100%" width="50%" style="forestrunner-button" label="${highscore.settings}"/>
+        </panel>
+      </panel>
+    </layer>
+  </screen>
+  
+  
+  
+</nifty>
