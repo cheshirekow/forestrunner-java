@@ -293,9 +293,9 @@ public abstract class Game extends SimpleApplication
         material.getAdditionalRenderState().setWireframe(true);
         m_acWireNode.setMaterial(material);
         
-        int     width   = (int)(m_patchWidth*m_patchDimX);
+        int     width   = (int)(m_patchWidth*(m_patchDimX+2));
         int     height  = (int)(m_patchHeight*m_patchDimY);
-        float   backup  = 1f;
+        float   backup  = 2f;
         float   drop    = 0.01f;
 
         Platform platform = JmeSystem.getPlatform();
