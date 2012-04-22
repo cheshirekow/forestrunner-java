@@ -298,16 +298,10 @@ public abstract class Game extends SimpleApplication
         float   backup  = 2f;
         float   drop    = 0.01f;
 
-        Platform platform = JmeSystem.getPlatform();
-        
-        
         m_gridNode  = new Geometry("wireframe grid", 
                                         new Grid( height, width, 1f) );
         material = material.clone();
-        
-        if(  platform.ordinal() < Platform.MacOSX32.ordinal() ||
-                platform.ordinal() > Platform.MacOSX_PPC64.ordinal() )
-            material.getAdditionalRenderState().setDepthWrite(false);
+        material.getAdditionalRenderState().setDepthWrite(false);
         m_gridNode.setMaterial(material);
         m_gridNode.setLocalTranslation(-width/2f, 0f, -height+backup);
         
