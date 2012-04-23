@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <nifty-controls>
   <useControls filename="Interface/Nifty/Controls/highscore-list-line.xml" />
+  <useControls filename="Interface/Nifty/Controls/progressbar.xml" />
 </nifty-controls>

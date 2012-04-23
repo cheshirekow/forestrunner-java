@@ -4,7 +4,7 @@
         xsi:schemaLocation="http://nifty-gui.sourceforge.net/nifty-1.3.xsd">
   
    <!--  the disclaimer screen, displays the disclaimer and accept/reject buttons -->
-  <screen id="disclaimer" controller="edu.mit.lids.ares.forestrunner.screens.DisclaimerScreen">
+  <screen id="disclaimer" controller="edu.mit.lids.ares.forestrunner.gui.screens.DisclaimerScreen">
     <layer id="layer" backgroundColor="#0000" childLayout="center">
       <panel id="panel" style="nifty-panel-80" height="80%" width="80%" align="center" valign="center" childLayout="vertical" visibleToMouse="true">
         <effect>

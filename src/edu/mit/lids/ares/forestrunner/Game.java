@@ -19,16 +19,15 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.debug.Grid;
-import com.jme3.system.JmeSystem;
-import com.jme3.system.Platform;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.controls.Label;
 
+import edu.mit.lids.ares.forestrunner.data.Store;
+import edu.mit.lids.ares.forestrunner.gui.ScreenManager;
 import edu.mit.lids.ares.forestrunner.screens.*;
-//import edu.mit.lids.ares.forestrunner.toonblow.CartoonEdgeProcessor;
 
 public abstract class Game extends SimpleApplication
 {
@@ -49,6 +48,9 @@ public abstract class Game extends SimpleApplication
     protected Map<String,ScreenController>    m_screens;
     protected State                           m_state;
     protected SystemContext                   m_system;
+
+    protected Store                           m_dataStore;
+    protected ScreenManager                   m_screenMgr;
     
     protected Map<String,Integer>             m_params;
     protected FloorPatch[][]                  m_patches;
@@ -199,8 +201,8 @@ public abstract class Game extends SimpleApplication
         // remove logging
         if( m_system != SystemContext.APPLET)
         {
-            java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.SEVERE);
-            java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.SEVERE);
+            java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.WARNING);
+            java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.WARNING);
             
             if(newSettings.get("verbose"))
             {
@@ -419,9 +421,14 @@ public abstract class Game extends SimpleApplication
                 inputManager,
                 audioRenderer,
                 guiViewPort);
+
         m_nifty = niftyDisplay.getNifty();
+        m_nifty.addXml("Interface/Nifty/ui.xml");
         
-        m_screens.put("disclaimer", new DisclaimerScreen(this));
+        // create a data store
+        m_dataStore = Store.createStore(m_system);
+        m_screenMgr = new ScreenManager(m_nifty,m_dataStore);
+        
         m_screens.put("nick",       new NickScreen(this));
         m_screens.put("game",       new GameScreen(this));
         m_screens.put("highscore",  new HighScoreScreen(this));
@@ -432,16 +439,14 @@ public abstract class Game extends SimpleApplication
         
         for( ScreenController sc : m_screens.values() )
             m_nifty.registerScreenController(sc);
-        
-        m_nifty.addXml("Interface/Nifty/ui.xml");
 
         for( String screenName : m_screens.keySet() )
             m_nifty.addXml( "Interface/Nifty/Screens/" + screenName + ".xml" );
         
-        m_nifty.gotoScreen("disclaimer");
-        
         // attach the nifty display to the gui view port as a processor
         guiViewPort.addProcessor(niftyDisplay);
+        
+        
     }
     
     public void setupCamera()
@@ -454,9 +459,12 @@ public abstract class Game extends SimpleApplication
         // changes the camera "zoom" by setting the viewing angle to 20deg
         // so that cylinders don't get clipped when they get close to the
         // camera
+        float ar = settings.getWidth()/(float)settings.getHeight();
         cam.setLocation(new Vector3f(0f,2.5f,5f));
-        cam.setFrustumPerspective(30f, 640f/480f, 1f, s_farPlane);
+        cam.setFrustumPerspective(30f, ar, 1f, s_farPlane);
         cam.lookAt(new Vector3f(0f,0f,-4f), new Vector3f(0f,1f,0f) );
+        
+        
     }
 
     @Override
@@ -509,6 +517,8 @@ public abstract class Game extends SimpleApplication
     @Override
     public void simpleUpdate(float tpf) 
     {
+        m_screenMgr.update(tpf);
+        
         // if we're paused or crashed don't update the scene
         if(m_state != State.RUNNING)
             return;
