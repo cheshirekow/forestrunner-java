@@ -26,7 +26,9 @@ import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.controls.Label;
 
 import edu.mit.lids.ares.forestrunner.data.Store;
+import edu.mit.lids.ares.forestrunner.gui.ScreenBase;
 import edu.mit.lids.ares.forestrunner.gui.ScreenManager;
+import edu.mit.lids.ares.forestrunner.gui.screens.NickScreen;
 import edu.mit.lids.ares.forestrunner.screens.*;
 
 public abstract class Game extends SimpleApplication
@@ -166,6 +168,7 @@ public abstract class Game extends SimpleApplication
         {
             java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.WARNING);
             java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.WARNING);
+            java.util.logging.Logger.getLogger(ScreenBase.class.getName()).setLevel(java.util.logging.Level.ALL);
         }
         
         m_system            = ctx;
@@ -203,6 +206,7 @@ public abstract class Game extends SimpleApplication
         {
             java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.WARNING);
             java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.WARNING);
+            java.util.logging.Logger.getLogger(ScreenBase.class.getName()).setLevel(java.util.logging.Level.ALL);
             
             if(newSettings.get("verbose"))
             {
@@ -429,7 +433,6 @@ public abstract class Game extends SimpleApplication
         m_dataStore = Store.createStore(m_system);
         m_screenMgr = new ScreenManager(m_nifty,m_dataStore);
         
-        m_screens.put("nick",       new NickScreen(this));
         m_screens.put("game",       new GameScreen(this));
         m_screens.put("highscore",  new HighScoreScreen(this));
         m_screens.put("countdown",  new CountdownScreen(this));

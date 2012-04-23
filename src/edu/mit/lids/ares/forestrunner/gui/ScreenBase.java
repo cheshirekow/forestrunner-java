@@ -1,5 +1,8 @@
 package edu.mit.lids.ares.forestrunner.gui;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
@@ -9,6 +12,9 @@ import de.lessvoid.nifty.screen.ScreenController;
  */
 public class ScreenBase implements ScreenController
 {
+    public static final Logger s_logger = 
+            Logger.getLogger(ScreenBase.class.getName());
+    
     protected Boolean         m_active;
     protected ScreenManager   m_mgr;
     protected Nifty           m_nifty;
@@ -61,7 +67,7 @@ public class ScreenBase implements ScreenController
     @Override
     public void bind(Nifty nifty, Screen screen)
     {
-        System.out.println("Nifty is binding " + screen.getScreenId() );
+        s_logger.log(Level.INFO, "Nifty is binding " + screen.getScreenId() );
         m_nifty     = nifty;
         m_screen    = screen;
     }
@@ -75,6 +81,7 @@ public class ScreenBase implements ScreenController
     public void onEndScreen()
     {
         m_active = false;
+        s_logger.log(Level.INFO, m_screen.getScreenId() + ": onEndScreenEvent");
     }
 
     /**
@@ -85,7 +92,7 @@ public class ScreenBase implements ScreenController
     @Override
     public void onStartScreen()
     {
-        
+        s_logger.log(Level.INFO, m_screen.getScreenId() + ": onStartScreenEvent");
     }
     
     /**
@@ -95,6 +102,7 @@ public class ScreenBase implements ScreenController
     public void onExitStarted()
     {
         m_active = false;
+        s_logger.log(Level.INFO, m_screen.getScreenId() + ": onExitStartedEvent");
     }
     
     /**
@@ -104,5 +112,6 @@ public class ScreenBase implements ScreenController
     public void onEntranceFinished()
     {
         m_active = true;
+        s_logger.log(Level.INFO, m_screen.getScreenId() + ": onEntranceFinishedEvent");
     }
 }
