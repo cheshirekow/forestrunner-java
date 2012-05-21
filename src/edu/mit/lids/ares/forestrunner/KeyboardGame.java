@@ -113,7 +113,7 @@ public abstract class KeyboardGame extends Game
         
         // on a PC, we rotate the scene according to xspeed
         // on android, we do the opposite
-        float angle = (float)(Math.PI / 9) * m_xSpeed / m_xSpeedMax;
+        float angle = (float)(Math.PI / 12) * m_xSpeed / m_xSpeedMax;
         Quaternion q = new Quaternion();
         
         if(m_worldRotate)
