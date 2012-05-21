@@ -31,6 +31,7 @@ public class DesktopCommProvider
         // get the path to the user's home directory
         String userHome     = System.getProperty("user.home");
         String dataDir      = userHome + File.separator + ".forestrunner";
+        
         File dataDirFile    = new File(dataDir);
         
         // if the forestrunner directory doesn't exist yet, then create it

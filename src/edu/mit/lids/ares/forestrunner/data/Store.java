@@ -2,9 +2,16 @@ package edu.mit.lids.ares.forestrunner.data;
 
 import edu.mit.lids.ares.forestrunner.SystemContext;
 
+/**
+ *  @brief  Abstract data storage interface which provides a consistant API
+ *          for storing data across all three version of the game
+ *          (Android, Applet, Desktop)
+ *  @author josh
+ */
 public abstract class Store
 {
     protected String m_nick;
+    protected String m_userHash;
     
     /**
      *  @brief  just sets some defaults

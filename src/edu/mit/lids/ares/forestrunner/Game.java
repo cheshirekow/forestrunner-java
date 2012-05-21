@@ -41,6 +41,10 @@ public abstract class Game extends SimpleApplication
         PAUSED
     }
     
+    /// this should NEVER decrease, increment when parameter equations are
+    /// changed, or when storage backend changes
+    public static final int   s_version    = 1;
+    
     public static final float s_pad        = 0.08f;
     public static final float s_cPad       = 0.03f;
     public static final float s_farPlane   = 35f;
