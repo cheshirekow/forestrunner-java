@@ -17,7 +17,8 @@ public class AdvancedSettings
         "debugGrids",
         "mainGrid",
         "gradientFloor",
-        "verbose"
+        "verbose",
+        "worldRotate"
     };
     
     public static AdvancedSettings s_default;
@@ -27,6 +28,7 @@ public class AdvancedSettings
         s_default = new AdvancedSettings();
         s_default.put("cartoon", true);
         s_default.put("mainGrid", true);
+        s_default.put("worldRotate", true);
     }
     
     public AdvancedSettings()

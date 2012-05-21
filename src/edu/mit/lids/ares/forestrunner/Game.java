@@ -58,6 +58,7 @@ public abstract class Game extends SimpleApplication
     protected FloorPatch[][]                  m_patches;
     protected Node                            m_patchRoot;
     protected Node                            m_patchRotate;
+    protected Node                            m_acRotate;
    
     protected PointLight        m_pointLight;
     protected AmbientLight      m_ambientLight;
@@ -84,6 +85,7 @@ public abstract class Game extends SimpleApplication
     protected float   m_score;
     protected int     m_patchDimX;
     protected int     m_patchDimY;
+    protected Boolean m_worldRotate;
     
     protected AircraftMesh  m_acBaseMesh;
     protected AircraftMesh  m_acOutlineMesh;
@@ -160,6 +162,7 @@ public abstract class Game extends SimpleApplication
         m_acSide    = 0.3f;
         m_acRadius  = (m_acSide/2f) * (float)Math.tan(Math.PI/6.0);
         m_acTrans   = (float)( m_acSide*Math.sin(Math.PI/3) ) - m_acRadius;
+        m_worldRotate   = m_advancedSettings.get("worldRotate");
     }
     
     public Game(SystemContext ctx)
@@ -186,6 +189,7 @@ public abstract class Game extends SimpleApplication
         System.out.println("Updating advanced settings\n------------------");
         
         m_advancedSettings = newSettings;
+        m_worldRotate      = m_advancedSettings.get("worldRotate");
         
         // first, clear out all extra processors and post processing filters
         m_fpp.removeAllFilters();
@@ -246,7 +250,7 @@ public abstract class Game extends SimpleApplication
         FloorPatch.setUseOutline( newSettings.get("cartoon") );
         
         if(newSettings.get("cartoon"))
-            rootNode.attachChild(m_acOutlineNode);
+            m_acRotate.attachChild(m_acOutlineNode);
         
         FloorPatch.setUseLighting( newSettings.get("lighting") );
         if(newSettings.get("lighting"))
@@ -321,9 +325,9 @@ public abstract class Game extends SimpleApplication
         material.setBoolean("VertexColor", true);
         m_gradientNode.setMaterial(material);
         
-        rootNode.attachChild(m_acBaseNode);
-        rootNode.attachChild(m_acOutlineNode);
-        rootNode.attachChild(m_acWireNode);
+        m_acRotate.attachChild(m_acBaseNode);
+        m_acRotate.attachChild(m_acOutlineNode);
+        m_acRotate.attachChild(m_acWireNode);
         
         m_patchRoot.attachChild(m_gridNode);
         m_patchRotate.attachChild(m_gradientNode);
@@ -334,9 +338,11 @@ public abstract class Game extends SimpleApplication
     {
         m_patchRoot     = new Node("patch_root");
         m_patchRotate   = new Node("patch_rotate");
+        m_acRotate      = new Node("ac_rotate");
         
         m_patchRotate.attachChild(m_patchRoot);
         rootNode.attachChild(m_patchRotate);
+        rootNode.attachChild(m_acRotate);
     }
     
     public void initPatches()

@@ -3,7 +3,6 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
         xsi:schemaLocation="http://nifty-gui.sourceforge.net/nifty-1.3.xsd">
 
-
   
   <!--  the game screen, displays instructions and settings -->
   <screen id="game" controller="edu.mit.lids.ares.forestrunner.screens.GameScreen">
@@ -21,7 +20,15 @@
                     <control id="game.btn.advanced" width="90%" height="40px" align="center" name="button" style="forestrunner-button" label="${game.advanced}"/>
                 </panel>
                 <panel id="pnl.options" style="nifty-panel-80" width="50%" height="80%" childLayout="vertical">
-<panel id="heatmap.split" width="100%" height="100%" childLayout="horizontal">
+                <text id="txt.speed" width="90%" font="Interface/Fonts/SansSerif-20.fnt" text="${game.speed}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
+                    <control id="game.sldr.velocity"  name="horizontalSlider" width="100%" height="30px" min="0" max="9" initial="0" stepSize="1" buttonStepSize="1" />
+                    <text id="txt.density" width="90%" font="Interface/Fonts/SansSerif-20.fnt" text="${game.density}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
+                    <control id="game.sldr.density"  name="horizontalSlider" width="100%" height="30px" min="0" max="9" initial="0" stepSize="1" buttonStepSize="1" />
+                    <text id="txt.radius" width="90%" font="Interface/Fonts/SansSerif-20.fnt" text="${game.radius}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
+                    <control id="game.sldr.radius"   name="horizontalSlider" width="100%" height="30px" min="0" max="9" initial="0" stepSize="1" buttonStepSize="1" />
+                    
+        <!-- 
+        <panel id="heatmap.split" width="100%" height="100%" childLayout="horizontal">
                     <text id="txt.speed" width="3%" font="aurulent-sans-16.fnt" text="${game.speed}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
                 <panel id="heatmap" style="nifty-panel-80" width="100%" height="100%" childLayout="absolute">
         <panel id="v10d01" x="0%" y="0%" height="10%" width="10%">
@@ -236,6 +243,7 @@
                         <control id="game.btn.global" width="50%" name="button" label="${game.global}"/>
                         <control id="game.btn.personal" width="50%" name="button" label="${game.personal}"/>
                     </panel>
+       -->
                     <panel id="pnl.spacer" width="100%" height="20px">
                     </panel>
                     <panel id="pnl.buttons" width="90%" childLayout="horizontal" align="center">

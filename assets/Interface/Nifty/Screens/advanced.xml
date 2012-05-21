@@ -45,6 +45,10 @@
                     <control name="label" font="Interface/Fonts/SansSerif-20.fnt" width="300px" textHAlign="left" text="Verbose"  />
                     <control id="advanced.chk.verbose" name="checkbox"  />
                 </panel>
+                <panel id="pnl.chk9" width="400px" childLayout="horizontal" align="right">
+                    <control name="label" font="Interface/Fonts/SansSerif-20.fnt" width="300px" textHAlign="left" text="World Rotate"  />
+                    <control id="advanced.chk.worldRotate" name="checkbox"  />
+                </panel>
             </panel>
             <panel id="pnl.spacer" width="100%" height="20px" childLayout="horizontal">
             </panel>

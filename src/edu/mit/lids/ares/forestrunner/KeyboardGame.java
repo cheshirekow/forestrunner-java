@@ -115,8 +115,17 @@ public abstract class KeyboardGame extends Game
         // on android, we do the opposite
         float angle = (float)(Math.PI / 9) * m_xSpeed / m_xSpeedMax;
         Quaternion q = new Quaternion();
-        q.fromAngleAxis(angle, new Vector3f(0f,0f,1f));
-        m_patchRotate.setLocalRotation(q);
+        
+        if(m_worldRotate)
+        {
+            q.fromAngleAxis(angle, new Vector3f(0f,0f,1f));
+            m_patchRotate.setLocalRotation(q);
+        }
+        else
+        {
+            q.fromAngleAxis(-angle, new Vector3f(0f,0f,1f));
+            m_acRotate.setLocalRotation(q);
+        }
     }
     
     @Override

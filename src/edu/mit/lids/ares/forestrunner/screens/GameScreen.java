@@ -40,25 +40,28 @@ public class GameScreen implements ScreenController
         m_screen    = screen;
 
         // select "global" or "personal"
-        colors = cm.getColors("global");
-	String elem = "";
-        Element e = m_screen.findElementByName("v10d01");
-        for(int i=10; i>0; i--){
-            for(int j=1; j<11; j++){
-                if(i==10 && j==10){
-                    elem = "v"+i+"d"+j;
+        if(false)
+        {
+            colors = cm.getColors("global");
+            String elem = "";
+            Element e = m_screen.findElementByName("v10d01");
+            for(int i=10; i>0; i--){
+                for(int j=1; j<11; j++){
+                    if(i==10 && j==10){
+                        elem = "v"+i+"d"+j;
+                    }
+                    else if(i==10 && j<10){
+                        elem = "v"+i+"d0"+j;
+                    }
+                    else if(i<10 && j==10){
+                        elem = "v0"+i+"d"+j;
+                    }
+                    else{
+                        elem = "v0"+i+"d0"+j;
+                    }
+                    e = m_screen.findElementByName(elem);
+                    e.getRenderer(PanelRenderer.class).setBackgroundColor(new Color(colors[i-1][j-1]));
                 }
-                else if(i==10 && j<10){
-                    elem = "v"+i+"d0"+j;
-                }
-                else if(i<10 && j==10){
-                    elem = "v0"+i+"d"+j;
-                }
-                else{
-                    elem = "v0"+i+"d0"+j;
-                }
-                e = m_screen.findElementByName(elem);
-                e.getRenderer(PanelRenderer.class).setBackgroundColor(new Color(colors[i-1][j-1]));
             }
         }
     }
@@ -99,7 +102,7 @@ public class GameScreen implements ScreenController
         {
             m_nifty.gotoScreen("advanced");
         }
-else if( id.compareTo("game.btn.global")==0 )
+        else if( id.compareTo("game.btn.global")==0 )
         {
             colors = cm.getColors("global");
             String elem = "";
