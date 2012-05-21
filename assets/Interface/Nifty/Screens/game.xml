@@ -13,238 +13,241 @@
               <onEndScreen name="move" mode="out" direction="bottom" length="300" startDelay="0" inherit="true" onEndEffect="onEndScreenEffect()"/>
             </effect>
             <panel id="pnl.split" width="100%" height="100%" childLayout="horizontal">
-                <panel id="pnl.instructions" style="nifty-panel-80" width="50%" height="50%" childLayout="vertical">
+                <panel id="pnl.instructions" style="nifty-panel-80" width="50%" childLayout="vertical">
                     <text id="txt.instructions" width="90%" font="Interface/Fonts/SansSerif-20.fnt" text="${game.instructions}" color="#ffff" wrap="true" textHAlign="left"/>
                     <panel id="pnl.spacer2" width="100%" height="20px">
                     </panel>
                     <control id="game.btn.advanced" width="90%" height="40px" align="center" name="button" style="forestrunner-button" label="${game.advanced}"/>
                 </panel>
-                <panel id="pnl.options" style="nifty-panel-80" width="50%" height="80%" childLayout="vertical">
-                <text id="txt.speed" width="90%" font="Interface/Fonts/SansSerif-20.fnt" text="${game.speed}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
-                    <control id="game.sldr.velocity"  name="horizontalSlider" width="100%" height="30px" min="0" max="9" initial="0" stepSize="1" buttonStepSize="1" />
+                <panel id="pnl.options" width="50%" height="100%" childLayout="vertical">
+                <panel id="pnl.sliders" childLayout="vertical" style="nifty-panel-80">
+                    <panel id="pnl.spacer1" height="20px" childLayout="vertical"></panel>
+                    <text id="txt.speed" width="90%" font="Interface/Fonts/SansSerif-20.fnt" text="${game.speed}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
+                    <control id="game.sldr.velocity"  style="forestrunner-horizontal-slider" name="horizontalSlider" width="100%" height="40px" min="0" max="9" initial="0" stepSize="1" buttonStepSize="1" />
+                    <panel id="pnl.spacer1" height="20px" childLayout="vertical"></panel>
                     <text id="txt.density" width="90%" font="Interface/Fonts/SansSerif-20.fnt" text="${game.density}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
-                    <control id="game.sldr.density"  name="horizontalSlider" width="100%" height="30px" min="0" max="9" initial="0" stepSize="1" buttonStepSize="1" />
+                    <control id="game.sldr.density"  style="forestrunner-horizontal-slider" name="horizontalSlider" width="100%" height="40px" min="0" max="9" initial="0" stepSize="1" buttonStepSize="1" />
+                    <panel id="pnl.spacer1" height="20px" childLayout="vertical"></panel>
                     <text id="txt.radius" width="90%" font="Interface/Fonts/SansSerif-20.fnt" text="${game.radius}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
-                    <control id="game.sldr.radius"   name="horizontalSlider" width="100%" height="30px" min="0" max="9" initial="0" stepSize="1" buttonStepSize="1" />
-                    
-        <!-- 
-        <panel id="heatmap.split" width="100%" height="100%" childLayout="horizontal">
-                    <text id="txt.speed" width="3%" font="aurulent-sans-16.fnt" text="${game.speed}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
-                <panel id="heatmap" style="nifty-panel-80" width="100%" height="100%" childLayout="absolute">
-        <panel id="v10d01" x="0%" y="0%" height="10%" width="10%">
-            <interact onClick="clicked(v10d01)" /></panel>
-        <panel id="v10d02" x="10%" y="0%" height="10%" width="10%">
-            <interact onClick="clicked(v10d02)" /></panel>
-        <panel id="v10d03" x="20%" y="0%" height="10%" width="10%">
-            <interact onClick="clicked(v10d03)" /></panel>
-        <panel id="v10d04"  x="30%" y="0%" height="10%" width="10%">
-            <interact onClick="clicked(v10d04)" /></panel>
-        <panel id="v10d05" x="40%" y="0%" height="10%" width="10%">
-            <interact onClick="clicked(v10d05)" /></panel>
-        <panel id="v10d06" x="50%" y="0%" height="10%" width="10%">
-            <interact onClick="clicked(v10d06)" /></panel>
-        <panel id="v10d07" x="60%" y="0%" height="10%" width="10%">
-            <interact onClick="clicked(v10d07)" /></panel>
-        <panel id="v10d08" x="70%" y="0%" height="10%" width="10%">
-            <interact onClick="clicked(v10d08)" /></panel>
-        <panel id="v10d09" x="80%" y="0%" height="10%" width="10%">
-            <interact onClick="clicked(v10d09)" /></panel>
-        <panel id="v10d10" x="90%" y="0%" height="10%" width="10%">
-            <interact onClick="clicked(v10d10)" /></panel>
-        <panel id="v09d01" x="0%" y="10%" height="10%" width="10%">
-            <interact onClick="clicked(v10d01)" /></panel>
-        <panel id="v09d02" x="10%" y="10%" height="10%" width="10%">
-            <interact onClick="clicked(v10d02)" /></panel>
-        <panel id="v09d03" x="20%" y="10%" height="10%" width="10%">
-            <interact onClick="clicked(v10d03)" /></panel>
-        <panel id="v09d04"  x="30%" y="10%" height="10%" width="10%">
-            <interact onClick="clicked(v10d04)" /></panel>
-        <panel id="v09d05" x="40%" y="10%" height="10%" width="10%">
-            <interact onClick="clicked(v10d05)" /></panel>
-        <panel id="v09d06" x="50%" y="10%" height="10%" width="10%">
-            <interact onClick="clicked(v10d06)" /></panel>
-        <panel id="v09d07" x="60%" y="10%" height="10%" width="10%">
-            <interact onClick="clicked(v10d07)" /></panel>
-        <panel id="v09d08" x="70%" y="10%" height="10%" width="10%">
-            <interact onClick="clicked(v10d08)" /></panel>
-        <panel id="v09d09" x="80%" y="10%" height="10%" width="10%">
-            <interact onClick="clicked(v10d09)" /></panel>
-        <panel id="v09d10" x="90%" y="10%" height="10%" width="10%">
-            <interact onClick="clicked(v10d10)" /></panel>
-        <panel id="v08d01" x="0%" y="20%" height="10%" width="10%">
-            <interact onClick="clicked(v08d03)" /></panel>
-        <panel id="v08d02" x="10%" y="20%" height="10%" width="10%">
-            <interact onClick="clicked(v08d04)" /></panel>
-        <panel id="v08d03" x="20%" y="20%" height="10%" width="10%">
-            <interact onClick="clicked(v08d03)" /></panel>
-        <panel id="v08d04" x="30%" y="20%" height="10%" width="10%">
-            <interact onClick="clicked(v08d04)" /></panel>
-        <panel id="v08d05" x="40%" y="20%" height="10%" width="10%">
-            <interact onClick="clicked(v08d05)" /></panel>
-        <panel id="v08d06" x="50%" y="20%" height="10%" width="10%">
-            <interact onClick="clicked(v08d06)" /></panel>
-        <panel id="v08d07" x="60%" y="20%" height="10%" width="10%">
-            <interact onClick="clicked(v08d07)" /></panel>
-        <panel id="v08d08" x="70%" y="20%" height="10%" width="10%">
-            <interact onClick="clicked(v08d08)" /></panel>
-        <panel id="v08d09" x="80%" y="20%" height="10%" width="10%">
-            <interact onClick="clicked(v08d09)" /></panel>
-        <panel id="v08d10" x="90%" y="20%" height="10%" width="10%">
-            <interact onClick="clicked(v08d10)" /></panel>
-        <panel id="v07d01" x="0%" y="30%" height="10%" width="10%">
-            <interact onClick="clicked(v07d01)" /></panel>
-        <panel id="v07d02" x="10%" y="30%" height="10%" width="10%">
-            <interact onClick="clicked(v07d02)" /></panel>
-        <panel id="v07d03" x="20%" y="30%" height="10%" width="10%">
-            <interact onClick="clicked(v07d03)" /></panel>
-        <panel id="v07d04" x="30%" y="30%" height="10%" width="10%">
-            <interact onClick="clicked(v07d04)" /></panel>
-        <panel id="v07d05" x="40%" y="30%" height="10%" width="10%">
-            <interact onClick="clicked(v07d05)" /></panel>
-        <panel id="v07d06" x="50%" y="30%" height="10%" width="10%">
-            <interact onClick="clicked(v07d06)" /></panel>
-        <panel id="v07d07" x="60%" y="30%" height="10%" width="10%">
-            <interact onClick="clicked(v07d07)" /></panel>
-        <panel id="v07d08" x="70%" y="30%" height="10%" width="10%">
-            <interact onClick="clicked(v07d08)" /></panel>
-        <panel id="v07d09" x="80%" y="30%" height="10%" width="10%">
-            <interact onClick="clicked(v07d09)" /></panel>
-        <panel id="v07d10" x="90%" y="30%" height="10%" width="10%">
-            <interact onClick="clicked(v07d10)" /></panel>
-        <panel id="v06d01" x="0%" y="40%" height="10%" width="10%">
-            <interact onClick="clicked(v06d01)" /></panel>
-        <panel id="v06d02" x="10%" y="40%" height="10%" width="10%">
-            <interact onClick="clicked(v06d02)" /></panel>
-        <panel id="v06d03" x="20%" y="40%" height="10%" width="10%">
-            <interact onClick="clicked(v06d03)" /></panel>
-        <panel id="v06d04" x="30%" y="40%" height="10%" width="10%">
-            <interact onClick="clicked(v06d04)" /></panel>
-        <panel id="v06d05" x="40%" y="40%" height="10%" width="10%">
-            <interact onClick="clicked(v06d05)" /></panel>
-        <panel id="v06d06" x="50%" y="40%" height="10%" width="10%">
-            <interact onClick="clicked(v06d06)" /></panel>
-        <panel id="v06d07" x="60%" y="40%" height="10%" width="10%">
-            <interact onClick="clicked(v06d07)" /></panel>
-        <panel id="v06d08" x="70%" y="40%" height="10%" width="10%">
-            <interact onClick="clicked(v06d08)" /></panel>
-        <panel id="v06d09" x="80%" y="40%" height="10%" width="10%">
-            <interact onClick="clicked(v06d09)" /></panel>
-        <panel id="v06d10" x="90%" y="40%" height="10%" width="10%">
-            <interact onClick="clicked(v06d10)" /></panel>
-        <panel id="v05d01" x="0%" y="50%" height="10%" width="10%">
-            <interact onClick="clicked(v05d01)" /></panel>
-        <panel id="v05d02" x="10%" y="50%" height="10%" width="10%">
-            <interact onClick="clicked(v05d02)" /></panel>
-        <panel id="v05d03" x="20%" y="50%" height="10%" width="10%">
-            <interact onClick="clicked(v05d03)" /></panel>
-        <panel id="v05d04" x="30%" y="50%" height="10%" width="10%">
-            <interact onClick="clicked(v05d04)" /></panel>
-        <panel id="v05d05" x="40%" y="50%" height="10%" width="10%">
-            <interact onClick="clicked(v05d05)" /></panel>
-        <panel id="v05d06" x="50%" y="50%" height="10%" width="10%">
-            <interact onClick="clicked(v05d06)" /></panel>
-        <panel id="v05d07" x="60%" y="50%" height="10%" width="10%">
-            <interact onClick="clicked(v05d07)" /></panel>
-        <panel id="v05d08" x="70%" y="50%" height="10%" width="10%">
-            <interact onClick="clicked(v05d08)" /></panel>
-        <panel id="v05d09" x="80%" y="50%" height="10%" width="10%">
-            <interact onClick="clicked(v05d09)" /></panel>
-        <panel id="v05d10" x="90%" y="50%" height="10%" width="10%">
-            <interact onClick="clicked(v05d10)" /></panel>
-        <panel id="v04d01" x="0%" y="60%" height="10%" width="10%">
-            <interact onClick="clicked(v04d01)" /></panel>
-        <panel id="v04d02" x="10%" y="60%" height="10%" width="10%">
-            <interact onClick="clicked(v04d02)" /></panel>
-        <panel id="v04d03" x="20%" y="60%" height="10%" width="10%">
-            <interact onClick="clicked(v04d03)" /></panel>
-        <panel id="v04d04" x="30%" y="60%" height="10%" width="10%">
-            <interact onClick="clicked(v04d04)" /></panel>
-        <panel id="v04d05" x="40%" y="60%" height="10%" width="10%">
-            <interact onClick="clicked(v04d05)" /></panel>
-        <panel id="v04d06" x="50%" y="60%" height="10%" width="10%">
-            <interact onClick="clicked(v04d06)" /></panel>
-        <panel id="v04d07" x="60%" y="60%" height="10%" width="10%">
-            <interact onClick="clicked(v04d07)" /></panel>
-        <panel id="v04d08" x="70%" y="60%" height="10%" width="10%">
-            <interact onClick="clicked(v04d08)" /></panel>
-        <panel id="v04d09" x="80%" y="60%" height="10%" width="10%">
-            <interact onClick="clicked(v04d09)" /></panel>
-        <panel id="v04d10" x="90%" y="60%" height="10%" width="10%">
-            <interact onClick="clicked(v04d10)" /></panel>
-        <panel id="v03d01" x="0%" y="70%" height="10%" width="10%">
-            <interact onClick="clicked(v03d01)" /></panel>
-        <panel id="v03d02" x="10%" y="70%" height="10%" width="10%">
-            <interact onClick="clicked(v03d02)" /></panel>
-        <panel id="v03d03" x="20%" y="70%" height="10%" width="10%">
-            <interact onClick="clicked(v03d03)" /></panel>
-        <panel id="v03d04" x="30%" y="70%" height="10%" width="10%">
-            <interact onClick="clicked(v03d04)" /></panel>
-        <panel id="v03d05" x="40%" y="70%" height="10%" width="10%">
-            <interact onClick="clicked(v03d05)" /></panel>
-        <panel id="v03d06" x="50%" y="70%" height="10%" width="10%">
-            <interact onClick="clicked(v03d06)" /></panel>
-        <panel id="v03d07" x="60%" y="70%" height="10%" width="10%">
-            <interact onClick="clicked(v03d07)" /></panel>
-        <panel id="v03d08" x="70%" y="70%" height="10%" width="10%">
-            <interact onClick="clicked(v03d08)" /></panel>
-        <panel id="v03d09" x="80%" y="70%" height="10%" width="10%">
-            <interact onClick="clicked(v03d09)" /></panel>
-        <panel id="v03d10" x="90%" y="70%" height="10%" width="10%">
-            <interact onClick="clicked(v03d10)" /></panel>
-        <panel id="v02d01" x="0%" y="80%" height="10%" width="10%">
-            <interact onClick="clicked(v02d01)" /></panel>
-        <panel id="v02d02" x="10%" y="80%" height="10%" width="10%">
-            <interact onClick="clicked(v02d02)" /></panel>
-        <panel id="v02d03" x="20%" y="80%" height="10%" width="10%">
-            <interact onClick="clicked(v02d03)" /></panel>
-        <panel id="v02d04" x="30%" y="80%" height="10%" width="10%">
-            <interact onClick="clicked(v02d04)" /></panel>
-        <panel id="v02d05" x="40%" y="80%" height="10%" width="10%">
-            <interact onClick="clicked(v02d05)" /></panel>
-        <panel id="v02d06" x="50%" y="80%" height="10%" width="10%">
-            <interact onClick="clicked(v02d06)" /></panel>
-        <panel id="v02d07" x="60%" y="80%" height="10%" width="10%">
-            <interact onClick="clicked(v02d07)" /></panel>
-        <panel id="v02d08" x="70%" y="80%" height="10%" width="10%">
-            <interact onClick="clicked(v02d08)" /></panel>
-        <panel id="v02d09" x="80%" y="80%" height="10%" width="10%">
-            <interact onClick="clicked(v02d09)" /></panel>
-        <panel id="v02d10" x="90%" y="80%" height="10%" width="10%">
-            <interact onClick="clicked(v02d10)" /></panel>
-        <panel id="v01d01" x="0%" y="90%" height="10%" width="10%">
-            <interact onClick="clicked(v01d01)" /></panel>
-        <panel id="v01d02" x="10%" y="90%" height="10%" width="10%">
-            <interact onClick="clicked(v01d02)" /></panel>
-        <panel id="v01d03" x="20%" y="90%" height="10%" width="10%">
-            <interact onClick="clicked(v01d03)" /></panel>
-        <panel id="v01d04" x="30%" y="90%" height="10%" width="10%">
-            <interact onClick="clicked(v01d04)" /></panel>
-        <panel id="v01d05" x="40%" y="90%" height="10%" width="10%">
-            <interact onClick="clicked(v01d05)" /></panel>
-        <panel id="v01d06" x="50%" y="90%" height="10%" width="10%">
-            <interact onClick="clicked(v01d06)" /></panel>
-        <panel id="v01d07" x="60%" y="90%" height="10%" width="10%">
-            <interact onClick="clicked(v01d07)" /></panel>
-        <panel id="v01d08" x="70%" y="90%" height="10%" width="10%">
-            <interact onClick="clicked(v01d08)" /></panel>
-        <panel id="v01d09" x="80%" y="90%" height="10%" width="10%">
-            <interact onClick="clicked(v01d09)" /></panel>
-        <panel id="v01d10" x="90%" y="90%" height="10%" width="10%">
-            <interact onClick="clicked(v01d10)" /></panel>
-        <text id="txt.density" x="0%" y="100%" font="aurulent-sans-16.fnt" text="${game.density}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
-        </panel>
-                    </panel>
-                    <text id="txt.space" width="90%" font="aurulent-sans-16.fnt" text="${game.space}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
-                    <panel id="propText" width="70%" childLayout="horizontal" align="center">
-                        <text id="propSp" width="50%" font="aurulent-sans-16.fnt" text="Speed: 01" color="#ffff" wrap="true" align="center" textHAlign="left"/>
-                        <text id="propDen" width="50%" font="aurulent-sans-16.fnt" text="Density: 01" color="#ffff" wrap="true" align="center" textHAlign="left"/>
-                    </panel>
-                    <panel id="pnl.buttons" width="70%" height="10%" childLayout="horizontal" align="center">
-                        <control id="game.btn.global" width="50%" name="button" label="${game.global}"/>
-                        <control id="game.btn.personal" width="50%" name="button" label="${game.personal}"/>
-                    </panel>
-       -->
-                    <panel id="pnl.spacer" width="100%" height="20px">
+                    <control id="game.sldr.radius"   style="forestrunner-horizontal-slider" name="horizontalSlider" width="100%" height="40px" min="0" max="9" initial="0" stepSize="1" buttonStepSize="1" />
+                    <panel id="pnl.spacer1" height="20px" childLayout="vertical"></panel>
+              <!-- 
+              <panel id="heatmap.split" width="100%" height="100%" childLayout="horizontal">
+                          <text id="txt.speed" width="3%" font="aurulent-sans-16.fnt" text="${game.speed}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
+                      <panel id="heatmap" style="nifty-panel-80" width="100%" height="100%" childLayout="absolute">
+              <panel id="v10d01" x="0%" y="0%" height="10%" width="10%">
+                  <interact onClick="clicked(v10d01)" /></panel>
+              <panel id="v10d02" x="10%" y="0%" height="10%" width="10%">
+                  <interact onClick="clicked(v10d02)" /></panel>
+              <panel id="v10d03" x="20%" y="0%" height="10%" width="10%">
+                  <interact onClick="clicked(v10d03)" /></panel>
+              <panel id="v10d04"  x="30%" y="0%" height="10%" width="10%">
+                  <interact onClick="clicked(v10d04)" /></panel>
+              <panel id="v10d05" x="40%" y="0%" height="10%" width="10%">
+                  <interact onClick="clicked(v10d05)" /></panel>
+              <panel id="v10d06" x="50%" y="0%" height="10%" width="10%">
+                  <interact onClick="clicked(v10d06)" /></panel>
+              <panel id="v10d07" x="60%" y="0%" height="10%" width="10%">
+                  <interact onClick="clicked(v10d07)" /></panel>
+              <panel id="v10d08" x="70%" y="0%" height="10%" width="10%">
+                  <interact onClick="clicked(v10d08)" /></panel>
+              <panel id="v10d09" x="80%" y="0%" height="10%" width="10%">
+                  <interact onClick="clicked(v10d09)" /></panel>
+              <panel id="v10d10" x="90%" y="0%" height="10%" width="10%">
+                  <interact onClick="clicked(v10d10)" /></panel>
+              <panel id="v09d01" x="0%" y="10%" height="10%" width="10%">
+                  <interact onClick="clicked(v10d01)" /></panel>
+              <panel id="v09d02" x="10%" y="10%" height="10%" width="10%">
+                  <interact onClick="clicked(v10d02)" /></panel>
+              <panel id="v09d03" x="20%" y="10%" height="10%" width="10%">
+                  <interact onClick="clicked(v10d03)" /></panel>
+              <panel id="v09d04"  x="30%" y="10%" height="10%" width="10%">
+                  <interact onClick="clicked(v10d04)" /></panel>
+              <panel id="v09d05" x="40%" y="10%" height="10%" width="10%">
+                  <interact onClick="clicked(v10d05)" /></panel>
+              <panel id="v09d06" x="50%" y="10%" height="10%" width="10%">
+                  <interact onClick="clicked(v10d06)" /></panel>
+              <panel id="v09d07" x="60%" y="10%" height="10%" width="10%">
+                  <interact onClick="clicked(v10d07)" /></panel>
+              <panel id="v09d08" x="70%" y="10%" height="10%" width="10%">
+                  <interact onClick="clicked(v10d08)" /></panel>
+              <panel id="v09d09" x="80%" y="10%" height="10%" width="10%">
+                  <interact onClick="clicked(v10d09)" /></panel>
+              <panel id="v09d10" x="90%" y="10%" height="10%" width="10%">
+                  <interact onClick="clicked(v10d10)" /></panel>
+              <panel id="v08d01" x="0%" y="20%" height="10%" width="10%">
+                  <interact onClick="clicked(v08d03)" /></panel>
+              <panel id="v08d02" x="10%" y="20%" height="10%" width="10%">
+                  <interact onClick="clicked(v08d04)" /></panel>
+              <panel id="v08d03" x="20%" y="20%" height="10%" width="10%">
+                  <interact onClick="clicked(v08d03)" /></panel>
+              <panel id="v08d04" x="30%" y="20%" height="10%" width="10%">
+                  <interact onClick="clicked(v08d04)" /></panel>
+              <panel id="v08d05" x="40%" y="20%" height="10%" width="10%">
+                  <interact onClick="clicked(v08d05)" /></panel>
+              <panel id="v08d06" x="50%" y="20%" height="10%" width="10%">
+                  <interact onClick="clicked(v08d06)" /></panel>
+              <panel id="v08d07" x="60%" y="20%" height="10%" width="10%">
+                  <interact onClick="clicked(v08d07)" /></panel>
+              <panel id="v08d08" x="70%" y="20%" height="10%" width="10%">
+                  <interact onClick="clicked(v08d08)" /></panel>
+              <panel id="v08d09" x="80%" y="20%" height="10%" width="10%">
+                  <interact onClick="clicked(v08d09)" /></panel>
+              <panel id="v08d10" x="90%" y="20%" height="10%" width="10%">
+                  <interact onClick="clicked(v08d10)" /></panel>
+              <panel id="v07d01" x="0%" y="30%" height="10%" width="10%">
+                  <interact onClick="clicked(v07d01)" /></panel>
+              <panel id="v07d02" x="10%" y="30%" height="10%" width="10%">
+                  <interact onClick="clicked(v07d02)" /></panel>
+              <panel id="v07d03" x="20%" y="30%" height="10%" width="10%">
+                  <interact onClick="clicked(v07d03)" /></panel>
+              <panel id="v07d04" x="30%" y="30%" height="10%" width="10%">
+                  <interact onClick="clicked(v07d04)" /></panel>
+              <panel id="v07d05" x="40%" y="30%" height="10%" width="10%">
+                  <interact onClick="clicked(v07d05)" /></panel>
+              <panel id="v07d06" x="50%" y="30%" height="10%" width="10%">
+                  <interact onClick="clicked(v07d06)" /></panel>
+              <panel id="v07d07" x="60%" y="30%" height="10%" width="10%">
+                  <interact onClick="clicked(v07d07)" /></panel>
+              <panel id="v07d08" x="70%" y="30%" height="10%" width="10%">
+                  <interact onClick="clicked(v07d08)" /></panel>
+              <panel id="v07d09" x="80%" y="30%" height="10%" width="10%">
+                  <interact onClick="clicked(v07d09)" /></panel>
+              <panel id="v07d10" x="90%" y="30%" height="10%" width="10%">
+                  <interact onClick="clicked(v07d10)" /></panel>
+              <panel id="v06d01" x="0%" y="40%" height="10%" width="10%">
+                  <interact onClick="clicked(v06d01)" /></panel>
+              <panel id="v06d02" x="10%" y="40%" height="10%" width="10%">
+                  <interact onClick="clicked(v06d02)" /></panel>
+              <panel id="v06d03" x="20%" y="40%" height="10%" width="10%">
+                  <interact onClick="clicked(v06d03)" /></panel>
+              <panel id="v06d04" x="30%" y="40%" height="10%" width="10%">
+                  <interact onClick="clicked(v06d04)" /></panel>
+              <panel id="v06d05" x="40%" y="40%" height="10%" width="10%">
+                  <interact onClick="clicked(v06d05)" /></panel>
+              <panel id="v06d06" x="50%" y="40%" height="10%" width="10%">
+                  <interact onClick="clicked(v06d06)" /></panel>
+              <panel id="v06d07" x="60%" y="40%" height="10%" width="10%">
+                  <interact onClick="clicked(v06d07)" /></panel>
+              <panel id="v06d08" x="70%" y="40%" height="10%" width="10%">
+                  <interact onClick="clicked(v06d08)" /></panel>
+              <panel id="v06d09" x="80%" y="40%" height="10%" width="10%">
+                  <interact onClick="clicked(v06d09)" /></panel>
+              <panel id="v06d10" x="90%" y="40%" height="10%" width="10%">
+                  <interact onClick="clicked(v06d10)" /></panel>
+              <panel id="v05d01" x="0%" y="50%" height="10%" width="10%">
+                  <interact onClick="clicked(v05d01)" /></panel>
+              <panel id="v05d02" x="10%" y="50%" height="10%" width="10%">
+                  <interact onClick="clicked(v05d02)" /></panel>
+              <panel id="v05d03" x="20%" y="50%" height="10%" width="10%">
+                  <interact onClick="clicked(v05d03)" /></panel>
+              <panel id="v05d04" x="30%" y="50%" height="10%" width="10%">
+                  <interact onClick="clicked(v05d04)" /></panel>
+              <panel id="v05d05" x="40%" y="50%" height="10%" width="10%">
+                  <interact onClick="clicked(v05d05)" /></panel>
+              <panel id="v05d06" x="50%" y="50%" height="10%" width="10%">
+                  <interact onClick="clicked(v05d06)" /></panel>
+              <panel id="v05d07" x="60%" y="50%" height="10%" width="10%">
+                  <interact onClick="clicked(v05d07)" /></panel>
+              <panel id="v05d08" x="70%" y="50%" height="10%" width="10%">
+                  <interact onClick="clicked(v05d08)" /></panel>
+              <panel id="v05d09" x="80%" y="50%" height="10%" width="10%">
+                  <interact onClick="clicked(v05d09)" /></panel>
+              <panel id="v05d10" x="90%" y="50%" height="10%" width="10%">
+                  <interact onClick="clicked(v05d10)" /></panel>
+              <panel id="v04d01" x="0%" y="60%" height="10%" width="10%">
+                  <interact onClick="clicked(v04d01)" /></panel>
+              <panel id="v04d02" x="10%" y="60%" height="10%" width="10%">
+                  <interact onClick="clicked(v04d02)" /></panel>
+              <panel id="v04d03" x="20%" y="60%" height="10%" width="10%">
+                  <interact onClick="clicked(v04d03)" /></panel>
+              <panel id="v04d04" x="30%" y="60%" height="10%" width="10%">
+                  <interact onClick="clicked(v04d04)" /></panel>
+              <panel id="v04d05" x="40%" y="60%" height="10%" width="10%">
+                  <interact onClick="clicked(v04d05)" /></panel>
+              <panel id="v04d06" x="50%" y="60%" height="10%" width="10%">
+                  <interact onClick="clicked(v04d06)" /></panel>
+              <panel id="v04d07" x="60%" y="60%" height="10%" width="10%">
+                  <interact onClick="clicked(v04d07)" /></panel>
+              <panel id="v04d08" x="70%" y="60%" height="10%" width="10%">
+                  <interact onClick="clicked(v04d08)" /></panel>
+              <panel id="v04d09" x="80%" y="60%" height="10%" width="10%">
+                  <interact onClick="clicked(v04d09)" /></panel>
+              <panel id="v04d10" x="90%" y="60%" height="10%" width="10%">
+                  <interact onClick="clicked(v04d10)" /></panel>
+              <panel id="v03d01" x="0%" y="70%" height="10%" width="10%">
+                  <interact onClick="clicked(v03d01)" /></panel>
+              <panel id="v03d02" x="10%" y="70%" height="10%" width="10%">
+                  <interact onClick="clicked(v03d02)" /></panel>
+              <panel id="v03d03" x="20%" y="70%" height="10%" width="10%">
+                  <interact onClick="clicked(v03d03)" /></panel>
+              <panel id="v03d04" x="30%" y="70%" height="10%" width="10%">
+                  <interact onClick="clicked(v03d04)" /></panel>
+              <panel id="v03d05" x="40%" y="70%" height="10%" width="10%">
+                  <interact onClick="clicked(v03d05)" /></panel>
+              <panel id="v03d06" x="50%" y="70%" height="10%" width="10%">
+                  <interact onClick="clicked(v03d06)" /></panel>
+              <panel id="v03d07" x="60%" y="70%" height="10%" width="10%">
+                  <interact onClick="clicked(v03d07)" /></panel>
+              <panel id="v03d08" x="70%" y="70%" height="10%" width="10%">
+                  <interact onClick="clicked(v03d08)" /></panel>
+              <panel id="v03d09" x="80%" y="70%" height="10%" width="10%">
+                  <interact onClick="clicked(v03d09)" /></panel>
+              <panel id="v03d10" x="90%" y="70%" height="10%" width="10%">
+                  <interact onClick="clicked(v03d10)" /></panel>
+              <panel id="v02d01" x="0%" y="80%" height="10%" width="10%">
+                  <interact onClick="clicked(v02d01)" /></panel>
+              <panel id="v02d02" x="10%" y="80%" height="10%" width="10%">
+                  <interact onClick="clicked(v02d02)" /></panel>
+              <panel id="v02d03" x="20%" y="80%" height="10%" width="10%">
+                  <interact onClick="clicked(v02d03)" /></panel>
+              <panel id="v02d04" x="30%" y="80%" height="10%" width="10%">
+                  <interact onClick="clicked(v02d04)" /></panel>
+              <panel id="v02d05" x="40%" y="80%" height="10%" width="10%">
+                  <interact onClick="clicked(v02d05)" /></panel>
+              <panel id="v02d06" x="50%" y="80%" height="10%" width="10%">
+                  <interact onClick="clicked(v02d06)" /></panel>
+              <panel id="v02d07" x="60%" y="80%" height="10%" width="10%">
+                  <interact onClick="clicked(v02d07)" /></panel>
+              <panel id="v02d08" x="70%" y="80%" height="10%" width="10%">
+                  <interact onClick="clicked(v02d08)" /></panel>
+              <panel id="v02d09" x="80%" y="80%" height="10%" width="10%">
+                  <interact onClick="clicked(v02d09)" /></panel>
+              <panel id="v02d10" x="90%" y="80%" height="10%" width="10%">
+                  <interact onClick="clicked(v02d10)" /></panel>
+              <panel id="v01d01" x="0%" y="90%" height="10%" width="10%">
+                  <interact onClick="clicked(v01d01)" /></panel>
+              <panel id="v01d02" x="10%" y="90%" height="10%" width="10%">
+                  <interact onClick="clicked(v01d02)" /></panel>
+              <panel id="v01d03" x="20%" y="90%" height="10%" width="10%">
+                  <interact onClick="clicked(v01d03)" /></panel>
+              <panel id="v01d04" x="30%" y="90%" height="10%" width="10%">
+                  <interact onClick="clicked(v01d04)" /></panel>
+              <panel id="v01d05" x="40%" y="90%" height="10%" width="10%">
+                  <interact onClick="clicked(v01d05)" /></panel>
+              <panel id="v01d06" x="50%" y="90%" height="10%" width="10%">
+                  <interact onClick="clicked(v01d06)" /></panel>
+              <panel id="v01d07" x="60%" y="90%" height="10%" width="10%">
+                  <interact onClick="clicked(v01d07)" /></panel>
+              <panel id="v01d08" x="70%" y="90%" height="10%" width="10%">
+                  <interact onClick="clicked(v01d08)" /></panel>
+              <panel id="v01d09" x="80%" y="90%" height="10%" width="10%">
+                  <interact onClick="clicked(v01d09)" /></panel>
+              <panel id="v01d10" x="90%" y="90%" height="10%" width="10%">
+                  <interact onClick="clicked(v01d10)" /></panel>
+              <text id="txt.density" x="0%" y="100%" font="aurulent-sans-16.fnt" text="${game.density}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
+              </panel>
+                          </panel>
+                          <text id="txt.space" width="90%" font="aurulent-sans-16.fnt" text="${game.space}" color="#ffff" wrap="true" align="left" textHAlign="left"/>
+                          <panel id="propText" width="70%" childLayout="horizontal" align="center">
+                              <text id="propSp" width="50%" font="aurulent-sans-16.fnt" text="Speed: 01" color="#ffff" wrap="true" align="center" textHAlign="left"/>
+                              <text id="propDen" width="50%" font="aurulent-sans-16.fnt" text="Density: 01" color="#ffff" wrap="true" align="center" textHAlign="left"/>
+                          </panel>
+                          <panel id="pnl.buttons" width="70%" height="10%" childLayout="horizontal" align="center">
+                              <control id="game.btn.global" width="50%" name="button" label="${game.global}"/>
+                              <control id="game.btn.personal" width="50%" name="button" label="${game.personal}"/>
+                          </panel>
+             -->
                     </panel>
                     <panel id="pnl.buttons" width="90%" childLayout="horizontal" align="center">
                         <control id="game.btn.new" width="50%" height="40px" name="button" style="forestrunner-button" label="${game.newgame}"/>
