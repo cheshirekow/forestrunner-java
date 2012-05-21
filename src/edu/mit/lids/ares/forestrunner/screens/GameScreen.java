@@ -29,6 +29,7 @@ public class GameScreen implements ScreenController
     {
         m_game              = game;
         m_resumeImmediately = false;
+        cm                  = new ColorMatrix(game);
     }
     
     @Override
