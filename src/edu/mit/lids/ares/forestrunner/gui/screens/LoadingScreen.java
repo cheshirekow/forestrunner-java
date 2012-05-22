@@ -53,6 +53,10 @@ public class LoadingScreen
     {
         switch(m_step)
         {
+            case 0:
+                m_game.initDataStore();
+                break;
+                
             case   1:
                 m_game.initConstants();
                 break;

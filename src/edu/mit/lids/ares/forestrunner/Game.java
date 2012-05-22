@@ -357,7 +357,6 @@ public abstract class Game extends Application
         
         // create a data store
         m_dataStore = Store.createStore(m_system);
-        m_dataStore.init();
         
         // attach the nifty display to the gui view port as a processor
         guiViewPort.addProcessor(niftyDisplay);
@@ -402,6 +401,10 @@ public abstract class Game extends Application
 //-----------------------------------------------------------------------------
 //                      Secondary Init Sequence
 //-----------------------------------------------------------------------------
+    public void initDataStore()
+    {
+        m_dataStore.init();
+    }
     
     public void initConstants()
     {
