@@ -142,45 +142,6 @@ public abstract class Game extends Application
         m_state = state;
     }
     
-    public void initViews()
-    {
-        guiNode.setQueueBucket(Bucket.Gui);
-        guiNode.setCullHint(CullHint.Never);
-        viewPort.attachScene(rootNode);
-        guiViewPort.attachScene(guiNode);
-        
-        viewPort.setBackgroundColor(new ColorRGBA(.9f,.9f,.9f,1f));
-    }
-    
-    public void initConstants()
-    {
-        m_state   = State.CRASHED;
-        
-        String[] paramNames = {"velocity","density","radius"};
-        for( String paramName : paramNames )
-            m_params.put(paramName,0);
-                
-        m_xAccel    = 20.0f;
-        m_xSpeedMax = 6.0f;
-        m_xSpeed    = 0f;
-        m_ySpeed    = 3.0f;
-        m_density   = 20f;
-        m_radius    = 0.1f;
-        
-        m_xPos      = 0;
-        m_yPos      = 0;
-        m_patchWidth    = 5.1f; //20.1f;
-        m_patchHeight   = 8.1f; //20.1f;
-        
-        m_patchDimX = 5;
-        m_patchDimY = 8; //4;
-        
-        m_acSide    = 0.3f;
-        m_acRadius  = (m_acSide/2f) * (float)Math.tan(Math.PI/6.0);
-        m_acTrans   = (float)( m_acSide*Math.sin(Math.PI/3) ) - m_acRadius;
-        m_worldRotate   = m_advancedSettings.get("worldRotate");
-    }
-    
     public Game(SystemContext ctx)
     {
         super();
@@ -200,26 +161,6 @@ public abstract class Game extends Application
         m_advancedSettings  = new AdvancedSettings();
     }
     
-    @Override
-    public void start() {
-        // set some default settings in-case
-        // settings dialog is not shown
-        boolean loadSettings = false;
-        if (settings == null) {
-            setSettings(new AppSettings(true));
-            loadSettings = true;
-        }
-
-        // show settings dialog
-        if (showSettings) {
-            if (!JmeSystem.showSettingsDialog(settings, loadSettings)) {
-                return;
-            }
-        }
-        //re-setting settings they can have been merged from the registry.
-        setSettings(settings);
-        super.start();
-    }
     
     public AdvancedSettings getAdvancedSettings()
     {
@@ -313,6 +254,187 @@ public abstract class Game extends Application
         }
     }
     
+    @Override
+    public void start() {
+        // set some default settings in-case
+        // settings dialog is not shown
+        boolean loadSettings = false;
+        if (settings == null) {
+            setSettings(new AppSettings(true));
+            loadSettings = true;
+        }
+
+        // show settings dialog
+        if (showSettings) {
+            if (!JmeSystem.showSettingsDialog(settings, loadSettings)) {
+                return;
+            }
+        }
+        //re-setting settings they can have been merged from the registry.
+        setSettings(settings);
+        super.start();
+    }
+    
+    
+    
+    
+    public boolean isShowSettings() {
+        return showSettings;
+    }
+
+    /**
+     * Toggles settings window to display at start-up
+     * @param showSettings Sets true/false
+     *
+     */
+    public void setShowSettings(boolean showSettings) {
+        this.showSettings = showSettings;
+    }
+
+    @Override
+    public void update() {
+        super.update(); // makes sure to execute AppTasks
+        if (speed == 0 || paused) {
+            return;
+        }
+
+        float tpf = timer.getTimePerFrame() * speed;
+
+        // update states
+        stateManager.update(tpf);
+        
+        // simple update and root node
+        // simpleUpdate(tpf);
+ 
+        rootNode.updateLogicalState(tpf);
+        guiNode.updateLogicalState(tpf);
+        
+        rootNode.updateGeometricState();
+        guiNode.updateGeometricState();
+
+        // render states
+        stateManager.render(renderManager);
+        renderManager.render(tpf, context.isRenderable());
+        stateManager.postRender();    
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+//-----------------------------------------------------------------------------
+//                        Primary Init Sequence
+//-----------------------------------------------------------------------------
+    
+    public void initViews()
+    {
+        guiNode.setQueueBucket(Bucket.Gui);
+        guiNode.setCullHint(CullHint.Never);
+        viewPort.attachScene(rootNode);
+        guiViewPort.attachScene(guiNode);
+        
+        viewPort.setBackgroundColor(new ColorRGBA(.9f,.9f,.9f,1f));
+    }
+    
+    
+    
+    
+    public void initNifty()
+    {
+        NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(assetManager,
+                inputManager,
+                audioRenderer,
+                guiViewPort);
+
+        m_nifty = niftyDisplay.getNifty();
+        m_nifty.addXml("Interface/Nifty/ui.xml");
+        
+        // create a data store
+        m_dataStore = Store.createStore(m_system);
+        m_dataStore.init();
+        
+        // attach the nifty display to the gui view port as a processor
+        guiViewPort.addProcessor(niftyDisplay);
+        
+        LoadingScreen loadingScreen = new LoadingScreen(this,stateManager);
+        m_nifty.registerScreenController(loadingScreen);
+        m_nifty.addXml("Interface/Nifty/Screens/loading.xml");
+        //m_screens2.put("loading",    new LoadingScreen(stateManager));
+        //m_nifty.registerScreenController(m_screens.get("loading"));
+        //m_nifty.addXml("Interface/Nifty/Screens/loading.xml");
+        
+        m_nifty.gotoScreen("loading");
+    }
+    
+    
+    
+    
+    @Override
+    public void initialize() {
+        super.initialize();
+
+        // call user code
+        initViews();
+        initNifty();
+        /*
+        initConstants();
+        initSceneGraph();
+        initStaticMeshes();
+        initPatches();
+        setupLights();
+        setupCamera();
+        setupProcessor();
+        setupNifty();
+        initRun();
+        
+        changeAdvancedSettings(AdvancedSettings.s_default);
+        */
+    }
+    
+    
+    
+//-----------------------------------------------------------------------------
+//                      Secondary Init Sequence
+//-----------------------------------------------------------------------------
+    
+    public void initConstants()
+    {
+        m_state   = State.CRASHED;
+        
+        String[] paramNames = {"velocity","density","radius"};
+        for( String paramName : paramNames )
+            m_params.put(paramName,0);
+                
+        m_xAccel    = 20.0f;
+        m_xSpeedMax = 6.0f;
+        m_xSpeed    = 0f;
+        m_ySpeed    = 3.0f;
+        m_density   = 20f;
+        m_radius    = 0.1f;
+        
+        m_xPos      = 0;
+        m_yPos      = 0;
+        m_patchWidth    = 5.1f; //20.1f;
+        m_patchHeight   = 8.1f; //20.1f;
+        
+        m_patchDimX = 5;
+        m_patchDimY = 8; //4;
+        
+        m_acSide    = 0.3f;
+        m_acRadius  = (m_acSide/2f) * (float)Math.tan(Math.PI/6.0);
+        m_acTrans   = (float)( m_acSide*Math.sin(Math.PI/3) ) - m_acRadius;
+        m_worldRotate   = m_advancedSettings.get("worldRotate");
+    }
+    
+    
+    
+    
     public void initStaticMeshes()
     {
         m_cylinderBaseMesh      = new Cylinder(4,10,m_radius,s_treeHeight,true,false);
@@ -376,6 +498,9 @@ public abstract class Game extends Application
         
     }
     
+    
+
+    
     public void initSceneGraph()
     {
         m_patchRoot     = new Node("patch_root");
@@ -386,6 +511,9 @@ public abstract class Game extends Application
         rootNode.attachChild(m_patchRotate);
         rootNode.attachChild(m_acRotate);
     }
+    
+    
+    
     
     public void initPatches()
     {
@@ -412,6 +540,9 @@ public abstract class Game extends Application
         }
     }
     
+    
+
+    
     public void setupLights()
     {
         m_pointLight = new PointLight();
@@ -426,6 +557,9 @@ public abstract class Game extends Application
         
         rootNode.setShadowMode(ShadowMode.Off);
     }
+    
+    
+    
     
     public void initRun()
     {
@@ -467,32 +601,8 @@ public abstract class Game extends Application
         System.out.println("initialized a new run");
     }
     
-    public void initNifty()
-    {
-        NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(assetManager,
-                inputManager,
-                audioRenderer,
-                guiViewPort);
-
-        m_nifty = niftyDisplay.getNifty();
-        m_nifty.addXml("Interface/Nifty/ui.xml");
-        
-        // create a data store
-        m_dataStore = Store.createStore(m_system);
-        m_dataStore.init();
-        
-        // attach the nifty display to the gui view port as a processor
-        guiViewPort.addProcessor(niftyDisplay);
-        
-        LoadingScreen loadingScreen = new LoadingScreen(this,stateManager);
-        m_nifty.registerScreenController(loadingScreen);
-        m_nifty.addXml("Interface/Nifty/Screens/loading.xml");
-        //m_screens2.put("loading",    new LoadingScreen(stateManager));
-        //m_nifty.registerScreenController(m_screens.get("loading"));
-        //m_nifty.addXml("Interface/Nifty/Screens/loading.xml");
-        
-        m_nifty.gotoScreen("loading");
-    }
+    
+    
     
     public void setupNifty()
     {
@@ -522,6 +632,9 @@ public abstract class Game extends Application
         //m_nifty.gotoScreen("loading");
     }
     
+    
+    
+    
     public void setupCamera()
     {
         // disable the fly cam
@@ -538,6 +651,9 @@ public abstract class Game extends Application
         
     }
 
+    
+    
+    
     public void setupProcessor()
     {
         m_fpp=new FilterPostProcessor(assetManager);
@@ -561,6 +677,22 @@ public abstract class Game extends Application
         //viewPort.addProcessor(m_fpp);
     }
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+//-----------------------------------------------------------------------------
+//                      Game logic
+//-----------------------------------------------------------------------------
     abstract protected void updateSpeed(float tpf);
     abstract protected void onCrash(float tpf);
     
@@ -691,67 +823,52 @@ public abstract class Game extends Application
     
     
     
-    public boolean isShowSettings() {
-        return showSettings;
-    }
-
-    /**
-     * Toggles settings window to display at start-up
-     * @param showSettings Sets true/false
-     *
-     */
-    public void setShowSettings(boolean showSettings) {
-        this.showSettings = showSettings;
-    }
-
-    @Override
-    public void initialize() {
-        super.initialize();
-
-        // call user code
-        initViews();
-        initNifty();
-        /*
-        initConstants();
-        initSceneGraph();
-        initStaticMeshes();
-        initPatches();
-        setupLights();
-        setupCamera();
-        setupProcessor();
-        setupNifty();
-        initRun();
-        
-        changeAdvancedSettings(AdvancedSettings.s_default);
-        */
-    }
-
-    @Override
-    public void update() {
-        super.update(); // makes sure to execute AppTasks
-        if (speed == 0 || paused) {
-            return;
-        }
-
-        float tpf = timer.getTimePerFrame() * speed;
-
-        // update states
-        stateManager.update(tpf);
-        
-        // simple update and root node
-        // simpleUpdate(tpf);
- 
-        rootNode.updateLogicalState(tpf);
-        guiNode.updateLogicalState(tpf);
-        
-        rootNode.updateGeometricState();
-        guiNode.updateGeometricState();
-
-        // render states
-        stateManager.render(renderManager);
-        renderManager.render(tpf, context.isRenderable());
-        stateManager.postRender();    
-    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
