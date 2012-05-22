@@ -6,7 +6,7 @@
   
 
   <!--  the high score screen, displays high scores -->
-  <screen id="empty" controller="edu.mit.lids.ares.forestrunner.screens.EmptyScreen">
+  <screen id="play" controller="edu.mit.lids.ares.forestrunner.gui.screens.PlayScreen">
     <layer id="layer" backgroundColor="#0000" childLayout="vertical">
         <panel id="pnl.hud" width="100%" childLayout="vertical">
             <control id="lbl.timer" align="right" name="label" text="Score: 00000.00" color="#000f" />

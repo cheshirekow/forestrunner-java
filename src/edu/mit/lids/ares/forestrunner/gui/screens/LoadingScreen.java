@@ -1,10 +1,5 @@
 package edu.mit.lids.ares.forestrunner.gui.screens;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.logging.Level;
-
 import com.jme3.app.state.AppStateManager;
 
 import de.lessvoid.nifty.Nifty;

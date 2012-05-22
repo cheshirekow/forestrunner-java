@@ -42,7 +42,7 @@ public abstract class KeyboardGame extends Game
             // the pause action is only meaning full if the game is active
             if (name.equals("Pause") && !keyPressed) 
             {
-                if( m_nifty.getCurrentScreen().getScreenId().compareTo("empty")==0 )
+                if( m_nifty.getCurrentScreen().getScreenId().compareTo("play")==0 )
                 {
                     m_state = State.PAUSED;
                     m_nifty.gotoScreen("game");
@@ -73,6 +73,7 @@ public abstract class KeyboardGame extends Game
         //add pause keys which bring up the pause menu
         inputManager.addMapping("Pause",        new KeyTrigger(KeyInput.KEY_ESCAPE));
         inputManager.addMapping("Pause",        new KeyTrigger(KeyInput.KEY_SPACE));
+        inputManager.addMapping("Pause",        new KeyTrigger(KeyInput.KEY_P));
         inputManager.addMapping("Crash",        new KeyTrigger(KeyInput.KEY_Q));
         
         inputManager.addMapping("Left",         new KeyTrigger(KeyInput.KEY_A));

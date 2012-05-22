@@ -154,7 +154,7 @@ public class GameScreen implements ScreenController
             if(m_game.getState() == State.PAUSED)
             {
                 m_resumeImmediately = true;
-                m_nifty.gotoScreen("empty");
+                m_nifty.gotoScreen("play");
             }
             else
             {

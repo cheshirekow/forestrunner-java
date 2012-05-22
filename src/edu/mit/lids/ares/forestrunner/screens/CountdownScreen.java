@@ -62,7 +62,7 @@ public class CountdownScreen implements ScreenController
                 m_nifty.gotoScreen("countdown1");
                 break;
             case 1:
-                m_nifty.gotoScreen("empty");
+                m_nifty.gotoScreen("play");
                 m_game.setState(State.RUNNING);
                 break;
             default:
