@@ -57,7 +57,7 @@ public class ColorMatrix {
                 mean[i][j] = 0;
                 for( HighScoreRow row : scores )
                 {
-                    if(!row.score.isEmpty())
+                    if(row.score.length() > 0)
                         mean[i][j] += Double.parseDouble(row.score);
                 }
                 if(scores.size()!=0)

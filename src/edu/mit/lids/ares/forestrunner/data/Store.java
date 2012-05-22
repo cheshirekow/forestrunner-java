@@ -1,5 +1,8 @@
 package edu.mit.lids.ares.forestrunner.data;
 
+import java.util.HashMap;
+
+import edu.mit.lids.ares.forestrunner.AdvancedSettings;
 import edu.mit.lids.ares.forestrunner.SystemContext;
 
 /**
@@ -10,25 +13,33 @@ import edu.mit.lids.ares.forestrunner.SystemContext;
  */
 public abstract class Store
 {
-    protected String m_nick;
-    protected String m_userHash;
+    // advanced settings (i.e. prefs)
+    protected AdvancedSettings  m_advancedSettings;
+    
+    // config stuff
+    protected String            m_nick;
+    protected String            m_userHash;
+    
+    // game paramters
+    protected int               m_radius;
+    protected int               m_density;
+    protected int               m_speed;
     
     /**
      *  @brief  just sets some defaults
      */
     public Store()
     {
-        m_nick = "Anon";
+        m_advancedSettings  = new AdvancedSettings();
+        m_nick      = "Anon";
+        m_userHash  = "";
     }
     
     /**
      *  @brief  make necessary database/network connections, build database
-     *          files if they do not exist
+     *          files if they do not exist, fetch mem-stored values
      */
-    public void init()
-    {
-        
-    }
+    public void init(){}
     
     /**
      *  @return user's saved nickname, or the default if there is not one

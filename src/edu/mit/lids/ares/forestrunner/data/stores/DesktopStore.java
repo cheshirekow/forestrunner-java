@@ -35,8 +35,12 @@ public class DesktopStore
     public DesktopStore()
     {
         m_configMap = new HashMap<String,String>();
-        
-        // get the path to the user's home directory
+    }
+    
+    @Override
+    public void init()
+    {
+     // get the path to the user's home directory
         String userHome     = System.getProperty("user.home");
         String dataDir      = userHome + File.separator + ".forestrunner";
         File dataDirFile    = new File(dataDir);
@@ -113,7 +117,7 @@ public class DesktopStore
         }
     }
     
-    void initDatabase()
+    private void initDatabase()
     {
         System.out.println("It appears the database is old or does not exist, initializing now");
         try

@@ -70,9 +70,6 @@ public abstract class KeyboardGame extends Game
      */
     protected void initKeys() 
     {
-        // don't quit on escape
-        inputManager.deleteMapping( SimpleApplication.INPUT_MAPPING_EXIT );
-        
         //add pause keys which bring up the pause menu
         inputManager.addMapping("Pause",        new KeyTrigger(KeyInput.KEY_ESCAPE));
         inputManager.addMapping("Pause",        new KeyTrigger(KeyInput.KEY_SPACE));

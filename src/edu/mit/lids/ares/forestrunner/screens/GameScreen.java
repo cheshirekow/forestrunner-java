@@ -14,7 +14,6 @@ import de.lessvoid.nifty.tools.Color;
 import edu.mit.lids.ares.forestrunner.Game;
 import edu.mit.lids.ares.forestrunner.Game.State;
 import java.util.Properties;
-import org.lwjgl.opengl.Display;
 
 public class GameScreen implements ScreenController
 {

@@ -4,7 +4,8 @@ package edu.mit.lids.ares.forestrunner;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.jme3.app.SimpleApplication;
+import com.jme3.app.Application;
+import com.jme3.input.FlyByCamera;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.PointLight;
 import com.jme3.material.Material;
@@ -13,12 +14,14 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.post.FilterPostProcessor;
-//import com.jme3.post.filters.CartoonEdgeFilter;
 import com.jme3.post.filters.FogFilter;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.debug.Grid;
+import com.jme3.system.AppSettings;
+import com.jme3.system.JmeSystem;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 
 import de.lessvoid.nifty.Nifty;
@@ -28,10 +31,9 @@ import de.lessvoid.nifty.controls.Label;
 import edu.mit.lids.ares.forestrunner.data.Store;
 import edu.mit.lids.ares.forestrunner.gui.ScreenBase;
 import edu.mit.lids.ares.forestrunner.gui.ScreenManager;
-import edu.mit.lids.ares.forestrunner.gui.screens.NickScreen;
 import edu.mit.lids.ares.forestrunner.screens.*;
 
-public abstract class Game extends SimpleApplication
+public abstract class Game extends Application
 {
     public enum State
     {
@@ -41,14 +43,20 @@ public abstract class Game extends SimpleApplication
         PAUSED
     }
     
-    /// this should NEVER decrease, increment when parameter equations are
-    /// changed, or when storage backend changes
+    // this should NEVER decrease, increment when parameter equations are
+    // changed, or when storage backend changes
     public static final int   s_version    = 1;
     
     public static final float s_pad        = 0.08f;
     public static final float s_cPad       = 0.03f;
     public static final float s_farPlane   = 35f;
     public static final float s_treeHeight = 0.5f;
+    
+    // stuff taken from jme.app.SimpleApplication
+    protected Node          rootNode    = new Node("Root Node");
+    protected Node          guiNode     = new Node("Gui Node");
+    protected FlyByCamera   flyCam;
+    protected boolean       showSettings= true;
     
     protected Nifty                           m_nifty;
     protected Map<String,ScreenController>    m_screens;
@@ -68,9 +76,7 @@ public abstract class Game extends SimpleApplication
     protected AmbientLight      m_ambientLight;
     
     FilterPostProcessor         m_fpp;
-    //CartoonEdgeFilter           m_cartoonFilter;
     FogFilter                   m_fogFilter;
-    //CartoonEdgeProcessor        m_toonBlow;
     Geometry                    m_gridNode;
     
     protected float   m_density;
@@ -171,6 +177,8 @@ public abstract class Game extends SimpleApplication
     
     public Game(SystemContext ctx)
     {
+        super();
+        
         if( ctx != SystemContext.APPLET)
         {
             java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.WARNING);
@@ -181,6 +189,27 @@ public abstract class Game extends SimpleApplication
         m_system            = ctx;
         m_advancedSettings  = new AdvancedSettings();
         init();
+    }
+    
+    @Override
+    public void start() {
+        // set some default settings in-case
+        // settings dialog is not shown
+        boolean loadSettings = false;
+        if (settings == null) {
+            setSettings(new AppSettings(true));
+            loadSettings = true;
+        }
+
+        // show settings dialog
+        if (showSettings) {
+            if (!JmeSystem.showSettingsDialog(settings, loadSettings)) {
+                return;
+            }
+        }
+        //re-setting settings they can have been merged from the registry.
+        setSettings(settings);
+        super.start();
     }
     
     public AdvancedSettings getAdvancedSettings()
@@ -480,12 +509,8 @@ public abstract class Game extends SimpleApplication
         
     }
 
-    @Override
     public void simpleInitApp() 
     {
-        setDisplayFps(false);
-        setDisplayStatView(false);
-        
         viewPort.setBackgroundColor(new ColorRGBA(.9f,.9f,.9f,1f));
         
         initSceneGraph();
@@ -527,7 +552,6 @@ public abstract class Game extends SimpleApplication
     abstract protected void onCrash(float tpf);
     
     
-    @Override
     public void simpleUpdate(float tpf) 
     {
         m_screenMgr.update(tpf);
@@ -652,6 +676,67 @@ public abstract class Game extends SimpleApplication
         
         if(collision)
             onCrash(tpf);
+    }
+    
+    
+    
+    public boolean isShowSettings() {
+        return showSettings;
+    }
+
+    /**
+     * Toggles settings window to display at start-up
+     * @param showSettings Sets true/false
+     *
+     */
+    public void setShowSettings(boolean showSettings) {
+        this.showSettings = showSettings;
+    }
+
+    @Override
+    public void initialize() {
+        super.initialize();
+
+        guiNode.setQueueBucket(Bucket.Gui);
+        guiNode.setCullHint(CullHint.Never);
+        viewPort.attachScene(rootNode);
+        guiViewPort.attachScene(guiNode);
+
+        if (inputManager != null) {
+            flyCam = new FlyByCamera(cam);
+            flyCam.setMoveSpeed(1f); // odd to set this here but it did it before
+            //stateManager.getState(FlyCamAppState.class).setCamera( flyCam );
+        }
+
+        // call user code
+        simpleInitApp();
+    }
+
+    @Override
+    public void update() {
+        super.update(); // makes sure to execute AppTasks
+        if (speed == 0 || paused) {
+            return;
+        }
+
+        float tpf = timer.getTimePerFrame() * speed;
+
+        // update states
+        stateManager.update(tpf);
+
+        // simple update and root node
+        simpleUpdate(tpf);
+ 
+        rootNode.updateLogicalState(tpf);
+        guiNode.updateLogicalState(tpf);
+        
+        rootNode.updateGeometricState();
+        guiNode.updateGeometricState();
+
+        // render states
+        stateManager.render(renderManager);
+        renderManager.render(tpf, context.isRenderable());
+        stateManager.postRender();        
     }
     
 }
