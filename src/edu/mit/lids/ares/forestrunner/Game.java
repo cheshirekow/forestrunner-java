@@ -154,9 +154,6 @@ public abstract class Game extends Application
     
     public void initConstants()
     {
-        m_screens = new HashMap<String,ScreenController>();
-        m_screens2= new HashMap<String,ScreenBase>();
-        m_params  = new HashMap<String,Integer>();
         m_state   = State.CRASHED;
         
         String[] paramNames = {"velocity","density","radius"};
@@ -194,6 +191,10 @@ public abstract class Game extends Application
             java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.WARNING);
             java.util.logging.Logger.getLogger(ScreenBase.class.getName()).setLevel(java.util.logging.Level.ALL);
         }
+        
+        m_screens = new HashMap<String,ScreenController>();
+        m_screens2= new HashMap<String,ScreenBase>();
+        m_params  = new HashMap<String,Integer>();
         
         m_system            = ctx;
         m_advancedSettings  = new AdvancedSettings();
@@ -482,6 +483,15 @@ public abstract class Game extends Application
         
         // attach the nifty display to the gui view port as a processor
         guiViewPort.addProcessor(niftyDisplay);
+        
+        LoadingScreen loadingScreen = new LoadingScreen(this,stateManager);
+        m_nifty.registerScreenController(loadingScreen);
+        m_nifty.addXml("Interface/Nifty/Screens/loading.xml");
+        //m_screens2.put("loading",    new LoadingScreen(stateManager));
+        //m_nifty.registerScreenController(m_screens.get("loading"));
+        //m_nifty.addXml("Interface/Nifty/Screens/loading.xml");
+        
+        m_nifty.gotoScreen("loading");
     }
     
     public void setupNifty()
@@ -493,7 +503,7 @@ public abstract class Game extends Application
         m_screens.put("advanced",   new AdvancedScreen(this));
         
         m_screens2.put("disclaimer", new DisclaimerScreen());
-        m_screens2.put("loading",    new LoadingScreen(stateManager));
+        //m_screens2.put("loading",    new LoadingScreen(stateManager));
         m_screens2.put("nick",       new NickScreen(stateManager, m_dataStore));
         m_screens2.put("play",       new PlayScreen(this, stateManager));
         
@@ -508,8 +518,8 @@ public abstract class Game extends Application
 
         for( String screenName : m_screens2.keySet() )
             m_nifty.addXml( "Interface/Nifty/Screens/" + screenName + ".xml" );
-        
-        m_nifty.gotoScreen("loading");
+
+        //m_nifty.gotoScreen("loading");
     }
     
     public void setupCamera()
@@ -528,7 +538,7 @@ public abstract class Game extends Application
         
     }
 
-    protected void setupProcessor()
+    public void setupProcessor()
     {
         m_fpp=new FilterPostProcessor(assetManager);
         
@@ -701,6 +711,7 @@ public abstract class Game extends Application
         // call user code
         initViews();
         initNifty();
+        /*
         initConstants();
         initSceneGraph();
         initStaticMeshes();
@@ -712,6 +723,7 @@ public abstract class Game extends Application
         initRun();
         
         changeAdvancedSettings(AdvancedSettings.s_default);
+        */
     }
 
     @Override

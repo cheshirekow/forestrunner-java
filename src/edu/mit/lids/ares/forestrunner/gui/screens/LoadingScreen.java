@@ -5,6 +5,8 @@ import com.jme3.app.state.AppStateManager;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import edu.mit.lids.ares.forestrunner.AdvancedSettings;
+import edu.mit.lids.ares.forestrunner.Game;
 import edu.mit.lids.ares.forestrunner.gui.ScreenBase;
 import edu.mit.lids.ares.forestrunner.nifty.ProgressbarControl;
 
@@ -17,13 +19,15 @@ public class LoadingScreen
     private ProgressbarControl  m_pb; 
     private int                 m_processed;
     private int                 m_total;
-    private int                 m_phase;
-    private static final int    s_totalPhases = 500;
+    private int                 m_step;
+    private static final int    s_totalSteps = 500;
     private AppStateManager     m_mgr;
+    private Game                m_game;
     
-    public LoadingScreen( AppStateManager mgr )
+    public LoadingScreen( Game game, AppStateManager mgr )
     {
         super();
+        m_game              = game;
         m_mgr               = mgr;
         m_hasEntranceAnim   = false;
         m_hasExitAnim       = false;
@@ -34,8 +38,8 @@ public class LoadingScreen
     {
         m_mgr.attach(this);
         m_processed = 0;
-        m_phase     = 0;
-        m_total     = s_totalPhases;
+        m_step      = 0;
+        m_total     = s_totalSteps;
     }
     
     @Override
@@ -47,9 +51,52 @@ public class LoadingScreen
     @Override
     public void update_impl( float tpf )
     {
-        switch(m_phase)
+        switch(m_step)
         {
-            case s_totalPhases:
+            case 10:
+                m_game.initConstants();
+                break;
+                
+            case 15:
+                m_game.setupCamera();
+                break;
+                
+            case 20:
+                m_game.initSceneGraph();
+                break;
+                
+            case 30:
+                m_game.initStaticMeshes();
+                break;
+                
+            case 40:
+                m_game.initPatches();
+                break;
+                
+            case 50:
+                m_game.setupLights();
+                break;
+                
+            case 60:
+                break;
+                
+            case 70:
+                m_game.setupProcessor();
+                break;
+                
+            case 80:
+                m_game.setupNifty();
+                break;
+                
+            case 90:
+                m_game.initRun();
+                break;
+                
+            case 100:
+                m_game.changeAdvancedSettings(AdvancedSettings.s_default);
+                break;
+                
+            case s_totalSteps:
                 m_nifty.gotoScreen("disclaimer");
                 break;
                 
@@ -57,8 +104,8 @@ public class LoadingScreen
                 break;
         }
         
-        m_phase++;
-        m_pb.setProgress( (m_processed + m_phase) / (float)m_total );
+        m_step++;
+        m_pb.setProgress( (m_processed + m_step) / (float)m_total );
     }
     
     @Override
