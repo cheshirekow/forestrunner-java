@@ -23,58 +23,24 @@ public class ScreenBase
     public static final Logger s_logger = 
             Logger.getLogger(ScreenBase.class.getName());
 
-    protected Boolean         m_hasEntranceAnim  = false;
-    protected Boolean         m_hasExitAnim      = false;
-    protected Boolean         m_active           = false;
+    protected boolean   m_hasEntranceAnim  = false;
+    protected boolean   m_hasExitAnim      = false;
+    protected boolean   m_active           = false;
+    protected boolean   m_initialized      = false;
 
-    protected ScreenManager   m_mgr;
-    protected Nifty           m_nifty;
-    protected Screen          m_screen;
-    
-    // app state stuff
-    protected boolean   m_initialized = false;
+    protected Nifty     m_nifty     = null;
+    protected Screen    m_screen    = null;
     
     /**
-     *  \brief constructor
-     *  @param mgr  screen manager for this process
+     *  @brief constructor
      */
-    public ScreenBase( ScreenManager mgr )
-    {
-        m_mgr           = mgr;
-    }
-    
-    /**
-     *  \brief  sets the active flag for this screen, if the screen is
-     *          inactive user input will be ignored (though animations and
-     *          other effects will still be processed by nifty)
-     *  @param active
-     */
-    public void setActive( Boolean active )
-    {
-        m_active = active;
-    }
-    
-    /**
-     *  \brief  if the screen is active, perform one frame-worth of actions for 
-     *          the current screen (default does nothing)
-     */
-    public void update( float tpf )
-    {
-        if(m_active)
-            update_impl(tpf);
-    }
-    
-    /**
-     *  \brief  default per-frame action (does nothing), implemented in
-     *          screens which do something on a per-frame basis
-     */
-    public void update_impl( float tpf )
+    public ScreenBase()
     {
         
     }
     
     /**
-     *  \brief  called when nifty creates the screen object associated with
+     *  @brief  called when nifty creates the screen object associated with
      *          this controller, simply stores pointers to nifty and the
      *          screen
      */
@@ -99,7 +65,10 @@ public class ScreenBase
     public void onStartScreen()
     {
         if(!m_hasEntranceAnim)
+        {
             m_active = true;
+            onStart_impl();
+        }
         s_logger.log(Level.INFO, m_screen.getScreenId() + ": onStartScreenEvent");
     }
     
@@ -112,7 +81,13 @@ public class ScreenBase
     public void onEntranceFinished()
     {
         m_active = true;
+        onStart_impl();
         s_logger.log(Level.INFO, m_screen.getScreenId() + ": onEntranceFinishedEvent");
+    }
+    
+    public void onStart_impl()
+    {
+        
     }
     
     /**
@@ -124,6 +99,7 @@ public class ScreenBase
     public void onExitStarted()
     {
         m_active = false;
+        onEnd_impl();
         s_logger.log(Level.INFO, m_screen.getScreenId() + ": onExitStartedEvent");
     }
     
@@ -139,11 +115,38 @@ public class ScreenBase
     public void onEndScreen()
     {
         if(!m_hasExitAnim)
+        {
             m_active = false;
+            onEnd_impl();
+        }
         s_logger.log(Level.INFO, m_screen.getScreenId() + ": onEndScreenEvent");
     }
     
+    public void onEnd_impl()
+    {
+        
+    }
     
+    
+    /**
+     *  @brief  if the screen is active, perform one frame-worth of actions for 
+     *          the current screen (default does nothing)
+     */
+    @Override
+    public void update( float tpf )
+    {
+        if(m_active)
+            update_impl(tpf);
+    }
+    
+    /**
+     *  @brief  default per-frame action (does nothing), implemented in
+     *          screens which do something on a per-frame basis
+     */
+    public void update_impl( float tpf )
+    {
+        
+    }
 
     @Override
     public void initialize(AppStateManager stateManager, Application app)

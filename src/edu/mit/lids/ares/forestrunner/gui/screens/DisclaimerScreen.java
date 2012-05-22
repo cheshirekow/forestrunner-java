@@ -6,7 +6,6 @@ import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.screen.ScreenController;
 import edu.mit.lids.ares.forestrunner.gui.ScreenBase;
-import edu.mit.lids.ares.forestrunner.gui.ScreenManager;
 
 public class DisclaimerScreen 
     extends
@@ -14,9 +13,11 @@ public class DisclaimerScreen
     implements 
         ScreenController
 {
-    public DisclaimerScreen( ScreenManager mgr )
+    public DisclaimerScreen( )
     {
-        super(mgr);
+        super();
+        m_hasEntranceAnim   = true;
+        m_hasExitAnim       = true;
     }
     
    
@@ -41,7 +42,7 @@ public class DisclaimerScreen
             System.exit(0);
         
         // if the user does agree, we advance to the loading screen
-        m_mgr.advance("nick");
+        m_nifty.gotoScreen("nick");
     }
 
     /**

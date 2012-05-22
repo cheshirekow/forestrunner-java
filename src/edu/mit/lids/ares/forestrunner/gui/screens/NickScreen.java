@@ -2,6 +2,8 @@ package edu.mit.lids.ares.forestrunner.gui.screens;
 
 import java.util.logging.Level;
 
+import com.jme3.app.state.AppStateManager;
+
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.Button;
@@ -13,7 +15,6 @@ import de.lessvoid.nifty.screen.ScreenController;
 
 import edu.mit.lids.ares.forestrunner.data.Store;
 import edu.mit.lids.ares.forestrunner.gui.ScreenBase;
-import edu.mit.lids.ares.forestrunner.gui.ScreenManager;
 
 public class NickScreen
     extends
@@ -26,13 +27,17 @@ public class NickScreen
     private Button      m_btn;
     private TextField   m_textField;
     private Store       m_dataStore;
+    private AppStateManager m_mgr;
     
-    public NickScreen(ScreenManager mgr, Store dataStore) 
+    public NickScreen(AppStateManager mgr, Store dataStore) 
     {
-        super(mgr);
-        m_dataStore     = dataStore;
-        m_nickChanged   = false;
-        m_buttonPressed = false;
+        super();
+        m_dataStore         = dataStore;
+        m_nickChanged       = false;
+        m_buttonPressed     = false;
+        m_hasEntranceAnim   = true;
+        m_hasExitAnim       = true;
+        m_mgr               = mgr;
     }
     
     public void fetchNick()
@@ -52,6 +57,15 @@ public class NickScreen
         m_textField = screen.findNiftyControl("txtfld.username", TextField.class);
     }
        
+    public void onStart_impl()
+    {
+        m_mgr.attach(this);
+    }
+    
+    public void onEnd_impl()
+    {
+        m_mgr.detach(this);
+    }
     
     /**
      *  \brief  if the button has been pressed then it writes any necessary
@@ -63,6 +77,8 @@ public class NickScreen
     {
         if(m_buttonPressed)
         {
+            // this will allow us to do all the fun work in one frame, and then
+            // transition screens in the next frame
             if(m_nickChanged)
             {
                 s_logger.log(Level.INFO, "writing updated nick to data store");
@@ -74,7 +90,7 @@ public class NickScreen
                 return;
             }
             
-            m_mgr.advance("game");
+            m_nifty.gotoScreen("game");
         }
             
     }

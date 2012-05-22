@@ -29,7 +29,7 @@ import de.lessvoid.nifty.controls.Label;
 
 import edu.mit.lids.ares.forestrunner.data.Store;
 import edu.mit.lids.ares.forestrunner.gui.ScreenBase;
-import edu.mit.lids.ares.forestrunner.gui.ScreenManager;
+import edu.mit.lids.ares.forestrunner.gui.screens.*;
 import edu.mit.lids.ares.forestrunner.screens.*;
 
 public abstract class Game extends Application
@@ -58,11 +58,11 @@ public abstract class Game extends Application
     
     protected Nifty                           m_nifty;
     protected Map<String,ScreenController>    m_screens;
+    protected Map<String,ScreenBase>          m_screens2;
     protected State                           m_state;
     protected SystemContext                   m_system;
 
     protected Store                           m_dataStore;
-    protected ScreenManager                   m_screenMgr;
     
     protected Map<String,Integer>             m_params;
     protected FloorPatch[][]                  m_patches;
@@ -155,6 +155,7 @@ public abstract class Game extends Application
     public void initConstants()
     {
         m_screens = new HashMap<String,ScreenController>();
+        m_screens2= new HashMap<String,ScreenBase>();
         m_params  = new HashMap<String,Integer>();
         m_state   = State.CRASHED;
         
@@ -485,8 +486,6 @@ public abstract class Game extends Application
     
     public void setupNifty()
     {
-        m_screenMgr = new ScreenManager(m_nifty,m_dataStore);
-        
         m_screens.put("game",       new GameScreen(this));
         m_screens.put("highscore",  new HighScoreScreen(this));
         m_screens.put("countdown",  new CountdownScreen(this));
@@ -494,11 +493,23 @@ public abstract class Game extends Application
         m_screens.put("crash",      new CrashScreen(this));
         m_screens.put("advanced",   new AdvancedScreen(this));
         
+        m_screens2.put("disclaimer", new DisclaimerScreen());
+        m_screens2.put("loading",    new LoadingScreen(stateManager));
+        m_screens2.put("nick",       new NickScreen(stateManager, m_dataStore));
+        
         for( ScreenController sc : m_screens.values() )
             m_nifty.registerScreenController(sc);
 
         for( String screenName : m_screens.keySet() )
             m_nifty.addXml( "Interface/Nifty/Screens/" + screenName + ".xml" );
+        
+        for( ScreenController sc : m_screens2.values() )
+            m_nifty.registerScreenController(sc);
+
+        for( String screenName : m_screens2.keySet() )
+            m_nifty.addXml( "Interface/Nifty/Screens/" + screenName + ".xml" );
+        
+        m_nifty.gotoScreen("loading");
     }
     
     public void setupCamera()
@@ -546,8 +557,6 @@ public abstract class Game extends Application
     
     public void simpleUpdate(float tpf) 
     {
-        m_screenMgr.update(tpf);
-        
         // if we're paused or crashed don't update the scene
         if(m_state != State.RUNNING)
             return;
