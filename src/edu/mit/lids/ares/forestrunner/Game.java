@@ -55,7 +55,6 @@ public abstract class Game extends Application
     // stuff taken from jme.app.SimpleApplication
     protected Node          rootNode    = new Node("Root Node");
     protected Node          guiNode     = new Node("Gui Node");
-    protected FlyByCamera   flyCam;
     protected boolean       showSettings= true;
     
     protected Nifty                           m_nifty;
@@ -494,8 +493,6 @@ public abstract class Game extends Application
     public void setupCamera()
     {
         // disable the fly cam
-        flyCam.setEnabled(false);
-        flyCam.setDragToRotate(true);
         inputManager.setCursorVisible(true);
         
         // changes the camera "zoom" by setting the viewing angle to 20deg
@@ -701,12 +698,6 @@ public abstract class Game extends Application
         guiNode.setCullHint(CullHint.Never);
         viewPort.attachScene(rootNode);
         guiViewPort.attachScene(guiNode);
-
-        if (inputManager != null) {
-            flyCam = new FlyByCamera(cam);
-            flyCam.setMoveSpeed(1f); // odd to set this here but it did it before
-            //stateManager.getState(FlyCamAppState.class).setCamera( flyCam );
-        }
 
         // call user code
         simpleInitApp();
