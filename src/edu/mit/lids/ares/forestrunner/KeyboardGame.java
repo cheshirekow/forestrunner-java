@@ -126,9 +126,9 @@ public abstract class KeyboardGame extends Game
     }
     
     @Override
-    public void simpleInitApp() 
+    public void initialize()
     {
-        super.simpleInitApp();
+        super.initialize();
         initKeys();
     }
     

@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.jme3.app.Application;
-import com.jme3.input.FlyByCamera;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.PointLight;
 import com.jme3.material.Material;
@@ -187,7 +186,6 @@ public abstract class Game extends Application
         
         m_system            = ctx;
         m_advancedSettings  = new AdvancedSettings();
-        init();
     }
     
     @Override
@@ -469,6 +467,7 @@ public abstract class Game extends Application
         
         // create a data store
         m_dataStore = Store.createStore(m_system);
+        m_dataStore.init();
         m_screenMgr = new ScreenManager(m_nifty,m_dataStore);
         
         m_screens.put("game",       new GameScreen(this));
@@ -506,22 +505,6 @@ public abstract class Game extends Application
         
     }
 
-    public void simpleInitApp() 
-    {
-        viewPort.setBackgroundColor(new ColorRGBA(.9f,.9f,.9f,1f));
-        
-        initSceneGraph();
-        initStaticMeshes();
-        initPatches();
-        setupLights();
-        setupNifty();
-        setupCamera();
-        setupProcessor();
-        initRun();
-        
-        changeAdvancedSettings(AdvancedSettings.s_default);
-    }
-    
     protected void setupProcessor()
     {
         m_fpp=new FilterPostProcessor(assetManager);
@@ -700,7 +683,20 @@ public abstract class Game extends Application
         guiViewPort.attachScene(guiNode);
 
         // call user code
-        simpleInitApp();
+        init();
+        
+        viewPort.setBackgroundColor(new ColorRGBA(.9f,.9f,.9f,1f));
+        
+        initSceneGraph();
+        initStaticMeshes();
+        initPatches();
+        setupLights();
+        setupNifty();
+        setupCamera();
+        setupProcessor();
+        initRun();
+        
+        changeAdvancedSettings(AdvancedSettings.s_default);
     }
 
     @Override
@@ -712,9 +708,6 @@ public abstract class Game extends Application
 
         float tpf = timer.getTimePerFrame() * speed;
 
-        // update states
-        stateManager.update(tpf);
-
         // simple update and root node
         simpleUpdate(tpf);
  
@@ -725,9 +718,7 @@ public abstract class Game extends Application
         guiNode.updateGeometricState();
 
         // render states
-        stateManager.render(renderManager);
         renderManager.render(tpf, context.isRenderable());
-        stateManager.postRender();        
     }
     
 }
