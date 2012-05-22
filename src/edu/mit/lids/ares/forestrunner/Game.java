@@ -142,7 +142,17 @@ public abstract class Game extends Application
         m_state = state;
     }
     
-    protected void init()
+    public void initViews()
+    {
+        guiNode.setQueueBucket(Bucket.Gui);
+        guiNode.setCullHint(CullHint.Never);
+        viewPort.attachScene(rootNode);
+        guiViewPort.attachScene(guiNode);
+        
+        viewPort.setBackgroundColor(new ColorRGBA(.9f,.9f,.9f,1f));
+    }
+    
+    public void initConstants()
     {
         m_screens = new HashMap<String,ScreenController>();
         m_params  = new HashMap<String,Integer>();
@@ -455,7 +465,7 @@ public abstract class Game extends Application
         System.out.println("initialized a new run");
     }
     
-    public void setupNifty()
+    public void initNifty()
     {
         NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(assetManager,
                 inputManager,
@@ -468,6 +478,13 @@ public abstract class Game extends Application
         // create a data store
         m_dataStore = Store.createStore(m_system);
         m_dataStore.init();
+        
+        // attach the nifty display to the gui view port as a processor
+        guiViewPort.addProcessor(niftyDisplay);
+    }
+    
+    public void setupNifty()
+    {
         m_screenMgr = new ScreenManager(m_nifty,m_dataStore);
         
         m_screens.put("game",       new GameScreen(this));
@@ -482,11 +499,6 @@ public abstract class Game extends Application
 
         for( String screenName : m_screens.keySet() )
             m_nifty.addXml( "Interface/Nifty/Screens/" + screenName + ".xml" );
-        
-        // attach the nifty display to the gui view port as a processor
-        guiViewPort.addProcessor(niftyDisplay);
-        
-        
     }
     
     public void setupCamera()
@@ -677,23 +689,17 @@ public abstract class Game extends Application
     public void initialize() {
         super.initialize();
 
-        guiNode.setQueueBucket(Bucket.Gui);
-        guiNode.setCullHint(CullHint.Never);
-        viewPort.attachScene(rootNode);
-        guiViewPort.attachScene(guiNode);
-
         // call user code
-        init();
-        
-        viewPort.setBackgroundColor(new ColorRGBA(.9f,.9f,.9f,1f));
-        
+        initViews();
+        initNifty();
+        initConstants();
         initSceneGraph();
         initStaticMeshes();
         initPatches();
         setupLights();
-        setupNifty();
         setupCamera();
         setupProcessor();
+        setupNifty();
         initRun();
         
         changeAdvancedSettings(AdvancedSettings.s_default);
@@ -708,6 +714,9 @@ public abstract class Game extends Application
 
         float tpf = timer.getTimePerFrame() * speed;
 
+        // update states
+        stateManager.update(tpf);
+        
         // simple update and root node
         simpleUpdate(tpf);
  
@@ -718,7 +727,9 @@ public abstract class Game extends Application
         guiNode.updateGeometricState();
 
         // render states
+        stateManager.render(renderManager);
         renderManager.render(tpf, context.isRenderable());
+        stateManager.postRender();    
     }
     
 }

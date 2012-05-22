@@ -35,8 +35,8 @@ public class ScreenManager
         for( String screenName : m_screens.keySet() )
             m_nifty.addXml( "Interface/Nifty/Screens/" + screenName + ".xml" );
         
-        m_activeScreen = m_screens.get("disclaimer");
-        m_nifty.gotoScreen("disclaimer");
+        m_activeScreen = m_screens.get("loading");
+        m_nifty.gotoScreen("loading");
     }
     
     public void update(float tpf)

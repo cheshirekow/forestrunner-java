@@ -38,6 +38,7 @@ public class LoadingScreen
             // in phase 0 we manually bind all of the screens
             case 0:
             {
+                /*
                 if( m_screens.size() > 0 )
                 {
                     String screenId = m_screens.remove();
@@ -49,6 +50,7 @@ public class LoadingScreen
                     sc.bind(m_nifty, screen);
                 }
                 else
+                */
                     m_phase++;
                 
                 break;
@@ -63,7 +65,7 @@ public class LoadingScreen
             }
             
             case s_totalPhases:
-                m_mgr.advance("nick");
+                m_mgr.advance("disclaimer");
                 break;
                 
             default:
