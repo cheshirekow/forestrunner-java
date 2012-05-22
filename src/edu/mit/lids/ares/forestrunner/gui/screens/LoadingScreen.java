@@ -53,50 +53,50 @@ public class LoadingScreen
     {
         switch(m_step)
         {
-            case 10:
+            case   1:
                 m_game.initConstants();
                 break;
                 
-            case 15:
+            case   2:
                 m_game.setupCamera();
                 break;
                 
-            case 20:
+            case   3:
                 m_game.initSceneGraph();
                 break;
                 
-            case 30:
+            case   4:
                 m_game.initStaticMeshes();
                 break;
                 
-            case 40:
+            case   5:
                 m_game.initPatches();
                 break;
                 
-            case 50:
+            case   6:
                 m_game.setupLights();
                 break;
                 
-            case 60:
+            case   7:
                 break;
                 
-            case 70:
+            case   8:
                 m_game.setupProcessor();
                 break;
                 
-            case 80:
+            case   9:
                 m_game.setupNifty();
                 break;
                 
-            case 90:
+            case  10:
                 m_game.initRun();
                 break;
                 
-            case 100:
+            case  11:
                 m_game.changeAdvancedSettings(AdvancedSettings.s_default);
                 break;
                 
-            case s_totalSteps:
+            case  12:
                 m_nifty.gotoScreen("disclaimer");
                 break;
                 
