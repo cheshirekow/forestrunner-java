@@ -1,7 +1,5 @@
 package edu.mit.lids.ares.forestrunner.gui.screens;
 
-import com.jme3.app.state.AppStateManager;
-
 import de.lessvoid.nifty.screen.ScreenController;
 
 import edu.mit.lids.ares.forestrunner.Game;
@@ -13,16 +11,9 @@ public class PlayScreen
     implements 
         ScreenController
 {
-    private AppStateManager m_mgr;
-    private Game            m_game;
-    
-    public PlayScreen( Game game, AppStateManager mgr )
+    public PlayScreen( Game game )
     {
-        super();
-        m_mgr   = mgr;
-        m_game  = game;
-        m_hasEntranceAnim   = false;
-        m_hasExitAnim       = false;
+        super(game,false,false);
     }
     
     @Override

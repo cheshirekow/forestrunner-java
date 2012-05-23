@@ -11,6 +11,8 @@ import com.jme3.renderer.RenderManager;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import edu.mit.lids.ares.forestrunner.Game;
+import edu.mit.lids.ares.forestrunner.data.Store;
 
 /**
  *  \brief common interface for all of the gui screens
@@ -31,12 +33,18 @@ public class ScreenBase
     protected Nifty     m_nifty     = null;
     protected Screen    m_screen    = null;
     
-    /**
-     *  @brief constructor
-     */
-    public ScreenBase()
+    protected Game              m_game      = null;
+    protected AppStateManager   m_mgr       = null;
+    protected Store             m_dataStore = null;
+    
+    public ScreenBase(Game game, boolean hasEntranceAnim, boolean hasExitAnim)
     {
+        m_hasEntranceAnim   = hasEntranceAnim;
+        m_hasExitAnim       = hasExitAnim;
         
+        m_game      = game;
+        m_mgr       = game.getStateManager();
+        m_dataStore = game.getDataStore();
     }
     
     /**

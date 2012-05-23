@@ -1,7 +1,5 @@
 package edu.mit.lids.ares.forestrunner.gui.screens;
 
-import com.jme3.app.state.AppStateManager;
-
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
@@ -17,27 +15,19 @@ public class LoadingScreen
         ScreenController
 {
     private ProgressbarControl  m_pb; 
-    private int                 m_processed;
     private int                 m_total;
     private int                 m_step;
-    private static final int    s_totalSteps = 500;
-    private AppStateManager     m_mgr;
-    private Game                m_game;
+    private static final int    s_totalSteps = 20;
     
-    public LoadingScreen( Game game, AppStateManager mgr )
+    public LoadingScreen( Game game )
     {
-        super();
-        m_game              = game;
-        m_mgr               = mgr;
-        m_hasEntranceAnim   = false;
-        m_hasExitAnim       = false;
+        super(game,false,false);
     }
     
     @Override
     public void onStart_impl()
     {
         m_mgr.attach(this);
-        m_processed = 0;
         m_step      = 0;
         m_total     = s_totalSteps;
     }
@@ -100,7 +90,7 @@ public class LoadingScreen
                 m_game.changeAdvancedSettings(AdvancedSettings.s_default);
                 break;
                 
-            case  12:
+            case  20:
                 m_nifty.gotoScreen("disclaimer");
                 break;
                 
@@ -109,7 +99,7 @@ public class LoadingScreen
         }
         
         m_step++;
-        m_pb.setProgress( (m_processed + m_step) / (float)m_total );
+        m_pb.setProgress( (m_step) / (float)m_total );
     }
     
     @Override

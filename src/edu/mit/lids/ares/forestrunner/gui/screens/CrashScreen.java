@@ -1,15 +1,14 @@
 package edu.mit.lids.ares.forestrunner.gui.screens;
 
+import edu.mit.lids.ares.forestrunner.Game;
 import edu.mit.lids.ares.forestrunner.gui.ScreenBase;
 
 public class CrashScreen
     extends ScreenBase
 {
-    public CrashScreen()
+    public CrashScreen(Game game)
     {
-        super();
-        m_hasEntranceAnim   = true;
-        m_hasExitAnim       = true;
+        super(game,true,true);
     }
     
     @Override

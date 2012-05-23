@@ -1,43 +1,28 @@
 package edu.mit.lids.ares.forestrunner.gui.screens;
 
-import com.jme3.app.state.AppStateManager;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.Slider;
 import de.lessvoid.nifty.controls.SliderChangedEvent;
-import de.lessvoid.nifty.elements.Element;
-import de.lessvoid.nifty.elements.render.PanelRenderer;
-import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.screen.Screen;
-import de.lessvoid.nifty.tools.Color;
 import edu.mit.lids.ares.forestrunner.Game;
 import edu.mit.lids.ares.forestrunner.Game.State;
-import edu.mit.lids.ares.forestrunner.data.Store;
 import edu.mit.lids.ares.forestrunner.gui.ScreenBase;
-import edu.mit.lids.ares.forestrunner.screens.ColorMatrix;
 
 public class GameScreen
     extends
         ScreenBase
 {
-    Game            m_game;
-    Store           m_dataStore;
-    AppStateManager m_mgr;
     boolean         m_resumeImmediately;
     
     //ColorMatrix cm;
     //String[][] colors;
     
-    public GameScreen(Game game, AppStateManager mgr, Store dataStore) 
+    public GameScreen(Game game) 
     {
-        super();
-        m_game              = game;
-        m_mgr               = mgr;
-        m_dataStore         = dataStore;
-        m_hasEntranceAnim   = true;
-        m_hasExitAnim       = true;
+        super(game,true,true);
         m_resumeImmediately = false;
         
         //cm                  = new ColorMatrix(game);

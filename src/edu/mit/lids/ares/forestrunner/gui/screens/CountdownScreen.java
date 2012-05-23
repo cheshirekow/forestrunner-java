@@ -10,16 +10,12 @@ public class CountdownScreen
     extends
         ScreenBase
 {
-    Game        m_game;
     Screen[]    m_screens;
     
     public CountdownScreen(Game game)
     {
-        super();
+        super(game,true,true);
         m_screens           = new Screen[3];
-        m_game              = game;
-        m_hasEntranceAnim   = true;
-        m_hasExitAnim       = true;
     }
     
     @Override

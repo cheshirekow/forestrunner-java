@@ -2,8 +2,6 @@ package edu.mit.lids.ares.forestrunner.gui.screens;
 
 import java.util.logging.Level;
 
-import com.jme3.app.state.AppStateManager;
-
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.Button;
@@ -11,9 +9,8 @@ import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.controls.TextFieldChangedEvent;
 import de.lessvoid.nifty.screen.Screen;
-import de.lessvoid.nifty.screen.ScreenController;
 
-import edu.mit.lids.ares.forestrunner.data.Store;
+import edu.mit.lids.ares.forestrunner.Game;
 import edu.mit.lids.ares.forestrunner.gui.ScreenBase;
 
 public class NickScreen
@@ -24,18 +21,12 @@ public class NickScreen
     private Boolean     m_buttonPressed;
     private Button      m_btn;
     private TextField   m_textField;
-    private Store       m_dataStore;
-    private AppStateManager m_mgr;
     
-    public NickScreen(AppStateManager mgr, Store dataStore) 
+    public NickScreen(Game game) 
     {
-        super();
-        m_dataStore         = dataStore;
+        super(game,true,true);
         m_nickChanged       = false;
         m_buttonPressed     = false;
-        m_hasEntranceAnim   = true;
-        m_hasExitAnim       = true;
-        m_mgr               = mgr;
     }
     
     public void fetchNick()

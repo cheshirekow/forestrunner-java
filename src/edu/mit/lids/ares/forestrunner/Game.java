@@ -142,6 +142,11 @@ public abstract class Game extends Application
         m_state = state;
     }
     
+    public Store getDataStore()
+    {
+        return m_dataStore;
+    }
+    
     public Game(SystemContext ctx)
     {
         super();
@@ -361,13 +366,12 @@ public abstract class Game extends Application
         // attach the nifty display to the gui view port as a processor
         guiViewPort.addProcessor(niftyDisplay);
         
-        LoadingScreen loadingScreen = new LoadingScreen(this,stateManager);
+        LoadingScreen loadingScreen = new LoadingScreen(this);
+
         m_nifty.registerScreenController(loadingScreen);
         m_nifty.addXml("Interface/Nifty/Screens/loading.xml");
         m_screens2.put("loading", loadingScreen);
-        //m_screens2.put("loading",    new LoadingScreen(stateManager));
-        //m_nifty.registerScreenController(m_screens.get("loading"));
-        //m_nifty.addXml("Interface/Nifty/Screens/loading.xml");
+
         
         m_nifty.gotoScreen("loading");
     }
@@ -615,17 +619,17 @@ public abstract class Game extends Application
         ScreenBase loadingScreen = m_screens2.get("loading");
         m_screens2.remove("loading");
         
+        
         m_screens.put("highscore",  new HighScoreScreen(this));
         
-        
-        m_screens2.put("disclaimer", new DisclaimerScreen());
+        m_screens2.put("disclaimer", new DisclaimerScreen(this));
         //m_screens2.put("loading",    new LoadingScreen(stateManager));
-        m_screens2.put("nick",       new NickScreen(stateManager, m_dataStore));
-        m_screens2.put("game",       new GameScreen(this,stateManager,m_dataStore));
+        m_screens2.put("nick",       new NickScreen(this));
+        m_screens2.put("game",       new GameScreen(this));
         m_screens2.put("countdown",  new CountdownScreen(this));
-        m_screens2.put("play",       new PlayScreen(this, stateManager));
-        m_screens2.put("crash",      new CrashScreen());
-        m_screens2.put("advanced",   new AdvancedScreen(this,stateManager,m_dataStore));
+        m_screens2.put("play",       new PlayScreen(this));
+        m_screens2.put("crash",      new CrashScreen(this));
+        m_screens2.put("advanced",   new AdvancedScreen(this));
         
         
         for( ScreenController sc : m_screens.values() )

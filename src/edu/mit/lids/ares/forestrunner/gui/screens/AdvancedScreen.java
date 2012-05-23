@@ -1,37 +1,24 @@
 package edu.mit.lids.ares.forestrunner.gui.screens;
 
-import com.jme3.app.state.AppStateManager;
-
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.CheckBox;
 
 import edu.mit.lids.ares.forestrunner.AdvancedSettings;
 import edu.mit.lids.ares.forestrunner.Game;
-import edu.mit.lids.ares.forestrunner.data.Store;
 import edu.mit.lids.ares.forestrunner.gui.ScreenBase;
 
 public class AdvancedScreen
     extends ScreenBase
 {
-    Game                m_game;
-    Store               m_dataStore;
-    AppStateManager     m_mgr;
     boolean             m_shouldSave;
     boolean             m_shouldExit;
     
-    public AdvancedScreen( Game game, AppStateManager mgr, Store dataStore )
+    public AdvancedScreen( Game game )
     {
-        super();
-        m_hasEntranceAnim   = true;
-        m_hasExitAnim       = true;
-        
+        super(game,true,true);
         m_shouldSave   = false;
         m_shouldExit     = false;
-        
-        m_game          = game;
-        m_dataStore     = dataStore;
-        m_mgr           = mgr;
     }
     
     @Override

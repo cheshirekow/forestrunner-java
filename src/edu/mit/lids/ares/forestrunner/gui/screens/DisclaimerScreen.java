@@ -5,6 +5,7 @@ import java.util.logging.Level;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.screen.ScreenController;
+import edu.mit.lids.ares.forestrunner.Game;
 import edu.mit.lids.ares.forestrunner.gui.ScreenBase;
 
 public class DisclaimerScreen 
@@ -13,11 +14,9 @@ public class DisclaimerScreen
     implements 
         ScreenController
 {
-    public DisclaimerScreen( )
+    public DisclaimerScreen(Game game )
     {
-        super();
-        m_hasEntranceAnim   = true;
-        m_hasExitAnim       = true;
+        super(game,true,true);
     }
     
    
