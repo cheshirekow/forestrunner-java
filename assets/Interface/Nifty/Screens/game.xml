@@ -5,7 +5,7 @@
 
   
   <!--  the game screen, displays instructions and settings -->
-  <screen id="game" controller="edu.mit.lids.ares.forestrunner.screens.GameScreen">
+  <screen id="game" controller="edu.mit.lids.ares.forestrunner.gui.screens.GameScreen">
     <layer id="layer" backgroundColor="#0000" childLayout="center">
         <panel id="pnl.game" height="90%" width="90%" align="center" valign="center" childLayout="vertical">
             <effect>

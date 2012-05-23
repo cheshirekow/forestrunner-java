@@ -1,4 +1,6 @@
-package edu.mit.lids.ares.forestrunner.screens;
+package edu.mit.lids.ares.forestrunner.gui.screens;
+
+import com.jme3.app.state.AppStateManager;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
@@ -9,71 +11,71 @@ import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.PanelRenderer;
 import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.screen.Screen;
-import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.Color;
 import edu.mit.lids.ares.forestrunner.Game;
 import edu.mit.lids.ares.forestrunner.Game.State;
-import java.util.Properties;
+import edu.mit.lids.ares.forestrunner.data.Store;
+import edu.mit.lids.ares.forestrunner.gui.ScreenBase;
+import edu.mit.lids.ares.forestrunner.screens.ColorMatrix;
 
-public class GameScreen implements ScreenController
+public class GameScreen
+    extends
+        ScreenBase
 {
-    Game    m_game;
-    Nifty   m_nifty;
-    Screen  m_screen;
-    Boolean m_resumeImmediately;
-    ColorMatrix cm;
-    String[][] colors;
+    Game            m_game;
+    Store           m_dataStore;
+    AppStateManager m_mgr;
+    boolean         m_resumeImmediately;
     
-    public GameScreen(Game game)
+    //ColorMatrix cm;
+    //String[][] colors;
+    
+    public GameScreen(Game game, AppStateManager mgr, Store dataStore) 
     {
+        super();
         m_game              = game;
+        m_mgr               = mgr;
+        m_dataStore         = dataStore;
+        m_hasEntranceAnim   = true;
+        m_hasExitAnim       = true;
         m_resumeImmediately = false;
-        cm                  = new ColorMatrix(game);
+        
+        //cm                  = new ColorMatrix(game);
     }
     
     @Override
     public void bind(Nifty nifty, Screen screen)
     {
-        System.out.println("bind( " + screen.getScreenId() + ")");
-        m_nifty     = nifty;
-        m_screen    = screen;
-
+        super.bind(nifty,screen);
+        
         // select "global" or "personal"
-        if(false)
-        {
-            colors = cm.getColors("global");
-            String elem = "";
-            Element e = m_screen.findElementByName("v10d01");
-            for(int i=10; i>0; i--){
-                for(int j=1; j<11; j++){
-                    if(i==10 && j==10){
-                        elem = "v"+i+"d"+j;
-                    }
-                    else if(i==10 && j<10){
-                        elem = "v"+i+"d0"+j;
-                    }
-                    else if(i<10 && j==10){
-                        elem = "v0"+i+"d"+j;
-                    }
-                    else{
-                        elem = "v0"+i+"d0"+j;
-                    }
-                    e = m_screen.findElementByName(elem);
-                    e.getRenderer(PanelRenderer.class).setBackgroundColor(new Color(colors[i-1][j-1]));
+        /*
+        colors = cm.getColors("global");
+        String elem = "";
+        Element e = m_screen.findElementByName("v10d01");
+        for(int i=10; i>0; i--){
+            for(int j=1; j<11; j++){
+                if(i==10 && j==10){
+                    elem = "v"+i+"d"+j;
                 }
+                else if(i==10 && j<10){
+                    elem = "v"+i+"d0"+j;
+                }
+                else if(i<10 && j==10){
+                    elem = "v0"+i+"d"+j;
+                }
+                else{
+                    elem = "v0"+i+"d0"+j;
+                }
+                e = m_screen.findElementByName(elem);
+                e.getRenderer(PanelRenderer.class).setBackgroundColor(new Color(colors[i-1][j-1]));
             }
         }
+        */
     }
-
+    
     @Override
-    public void onEndScreen()
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void onStartScreen()
+    public void onStart_impl()
     {
         m_resumeImmediately = false;
         
@@ -86,6 +88,17 @@ public class GameScreen implements ScreenController
             slider.setValue( m_game.getParam(param) );
         }
     }
+    
+    @Override
+    public void onEnd_impl()
+    {
+        if( m_resumeImmediately )
+        {
+            System.out.println("Game is just paused, resuming now");
+            m_game.setState(State.RUNNING);
+        }
+    }
+    
     
     @NiftyEventSubscriber(pattern="game.btn.*")
     public void onButton( String id, ButtonClickedEvent event )
@@ -101,6 +114,7 @@ public class GameScreen implements ScreenController
         {
             m_nifty.gotoScreen("advanced");
         }
+        /*
         else if( id.compareTo("game.btn.global")==0 )
         {
             colors = cm.getColors("global");
@@ -149,6 +163,7 @@ public class GameScreen implements ScreenController
                 }
             }
         }
+        */
         else
         {
             if(m_game.getState() == State.PAUSED)
@@ -164,14 +179,6 @@ public class GameScreen implements ScreenController
         }
     }
     
-    public void onEndScreenEffect()
-    {
-        if( m_resumeImmediately )
-        {
-            System.out.println("Game is just paused, resuming now");
-            m_game.setState(State.RUNNING);
-        }
-    }
     
     @NiftyEventSubscriber(pattern="game.sldr.*")
     public void onSlider( String id, SliderChangedEvent event )
@@ -188,16 +195,20 @@ public class GameScreen implements ScreenController
             }
         }
     }
-	public void clicked(String id){
-        	String vel = id.substring(1,3);
-        	String den = id.substring(4);
-        	m_game.setParam("velocity", Integer.parseInt(vel));
-        	m_game.setParam("density", Integer.parseInt(den));
-        	System.out.println("velocity="+vel+" density="+den);
-        
-        	Element e = m_screen.findElementByName("propSp");
-        	e.getRenderer(TextRenderer.class).setText("Speed: " + vel);
-        	e = m_screen.findElementByName("propDen");
-        	e.getRenderer(TextRenderer.class).setText("Density: " + den);
-        }
+    
+    
+    /*
+    public void clicked(String id){
+        String vel = id.substring(1,3);
+        String den = id.substring(4);
+        m_game.setParam("velocity", Integer.parseInt(vel));
+        m_game.setParam("density", Integer.parseInt(den));
+        System.out.println("velocity="+vel+" density="+den);
+    
+        Element e = m_screen.findElementByName("propSp");
+        e.getRenderer(TextRenderer.class).setText("Speed: " + vel);
+        e = m_screen.findElementByName("propDen");
+        e.getRenderer(TextRenderer.class).setText("Density: " + den);
+    }
+    */
 }

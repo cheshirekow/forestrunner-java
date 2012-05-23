@@ -609,7 +609,7 @@ public abstract class Game extends Application
     
     public void setupNifty()
     {
-        m_screens.put("game",       new GameScreen(this));
+        m_screens.put("game",       new GameScreen(this,stateManager,m_dataStore));
         m_screens.put("highscore",  new HighScoreScreen(this));
         m_screens.put("crash",      new CrashScreen(this));
         m_screens.put("advanced",   new AdvancedScreen(this));

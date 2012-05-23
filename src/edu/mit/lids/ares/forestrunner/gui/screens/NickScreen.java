@@ -19,8 +19,6 @@ import edu.mit.lids.ares.forestrunner.gui.ScreenBase;
 public class NickScreen
     extends
         ScreenBase
-    implements 
-        ScreenController
 {
     private Boolean     m_nickChanged;
     private Boolean     m_buttonPressed;
