@@ -364,6 +364,7 @@ public abstract class Game extends Application
         LoadingScreen loadingScreen = new LoadingScreen(this,stateManager);
         m_nifty.registerScreenController(loadingScreen);
         m_nifty.addXml("Interface/Nifty/Screens/loading.xml");
+        m_screens2.put("loading", loadingScreen);
         //m_screens2.put("loading",    new LoadingScreen(stateManager));
         //m_nifty.registerScreenController(m_screens.get("loading"));
         //m_nifty.addXml("Interface/Nifty/Screens/loading.xml");
@@ -609,6 +610,11 @@ public abstract class Game extends Application
     
     public void setupNifty()
     {
+        // remove loading screen from the list so we dont attempt to
+        // reinitialize it
+        ScreenBase loadingScreen = m_screens2.get("loading");
+        m_screens2.remove("loading");
+        
         m_screens.put("highscore",  new HighScoreScreen(this));
         m_screens.put("advanced",   new AdvancedScreen(this));
         
@@ -633,6 +639,8 @@ public abstract class Game extends Application
         for( String screenName : m_screens2.keySet() )
             m_nifty.addXml( "Interface/Nifty/Screens/" + screenName + ".xml" );
 
+        // add loading screen back to the list
+        m_screens2.put("loading",loadingScreen);
         //m_nifty.gotoScreen("loading");
     }
     
