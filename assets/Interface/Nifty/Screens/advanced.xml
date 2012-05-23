@@ -5,12 +5,12 @@
   
   
   <!--  the advanced settings, displays instructions and settings -->
-  <screen id="advanced" controller="edu.mit.lids.ares.forestrunner.screens.AdvancedScreen">
+  <screen id="advanced" controller="edu.mit.lids.ares.forestrunner.gui.screens.AdvancedScreen">
     <layer id="layer" backgroundColor="#0000" childLayout="center">
         <panel id="pnl.advanced" style="nifty-panel-80" height="90%" width="90%" align="center" valign="center" childLayout="vertical">
             <effect>
-              <onStartScreen name="move" mode="in" direction="top" length="300" startDelay="0" inherit="true"/>
-              <onEndScreen name="move" mode="out" direction="bottom" length="300" startDelay="0" inherit="true"/>
+                <onStartScreen name="move" mode="in"  direction="top"    length="300" startDelay="0" inherit="true" onEndEffect="onEntranceFinished()" />
+                <onEndScreen   name="move" mode="out" direction="bottom" length="300" startDelay="0" inherit="true" onStartEffect="onExitStarted()"    />
             </effect>
             <panel id="pnl.center" width="90%" childLayout="vertical" align="center">
                 <panel id="pnl.chk1" width="400px" childLayout="horizontal" align="right">

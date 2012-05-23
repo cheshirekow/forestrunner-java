@@ -616,7 +616,7 @@ public abstract class Game extends Application
         m_screens2.remove("loading");
         
         m_screens.put("highscore",  new HighScoreScreen(this));
-        m_screens.put("advanced",   new AdvancedScreen(this));
+        
         
         m_screens2.put("disclaimer", new DisclaimerScreen());
         //m_screens2.put("loading",    new LoadingScreen(stateManager));
@@ -625,6 +625,7 @@ public abstract class Game extends Application
         m_screens2.put("countdown",  new CountdownScreen(this));
         m_screens2.put("play",       new PlayScreen(this, stateManager));
         m_screens2.put("crash",      new CrashScreen());
+        m_screens2.put("advanced",   new AdvancedScreen(this,stateManager,m_dataStore));
         
         
         for( ScreenController sc : m_screens.values() )
