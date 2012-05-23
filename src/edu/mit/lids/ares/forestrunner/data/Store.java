@@ -1,8 +1,10 @@
 package edu.mit.lids.ares.forestrunner.data;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import edu.mit.lids.ares.forestrunner.AdvancedSettings;
+import edu.mit.lids.ares.forestrunner.Game;
 import edu.mit.lids.ares.forestrunner.SystemContext;
 
 /**
@@ -13,53 +15,76 @@ import edu.mit.lids.ares.forestrunner.SystemContext;
  */
 public abstract class Store
 {
+    protected Map<String,Integer>   m_intMap;
+    protected Map<String,Boolean>   m_boolMap;
+    protected Map<String,String>    m_stringMap;
+    
     // advanced settings (i.e. prefs)
     protected AdvancedSettings  m_advancedSettings;
-    
-    // config stuff
-    protected String            m_nick;
-    protected String            m_userHash;
-    
-    // game paramters
-    protected int               m_radius;
-    protected int               m_density;
-    protected int               m_speed;
     
     /**
      *  @brief  just sets some defaults
      */
     public Store()
     {
-        m_advancedSettings  = new AdvancedSettings();
-        m_nick      = "Anon";
-        m_userHash  = "";
+        
     }
     
     /**
      *  @brief  make necessary database/network connections, build database
      *          files if they do not exist, fetch mem-stored values
      */
-    public void init(){}
-    
-    /**
-     *  @return user's saved nickname, or the default if there is not one
-     *          saved
-     */
-    public String getNick()
+    public void init()
     {
-        //TODO: override in derived classes to retrieve nickname from
-        // backend
-        return m_nick;
+        m_intMap    = new HashMap<String,Integer>();
+        m_boolMap   = new HashMap<String,Boolean>();
+        m_stringMap = new HashMap<String,String>();
+        
+        m_intMap.put("density", 1);
+        m_intMap.put("radius",  1);
+        m_intMap.put("speed",   1);
+        m_intMap.put("version", Game.s_version);
+        
+        for( String key : AdvancedSettings.parameters)
+            m_boolMap.put(key, false);
+        
+        m_stringMap.put("nick", "Anon");
+        m_stringMap.put("hash", "");
     }
-
-    /**
-     *  @brief  stores a new nickname for the user
-     *  @param  nick the new nickname
-     */
-    public void setNick(String nick)
+    
+    public void sync()
     {
-        m_nick = nick;
-        //TODO: override in base classes to store new nickname in backend
+        
+    }
+    
+    public Integer getInteger(String key)
+    {
+        return m_intMap.get(key);
+    }
+    
+    public Boolean getBoolean(String key)
+    {
+        return m_boolMap.get(key);
+    }
+    
+    public String getString(String key)
+    {
+        return m_stringMap.get(key);
+    }
+    
+    public void setInteger(String key, Integer value)
+    {
+        m_intMap.put(key,value);
+    }
+    
+    public void setBoolean(String key, Boolean value)
+    {
+        m_boolMap.put(key,value);
+    }
+    
+    public void setString(String key, String value)
+    {
+        m_stringMap.put(key,value);
     }
     
     /**

@@ -42,7 +42,7 @@ public class NickScreen
     
     public void fetchNick()
     {
-        m_textField.setText(m_dataStore.getNick());
+        m_textField.setText(m_dataStore.getString("nick"));
     }
     
     /**
@@ -60,6 +60,7 @@ public class NickScreen
     public void onStart_impl()
     {
         m_mgr.attach(this);
+        m_textField.setText(m_dataStore.getString("nick"));
     }
     
     public void onEnd_impl()
@@ -77,31 +78,27 @@ public class NickScreen
     {
         if(m_buttonPressed)
         {
+            m_textField.disable();
             // this will allow us to do all the fun work in one frame, and then
             // transition screens in the next frame
             if(m_nickChanged)
             {
                 s_logger.log(Level.INFO, "writing updated nick to data store");
                 
-                // TODO: write change to data store
+                m_dataStore.setString("nick", m_textField.getText());
+                m_dataStore.sync();
                 m_nickChanged = false;
                 
                 // dont do anything more until we render again
                 return;
             }
-            
-            m_nifty.gotoScreen("game");
+
+            else
+                m_nifty.gotoScreen("game");
         }
             
     }
     
-    @Override
-    public void onStartScreen()
-    {
-        super.onStartScreen();
-        m_textField.setText("Anon");
-    }
-
     /**
      *  \brief  when the user clicks the button to continue, then we
      *          can move on to the next screen

@@ -5,22 +5,23 @@ DROP TABLE IF EXISTS user_data;
 DROP TABLE IF EXISTS global_data;
 DROP TABLE IF EXISTS nicks;
 
-CREATE TABLE config (
-    config_key      TEXT, 
-    config_value    TEXT
+CREATE TABLE strings (
+    string_key      TEXT PRIMARY KEY, 
+    string_value    TEXT
 );
 
-CREATE TABLE advanced (
-    advanced_key    TEXT, 
-    advanced_value  BOOLEAN
+CREATE TABLE booleans (
+    bool_key    TEXT PRIMARY KEY, 
+    bool_value  BOOLEAN
 );
 
-CREATE TABLE game (
-    game_key        TEXT,
-    game_value      INTEGER
+CREATE TABLE integers (
+    int_key        TEXT PRIMARY KEY,
+    int_value      INTEGER
 );
 
 CREATE TABLE unsent_score(
+    score_id        INTEGER PRIMARY KEY AUTOINCREMENT,
     date            INTEGER,
     speed           INTEGER,
     density         INTEGER,
@@ -48,12 +49,11 @@ CREATE TABLE global_data (
     score           FLOAT
 );
 
-INSERT INTO config
+INSERT INTO strings
         SELECT 'hash'    , ''
- UNION  SELECT 'nick'    , 'Anon'
- UNION  SELECT 'version' , '1';
+ UNION  SELECT 'nick'    , 'Anon';
 
-INSERT INTO advanced  
+INSERT INTO booleans  
         SELECT 'postProcessor'   , 0
  UNION  SELECT 'fogFilter'       , 0 
  UNION  SELECT 'cartoon'         , 1  
@@ -64,7 +64,8 @@ INSERT INTO advanced
  UNION  SELECT 'verbose'         , 0 
  UNION  SELECT 'worldRotate'     , 1  ;
 
-INSERT INTO game 
+INSERT INTO integers
         SELECT 'density',    1
  UNION  SELECT 'radius' ,    1 
- UNION  SELECT 'speed'  ,    1 ;
+ UNION  SELECT 'speed'  ,    1
+ UNION  SELECT 'version',    1;
