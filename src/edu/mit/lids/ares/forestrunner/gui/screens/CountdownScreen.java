@@ -1,22 +1,25 @@
-package edu.mit.lids.ares.forestrunner.screens;
+package edu.mit.lids.ares.forestrunner.gui.screens;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
-import de.lessvoid.nifty.screen.ScreenController;
 import edu.mit.lids.ares.forestrunner.Game;
 import edu.mit.lids.ares.forestrunner.Game.State;
+import edu.mit.lids.ares.forestrunner.gui.ScreenBase;
 
-public class CountdownScreen implements ScreenController
+public class CountdownScreen
+    extends
+        ScreenBase
 {
     Game        m_game;
-    Nifty       m_nifty;
-    Screen[]    m_screen;
+    Screen[]    m_screens;
     
     public CountdownScreen(Game game)
     {
-        m_game      = game;
-        m_nifty     = null;
-        m_screen    = new Screen[3];
+        super();
+        m_screens           = new Screen[3];
+        m_game              = game;
+        m_hasEntranceAnim   = true;
+        m_hasExitAnim       = true;
     }
     
     @Override
@@ -24,27 +27,14 @@ public class CountdownScreen implements ScreenController
     {
         System.out.println("bind( " + screen.getScreenId() + ")");
         m_nifty     = nifty;
+        m_screen    = screen;
 
         if( screen.getScreenId().compareTo("countdown3") ==0 )
-            m_screen[2] = screen;
+            m_screens[2] = screen;
         if( screen.getScreenId().compareTo("countdown2") ==0 )
-            m_screen[1] = screen;
+            m_screens[1] = screen;
         if( screen.getScreenId().compareTo("countdown1") ==0 )
-            m_screen[0] = screen;
-    }
-
-    @Override
-    public void onEndScreen()
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void onStartScreen()
-    {
-        // TODO Auto-generated method stub
-        
+            m_screens[0] = screen;
     }
     
     public void onStep(String num)
@@ -69,5 +59,4 @@ public class CountdownScreen implements ScreenController
                 assert(false);
         }
     }
-    
 }

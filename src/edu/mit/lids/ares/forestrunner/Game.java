@@ -611,7 +611,6 @@ public abstract class Game extends Application
     {
         m_screens.put("game",       new GameScreen(this));
         m_screens.put("highscore",  new HighScoreScreen(this));
-        m_screens.put("countdown",  new CountdownScreen(this));
         m_screens.put("crash",      new CrashScreen(this));
         m_screens.put("advanced",   new AdvancedScreen(this));
         
@@ -619,6 +618,7 @@ public abstract class Game extends Application
         //m_screens2.put("loading",    new LoadingScreen(stateManager));
         m_screens2.put("nick",       new NickScreen(stateManager, m_dataStore));
         m_screens2.put("play",       new PlayScreen(this, stateManager));
+        m_screens2.put("countdown",  new CountdownScreen(this));
         
         for( ScreenController sc : m_screens.values() )
             m_nifty.registerScreenController(sc);
