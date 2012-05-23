@@ -609,16 +609,17 @@ public abstract class Game extends Application
     
     public void setupNifty()
     {
-        m_screens.put("game",       new GameScreen(this,stateManager,m_dataStore));
         m_screens.put("highscore",  new HighScoreScreen(this));
-        m_screens.put("crash",      new CrashScreen(this));
         m_screens.put("advanced",   new AdvancedScreen(this));
         
         m_screens2.put("disclaimer", new DisclaimerScreen());
         //m_screens2.put("loading",    new LoadingScreen(stateManager));
         m_screens2.put("nick",       new NickScreen(stateManager, m_dataStore));
-        m_screens2.put("play",       new PlayScreen(this, stateManager));
+        m_screens2.put("game",       new GameScreen(this,stateManager,m_dataStore));
         m_screens2.put("countdown",  new CountdownScreen(this));
+        m_screens2.put("play",       new PlayScreen(this, stateManager));
+        m_screens2.put("crash",      new CrashScreen());
+        
         
         for( ScreenController sc : m_screens.values() )
             m_nifty.registerScreenController(sc);
