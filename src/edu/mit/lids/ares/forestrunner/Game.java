@@ -57,8 +57,7 @@ public abstract class Game extends Application
     protected boolean       showSettings= true;
     
     protected Nifty                           m_nifty;
-    protected Map<String,ScreenController>    m_screens;
-    protected Map<String,ScreenBase>          m_screens2;
+    protected Map<String,ScreenBase>          m_screens;
     protected State                           m_state;
     protected SystemContext                   m_system;
 
@@ -158,8 +157,7 @@ public abstract class Game extends Application
             java.util.logging.Logger.getLogger(ScreenBase.class.getName()).setLevel(java.util.logging.Level.ALL);
         }
         
-        m_screens = new HashMap<String,ScreenController>();
-        m_screens2= new HashMap<String,ScreenBase>();
+        m_screens= new HashMap<String,ScreenBase>();
         m_params  = new HashMap<String,Integer>();
         
         m_system            = ctx;
@@ -370,7 +368,7 @@ public abstract class Game extends Application
 
         m_nifty.registerScreenController(loadingScreen);
         m_nifty.addXml("Interface/Nifty/Screens/loading.xml");
-        m_screens2.put("loading", loadingScreen);
+        m_screens.put("loading", loadingScreen);
 
         
         m_nifty.gotoScreen("loading");
@@ -616,36 +614,27 @@ public abstract class Game extends Application
     {
         // remove loading screen from the list so we dont attempt to
         // reinitialize it
-        ScreenBase loadingScreen = m_screens2.get("loading");
-        m_screens2.remove("loading");
+        ScreenBase loadingScreen = m_screens.get("loading");
+        m_screens.remove("loading");
         
-        
+        m_screens.put("disclaimer", new DisclaimerScreen(this));
+        //m_screens.put("loading",    new LoadingScreen(stateManager));
+        m_screens.put("nick",       new NickScreen(this));
+        m_screens.put("game",       new GameScreen(this));
+        m_screens.put("countdown",  new CountdownScreen(this));
+        m_screens.put("play",       new PlayScreen(this));
+        m_screens.put("crash",      new CrashScreen(this));
+        m_screens.put("advanced",   new AdvancedScreen(this));
         m_screens.put("highscore",  new HighScoreScreen(this));
-        
-        m_screens2.put("disclaimer", new DisclaimerScreen(this));
-        //m_screens2.put("loading",    new LoadingScreen(stateManager));
-        m_screens2.put("nick",       new NickScreen(this));
-        m_screens2.put("game",       new GameScreen(this));
-        m_screens2.put("countdown",  new CountdownScreen(this));
-        m_screens2.put("play",       new PlayScreen(this));
-        m_screens2.put("crash",      new CrashScreen(this));
-        m_screens2.put("advanced",   new AdvancedScreen(this));
-        
         
         for( ScreenController sc : m_screens.values() )
             m_nifty.registerScreenController(sc);
 
         for( String screenName : m_screens.keySet() )
             m_nifty.addXml( "Interface/Nifty/Screens/" + screenName + ".xml" );
-        
-        for( ScreenController sc : m_screens2.values() )
-            m_nifty.registerScreenController(sc);
-
-        for( String screenName : m_screens2.keySet() )
-            m_nifty.addXml( "Interface/Nifty/Screens/" + screenName + ".xml" );
 
         // add loading screen back to the list
-        m_screens2.put("loading",loadingScreen);
+        m_screens.put("loading",loadingScreen);
         //m_nifty.gotoScreen("loading");
     }
     
@@ -665,12 +654,8 @@ public abstract class Game extends Application
         cam.setFrustumPerspective(30f, ar, 1f, s_farPlane);
         cam.lookAt(new Vector3f(0f,0f,-4f), new Vector3f(0f,1f,0f) );
         
-        
     }
 
-    
-    
-    
     public void setupProcessor()
     {
         m_fpp=new FilterPostProcessor(assetManager);
