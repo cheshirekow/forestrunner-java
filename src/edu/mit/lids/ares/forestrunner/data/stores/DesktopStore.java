@@ -3,14 +3,16 @@ package edu.mit.lids.ares.forestrunner.data.stores;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Scanner;
 
-import org.apache.commons.lang3.StringUtils;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 import com.almworks.sqlite4java.SQLiteConnection;
 import com.almworks.sqlite4java.SQLiteConstants;
@@ -79,7 +81,8 @@ public class DesktopStore
             readConfig();
             
             // check that the version of the database is the same as that of
-            // the program
+            // the program, and if it's not, run the init script to
+            // rebuild tables
             if( m_intMap.containsKey("version") )
             {
                 if( m_intMap.get("version") < Game.s_version )
@@ -88,6 +91,60 @@ public class DesktopStore
             else
                 initDatabase();
             
+            // check that the user has a hash stored
+            if( !m_stringMap.containsKey("hash") ||
+                    m_stringMap.get("hash").length() < 16 )
+            {
+                System.out.println("Database seems to have invalid hash, " +
+                		            "requesting one from server");
+                
+                String urlString = 
+                        "http://ares.lids.mit.edu/~jbialk/forest_runner/src/" 
+                        + "create_user.php";
+
+                // try to open a stream to the create user page
+                InputStream source;
+                try
+                {
+                    source = new URL(urlString).openStream();
+                } 
+                
+                catch (MalformedURLException e)
+                {
+                    System.out.println("Failed to connect to server to get a new " +
+                                        "hash, continuing without data");
+                    e.printStackTrace(System.out);
+                    m_dataOK = false;
+                    return;
+                } 
+                
+                catch (IOException e)
+                {
+                    System.out.println("Failed to connect to server to get a new " +
+                            "hash, continuing without data");
+                    e.printStackTrace(System.out);
+                    m_dataOK = false;
+                    return;
+                }  
+
+                // read the entire stream into a single string
+                String jsonString = 
+                        new Scanner( source, "UTF-8" )
+                                .useDelimiter("\\A").next();
+
+                JSONObject obj = (JSONObject) JSONValue.parse(jsonString);
+                
+                // check the result message
+                if( obj.containsKey("status") )
+                {
+                    String status = (String) obj.get("status");
+                    if( status.compareTo("OK") == 0 )
+                    {
+                        m_stringMap.put("hash", (String)obj.get("hash") );
+                        sync();
+                    }
+                }
+            }
         }
         catch (SQLiteException e)
         {
