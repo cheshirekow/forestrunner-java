@@ -16,6 +16,8 @@ public class GameScreen
         ScreenBase
 {
     boolean         m_resumeImmediately;
+    boolean         m_settingsChanged;
+    String          m_goto;
     
     //ColorMatrix cm;
     //String[][] colors;
@@ -24,7 +26,8 @@ public class GameScreen
     {
         super(game,true,true);
         m_resumeImmediately = false;
-        
+        m_settingsChanged   = false;
+        m_goto              = "";
         //cm                  = new ColorMatrix(game);
     }
     
@@ -63,6 +66,8 @@ public class GameScreen
     public void onStart_impl()
     {
         m_resumeImmediately = false;
+        m_settingsChanged   = false;
+        m_goto              = "";
         
         String[] params = {"velocity", "density", "radius"};
         
@@ -72,15 +77,49 @@ public class GameScreen
             Slider slider = m_screen.findNiftyControl(idName, Slider.class);
             slider.setValue( m_game.getParam(param) );
         }
+        
+        m_mgr.attach(this);
     }
     
     @Override
     public void onEnd_impl()
     {
+        m_mgr.detach(this);
+        
         if( m_resumeImmediately )
         {
             System.out.println("Game is just paused, resuming now");
             m_game.setState(State.RUNNING);
+        }
+    }
+    
+    @Override
+    public void update(float tpf)
+    {
+        if(m_goto.length() > 0)
+        {
+            if(m_settingsChanged)
+            {
+                String[] params = {"velocity", "density", "radius"};
+                
+                for( String param : params )
+                {
+                    String idName = "game.sldr." + param;
+                    Slider slider = m_screen.findNiftyControl(idName, Slider.class);
+                    int value = (int)slider.getValue( );
+                    System.out.println("Setting " + param + " to " + value);
+                    m_game.setParam(param, value );
+                    m_dataStore.setInteger(param, value);
+                }
+                
+                m_game.initRun();
+                m_settingsChanged = false;
+                return;
+            }
+            else
+            {
+                m_nifty.gotoScreen(m_goto);
+            }
         }
     }
     
@@ -92,12 +131,12 @@ public class GameScreen
         
         if( id.compareTo("game.btn.new")==0 )
         {
-            m_game.initRun();
-            m_nifty.gotoScreen("countdown3");
+            m_settingsChanged = true;
+            m_goto = "countdown3";
         }
         else if( id.compareTo("game.btn.advanced")==0 )
         {
-            m_nifty.gotoScreen("advanced");
+            m_goto = "advanced";
         }
         /*
         else if( id.compareTo("game.btn.global")==0 )
@@ -154,12 +193,12 @@ public class GameScreen
             if(m_game.getState() == State.PAUSED)
             {
                 m_resumeImmediately = true;
-                m_nifty.gotoScreen("play");
+                m_goto = "play";
             }
             else
             {
-                m_game.initRun();
-                m_nifty.gotoScreen("countdown3");
+                m_settingsChanged = true;
+                m_goto = "countdown3";
             }
         }
     }
@@ -168,17 +207,7 @@ public class GameScreen
     @NiftyEventSubscriber(pattern="game.sldr.*")
     public void onSlider( String id, SliderChangedEvent event )
     {
-        String[] params = {"velocity", "density", "radius"};
-        
-        for( String param : params )
-        {
-            String idName = "game.sldr." + param;
-            if( id.compareTo(idName)== 0)
-            {
-                System.out.println("Setting value of " + param + " to " + (int)event.getValue() );
-                m_game.setParam(param, (int)event.getValue());
-            }
-        }
+        m_settingsChanged = true;
     }
     
     
