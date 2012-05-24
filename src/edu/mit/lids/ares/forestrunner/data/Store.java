@@ -1,5 +1,7 @@
 package edu.mit.lids.ares.forestrunner.data;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,6 +63,11 @@ public abstract class Store
         
     }
     
+    public void syncGlobalHigh()
+    {
+        
+    }
+    
     public Integer getInteger(String key)
     {
         return m_intMap.get(key);
@@ -92,6 +99,16 @@ public abstract class Store
     }
     
     public void recordScore(float score)
+    {
+        
+    }
+    
+    public void sendOneScore()
+    {
+        
+    }
+    
+    public void sendNick()
     {
         
     }
@@ -163,5 +180,30 @@ public abstract class Store
         }
         
         return null;
+    }
+    
+    public static String encode(String script, Map<String,String> params)
+    {
+        StringBuilder buf = new StringBuilder();
+        buf.append( script ).append( '?' );
+        
+        try
+        {
+            for( String key : params.keySet() )
+            {
+                buf.append( URLEncoder.encode(key,"UTF-8") )
+                    .append('=')
+                    .append( URLEncoder.encode(params.get(key),"UTF-8"))
+                    .append('&');
+            } 
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            e.printStackTrace(System.err);
+        }
+        
+        
+        
+        return buf.toString();
     }
 }

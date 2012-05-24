@@ -79,8 +79,12 @@ public class HighScoreScreen
                 
                 break;
             }
-                
+            
             case 6:
+                m_dataStore.syncGlobalHigh();
+                break;
+                
+            case 7:
             {
                 ListBox<GlobalHighScoreRow> listBox =(ListBox<GlobalHighScoreRow>) 
                         m_screen.findNiftyControl("lb.globalHigh", ListBox.class);
@@ -96,8 +100,22 @@ public class HighScoreScreen
                 break;
             }
                 
-            case 7: 
-                // attempt to send scores to server
+            case  9: 
+                m_dataStore.sendNick();
+                break;
+                
+            case 10: 
+            case 11: 
+            case 12: 
+            //case 13: 
+            //case 14: 
+            //case 15: 
+            //case 16: 
+            //case 17: 
+            //case 18: 
+            //case 19:
+            //case 20:
+                m_dataStore.sendOneScore();
                 break;
                 
             case s_numSteps:

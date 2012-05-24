@@ -9,10 +9,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -339,6 +343,11 @@ public class DesktopStore
         		     "VALUES" +
         		     "    (%d, %d, %d, %d, %.30f)";
         
+        String globalFmt = "INSERT INTO %s " +
+                "    (date, velocity, density, radius, score, global_id) " +
+                "VALUES" +
+                "    (%d, %d, %d, %d, %.30f, %d)";
+        
         String delFmt = 
                 "DELETE FROM %s WHERE " +
                         "velocity=%d " +
@@ -372,13 +381,19 @@ public class DesktopStore
                     score
                 ));
             
-            m_sqlite.exec(String.format(fmt,
+            SQLiteStatement st = 
+                    m_sqlite.prepare("SELECT MIN(global_id) FROM global_data");
+            st.step();
+            int newId = Math.min(0, st.columnInt(0))-1;
+            
+            m_sqlite.exec(String.format(globalFmt,
                     "global_data",
                     (int) unixTime,
                     getInteger("velocity"),
                     getInteger("density"),
                     getInteger("radius"),
-                    score
+                    score,
+                    newId
                 ));
             
             m_intMap.put("lastGlobalRowId", (int)m_sqlite.getLastInsertId());
@@ -453,6 +468,250 @@ public class DesktopStore
         }
         
         return scores;
+    }
+    
+    @Override 
+    public void syncGlobalHigh()
+    {
+        Map<String,String> paramMap = new HashMap<String,String>();
+        
+        paramMap.put("version", String.format("%d",getInteger("version")));
+        paramMap.put("velocity", String.format("%d",getInteger("velocity")));
+        paramMap.put("density", String.format("%d",getInteger("density")));
+        paramMap.put("radius", String.format("%d",getInteger("radius")));
+        paramMap.put("hash", getString("hash"));
+        
+        String urlString = 
+                "http://ares.lids.mit.edu/~jbialk/forest_runner/src/" 
+                + Store.encode("get_global_scores.php", paramMap);
+
+        // try to open a stream to the create user page
+        InputStream source;
+        try
+        {
+            source = new URL(urlString).openStream();
+        } 
+        catch (MalformedURLException e)
+        {
+            System.err.println("Failed to get global scores form server");
+            e.printStackTrace(System.out);
+            return;
+        } 
+        catch (IOException e)
+        {
+            System.err.println("Failed to get global scores form server");
+            e.printStackTrace(System.out);
+            return;
+        }  
+
+        // read the entire stream into a single string
+        String jsonString = 
+                new Scanner( source, "UTF-8" )
+                        .useDelimiter("\\A").next();
+
+        JSONObject obj = (JSONObject) JSONValue.parse(jsonString);
+        
+        // check the result message
+        if( !obj.containsKey("status") )
+        {
+            System.err.println("Returned JSON message is malformed, " +
+            		            "no status: " + jsonString);
+            return;
+        }
+        
+        String status = (String) obj.get("status");
+        if( status.compareTo("OK") != 0 )
+        {
+            System.err.println("Failed to get global scores from server ");
+            if(obj.containsKey("message"))
+                System.err.println("Message: " + obj.get("message"));
+            return;
+        }
+        
+        String updateFmt = 
+            "INSERT OR IGNORE INTO global_data " +
+                    "(nick,date,velocity,density,radius,score,global_id)" +
+                "VALUES" + 
+                    "('%s',%d,%d,%d,%d,%.30f,%d)";
+        
+        String delFmt = 
+                "DELETE FROM %s WHERE " +
+                        "velocity=%d " +
+                        "AND density=%d " +
+                        "AND radius=%d " +
+                        "AND " +
+                        "score <= " + 
+                "(" +
+                    "SELECT score FROM user_data " +
+                        "ORDER BY score  DESC LIMIT 20, 1 " +
+                ")";
+        
+        // otherwise, things look good
+        JSONArray scoreArray = (JSONArray)obj.get("scores");
+        for( Object scoreObj : scoreArray )
+        {
+            JSONObject scoreMap = (JSONObject)scoreObj;
+            
+            try
+            {
+                m_sqlite.exec(String.format(updateFmt, 
+                    (String) scoreMap.get("nick"),
+                    (Integer) scoreMap.get("date"),
+                    getInteger("velocity"),
+                    getInteger("density"),
+                    getInteger("radius"),
+                    (Double) scoreMap.get("score"),
+                    (Integer) scoreMap.get("global_id")
+                ));
+                
+                m_sqlite.exec(String.format(delFmt,
+                    "global_data",
+                    getInteger("velocity"),
+                    getInteger("density"),
+                    getInteger("radius")
+                ));
+            }
+            catch(SQLiteException e)
+            {
+                e.printStackTrace(System.err);
+            }
+        }
+    }
+    
+    @Override
+    public void sendOneScore()
+    {
+        if(!m_dataOK)
+            return;
+        
+        try
+        {
+            SQLiteStatement st = 
+                    m_sqlite.prepare("SELECT * FROM unsent_score ORDER BY score_id ASC LIMIT 1");
+            if(st.step())
+            {
+                Map<String,String> paramMap = new HashMap<String,String>();
+                paramMap.put("data_id", String.format("%d",st.columnInt(0)));
+                paramMap.put("date",    String.format("%d",st.columnInt(1)));
+                paramMap.put("velocity",String.format("%d",st.columnInt(2)));
+                paramMap.put("density", String.format("%d",st.columnInt(3)));
+                paramMap.put("radius",  String.format("%d",st.columnInt(4)));
+                paramMap.put("score",   String.format("%.30f",st.columnDouble(5)));
+                paramMap.put("hash",    getString("hash"));
+                paramMap.put("version", String.format("%d",getInteger("version")));
+                
+                String urlString = 
+                        "http://ares.lids.mit.edu/~jbialk/forest_runner/src/" 
+                        + Store.encode("insert_score.php", paramMap);
+
+                // try to open a stream to the create user page
+                InputStream source = new URL(urlString).openStream();
+            
+                // read the entire stream into a single string
+                String jsonString = 
+                        new Scanner( source, "UTF-8" )
+                                .useDelimiter("\\A").next();
+    
+                JSONObject obj = (JSONObject) JSONValue.parse(jsonString);
+                
+                // check the result message
+                if( !obj.containsKey("status") )
+                {
+                    System.err.println("Returned JSON message is malformed, " +
+                                        "no status: " + jsonString);
+                    return;
+                }
+                
+                String status = (String) obj.get("status");
+                if( status.compareTo("OK") != 0 )
+                {
+                    System.err.println("Failed to send scores to server ");
+                    if(obj.containsKey("message"))
+                        System.err.println("Message: " + obj.get("message"));
+                    return;
+                }
+                
+                System.out.println("Sent score to server: " + jsonString);
+                
+                m_sqlite.exec(String.format(
+                        "DELETE FROM unsent_score WHERE score_id=%d", 
+                        st.columnInt(0)
+                ));
+            }
+            
+            st.dispose();
+        }
+        catch(SQLiteException e)
+        {
+            e.printStackTrace(System.err);
+        }
+        catch (MalformedURLException e)
+        {
+            System.err.println("Failed to send score to server");
+            e.printStackTrace(System.out);
+            return;
+        } 
+        catch (IOException e)
+        {
+            System.err.println("Failed to send score to  server");
+            e.printStackTrace(System.out);
+            return;
+        }  
+        
+    }
+    
+    @Override
+    public void sendNick()
+    {
+        try
+        {
+            Map<String,String> paramMap = new HashMap<String,String>();
+            paramMap.put("hash", getString("hash"));
+            paramMap.put("nick", getString("nick"));
+            
+            String urlString = 
+                    "http://ares.lids.mit.edu/~jbialk/forest_runner/src/" 
+                    + Store.encode("set_nick.php", paramMap);
+    
+            // try to open a stream to the create user page
+            InputStream source = new URL(urlString).openStream();
+        
+            // read the entire stream into a single string
+            String jsonString = 
+                    new Scanner( source, "UTF-8" )
+                            .useDelimiter("\\A").next();
+    
+            JSONObject obj = (JSONObject) JSONValue.parse(jsonString);
+            
+            // check the result message
+            if( !obj.containsKey("status") )
+            {
+                System.err.println("Returned JSON message is malformed, " +
+                                    "no status: " + jsonString);
+                return;
+            }
+            
+            String status = (String) obj.get("status");
+            if( status.compareTo("OK") != 0 )
+            {
+                System.err.println("Failed to update nickname with server ");
+                if(obj.containsKey("message"))
+                    System.err.println("Message: " + obj.get("message"));
+                return;
+            }
+            
+            System.out.println("Updated nickname at server: " + jsonString);
+        }
+        
+        catch (MalformedURLException e)
+        {
+            e.printStackTrace(System.err);
+        } 
+        
+        catch (IOException e)
+        {
+            e.printStackTrace(System.err);
+        }
     }
     
     @Override

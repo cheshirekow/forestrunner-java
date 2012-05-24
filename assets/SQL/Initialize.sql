@@ -45,8 +45,11 @@ CREATE TABLE global_data (
     velocity        INTEGER,
     density         INTEGER,
     radius          INTEGER,
-    score           FLOAT
+    score           FLOAT,
+    global_id       INTEGER
 );
+
+CREATE UNIQUE INDEX global_id_index ON global_data (global_id);
 
 INSERT INTO strings
         SELECT 'hash'    , ''
