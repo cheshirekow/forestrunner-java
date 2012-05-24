@@ -339,7 +339,7 @@ public class DesktopStore
         		     "    (%d, %d, %d, %d, %.30f)";
         
         String delFmt = 
-                "DELETE FROM user_data WHERE " +
+                "DELETE FROM %s WHERE " +
                         "velocity=%d " +
                         "AND density=%d " +
                         "AND radius=%d " +
@@ -359,6 +359,8 @@ public class DesktopStore
                         getInteger("radius"),
                         score
                     ));
+            
+            m_intMap.put("lastUserRowId", (int)m_sqlite.getLastInsertId());
 
             m_sqlite.exec(String.format(fmt,
                     "unsent_score",
@@ -369,7 +371,26 @@ public class DesktopStore
                     score
                 ));
             
+            m_sqlite.exec(String.format(fmt,
+                    "global_data",
+                    (int) unixTime,
+                    getInteger("velocity"),
+                    getInteger("density"),
+                    getInteger("radius"),
+                    score
+                ));
+            
+            m_intMap.put("lastGlobalRowId", (int)m_sqlite.getLastInsertId());
+            
             m_sqlite.exec(String.format(delFmt,
+                    "user_data",
+                    getInteger("velocity"),
+                    getInteger("density"),
+                    getInteger("radius")
+                    ));
+            
+            m_sqlite.exec(String.format(delFmt,
+                    "global_data",
                     getInteger("velocity"),
                     getInteger("density"),
                     getInteger("radius")

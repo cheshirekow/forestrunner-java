@@ -1,0 +1,9 @@
+<nifty-styles>
+  <!-- just some text label default -->
+  <style id="forestrunner-label" base="base-font">
+    <attributes align="center" textLineHeight="18px" textMinHeight="18px" />  
+    <effect>
+      <onActive name="clip" post="false" />
+    </effect>
+  </style>
+</nifty-styles>

@@ -12,16 +12,16 @@ import edu.mit.lids.ares.forestrunner.data.UserHighScoreRow;
 public class UserHighScoreViewConverter 
     implements ListBoxViewConverter<UserHighScoreRow> 
 {
-    private static final String LINE_DATE = "#highscore-line-user-date";
-    private static final String LINE_SCORE ="#highscore-line-user-score";
+    private static final String LINE_DATE  = "#highscore-line-user-date";
+    private static final String LINE_SCORE = "#highscore-line-user-score";
     
     private static SimpleDateFormat s_dateWriteFmt;
     private static String           s_scoreWriteFmt;
     
     static
     {
-        s_dateWriteFmt  = new SimpleDateFormat("MM/d H:m", Locale.ENGLISH);
-        s_scoreWriteFmt = "%10.04f";
+        s_dateWriteFmt  = new SimpleDateFormat("  MM/d H:m", Locale.ENGLISH);
+        s_scoreWriteFmt = "%10.04f   ";
     }
 
     /**
@@ -36,10 +36,15 @@ public class UserHighScoreViewConverter
     @Override
     public final void display(final Element listBoxItem, final UserHighScoreRow item) 
     {
-        final Element txtDate = listBoxItem.findElementByName(LINE_DATE);
+        final Element txtDate  = listBoxItem.findElementByName(LINE_DATE);
         final Element txtScore = listBoxItem.findElementByName(LINE_SCORE);
         
-        final TextRenderer textRdrDate = txtDate.getRenderer(TextRenderer.class);
+        if(item != null && item.isCurrent)
+            listBoxItem.setStyle("forestrunner-listbox-item-highlight");
+        else
+            listBoxItem.setStyle("forestrunner-listbox-item");
+        
+        final TextRenderer textRdrDate  = txtDate.getRenderer(TextRenderer.class);
         final TextRenderer textRdrScore = txtScore.getRenderer(TextRenderer.class);
         
         if (item != null) 

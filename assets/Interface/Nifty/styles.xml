@@ -3,9 +3,18 @@
   <useStyles filename="Interface/Nifty/Styles/button.xml" />
   <useStyles filename="Interface/Nifty/Styles/textfield.xml" />
   <useStyles filename="Interface/Nifty/Styles/slider.xml" />
+  <useStyles filename="Interface/Nifty/Styles/label.xml" />
   
   <style id="nifty-panel-80">
     <attributes padding="8px,16px,24px,16px" backgroundImage="Interface/Nifty/nifty-panel-80.png" imageMode="resize:28,184,28,28,28,184,28,154,28,184,28,58" />
+  </style>
+  
+  <style id="forestrunner-listbox-item">
+    <attributes backgroundColor="#0000" />
+  </style>
+  
+  <style id="forestrunner-listbox-item-highlight">
+    <attributes backgroundColor="#f008" />
   </style>
   
 </nifty-styles>

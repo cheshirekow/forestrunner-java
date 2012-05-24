@@ -39,8 +39,7 @@ CREATE TABLE user_data (
 );
 
 CREATE TABLE global_data (
-    data_id         INTEGER PRIMARY KEY,
-    global_id       INTEGER,
+    data_id         INTEGER PRIMARY KEY AUTOINCREMENT,
     date            INTEGER
     user            TEXT,
     velocity        INTEGER,

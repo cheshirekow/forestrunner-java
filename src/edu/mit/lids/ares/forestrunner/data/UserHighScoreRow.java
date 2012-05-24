@@ -11,7 +11,7 @@ public class UserHighScoreRow
     
     public UserHighScoreRow()
     {
-        
+        isCurrent = false;
     }
 
     @Override

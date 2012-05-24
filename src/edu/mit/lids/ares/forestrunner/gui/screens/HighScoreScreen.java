@@ -26,6 +26,9 @@ public class HighScoreScreen
     private List<UserHighScoreRow>      m_userList;
     private List<GlobalHighScoreRow>    m_globallist;
     
+    private static final int s_scoresToSend = 10;
+    private static final int s_numSteps     = 300;
+    
     public HighScoreScreen( Game game )
     {
         super(game,true,true);
@@ -53,35 +56,43 @@ public class HighScoreScreen
                 m_dataStore.recordScore(m_game.getScore());
                 break;
                 
-            case 2:
+            case 3:
                 m_userList    = m_dataStore.getUserScores();
                 break;
                 
-            case 3:
+            case 4:
                 m_globallist  = m_dataStore.getGlobalScores();
                 break;
                 
-            case 4:
+            case 5:
             {
                 ListBox<UserHighScoreRow> listBox =(ListBox<UserHighScoreRow>) 
                         m_screen.findNiftyControl("lb.personalHigh", ListBox.class);
                 listBox.clear();
                 System.out.println("personal scores:");
+                UserHighScoreRow thisRow = null;
                 for( UserHighScoreRow row : m_userList )
                 {
                     System.out.println("   " + row.date + ", " + row.score);
+                    if(row.id == m_dataStore.getInteger("lastUserRowId"))
+                        row.isCurrent = true;
                     listBox.addItem(row);
                 }
                 listBox.refresh();
                 
+                
                 break;
             }
                 
-            case 5:
+            case 6:
                 // update global display;
                 break;
                 
-            case 300:
+            case 7: 
+                // attempt to send scores to server
+                break;
+                
+            case s_numSteps:
                 m_nifty.closePopup(m_commPopup.getId());
                 break;
                 
@@ -94,7 +105,7 @@ public class HighScoreScreen
         }
         
         m_step++;
-        m_pb.setProgress( m_step/300.0f );
+        m_pb.setProgress( m_step/(float)s_numSteps );
     }
     
     public void onStart_impl()
