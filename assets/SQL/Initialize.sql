@@ -40,8 +40,8 @@ CREATE TABLE user_data (
 
 CREATE TABLE global_data (
     data_id         INTEGER PRIMARY KEY AUTOINCREMENT,
-    date            INTEGER
-    user            TEXT,
+    nick            TEXT,
+    date            INTEGER,
     velocity        INTEGER,
     density         INTEGER,
     radius          INTEGER,

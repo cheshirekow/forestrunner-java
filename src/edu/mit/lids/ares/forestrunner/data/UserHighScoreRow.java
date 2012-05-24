@@ -25,8 +25,10 @@ public class UserHighScoreRow
         {
             if( date < o.date )
                 return -1;
-            else
+            else if( date > o.date )
                 return 1;
+            else
+                return 0;
         }
     }
 }

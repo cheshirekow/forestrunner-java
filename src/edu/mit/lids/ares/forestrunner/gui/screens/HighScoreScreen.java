@@ -24,7 +24,7 @@ public class HighScoreScreen
     private Element             m_commPopup;
     
     private List<UserHighScoreRow>      m_userList;
-    private List<GlobalHighScoreRow>    m_globallist;
+    private List<GlobalHighScoreRow>    m_globalList;
     
     private static final int s_scoresToSend = 10;
     private static final int s_numSteps     = 300;
@@ -61,7 +61,7 @@ public class HighScoreScreen
                 break;
                 
             case 4:
-                m_globallist  = m_dataStore.getGlobalScores();
+                m_globalList  = m_dataStore.getGlobalScores();
                 break;
                 
             case 5:
@@ -70,23 +70,31 @@ public class HighScoreScreen
                         m_screen.findNiftyControl("lb.personalHigh", ListBox.class);
                 listBox.clear();
                 System.out.println("personal scores:");
-                UserHighScoreRow thisRow = null;
                 for( UserHighScoreRow row : m_userList )
                 {
                     System.out.println("   " + row.date + ", " + row.score);
-                    if(row.id == m_dataStore.getInteger("lastUserRowId"))
-                        row.isCurrent = true;
                     listBox.addItem(row);
                 }
                 listBox.refresh();
-                
                 
                 break;
             }
                 
             case 6:
-                // update global display;
+            {
+                ListBox<GlobalHighScoreRow> listBox =(ListBox<GlobalHighScoreRow>) 
+                        m_screen.findNiftyControl("lb.globalHigh", ListBox.class);
+                listBox.clear();
+                System.out.println("global scores:");
+                for( GlobalHighScoreRow row : m_globalList )
+                {
+                    System.out.println("   " + row.date + ", " + row.score);
+                    listBox.addItem(row);
+                }
+                listBox.refresh();
+                
                 break;
+            }
                 
             case 7: 
                 // attempt to send scores to server

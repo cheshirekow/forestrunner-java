@@ -21,8 +21,8 @@
             </panel>
             <panel id="pnl.globalHigh" style="nifty-panel-80" height="100%" width="60%" childLayout="vertical"> 
                 <text id="txt.globalHigh" font="Interface/Fonts/SansSerif-20.fnt" text="${highscore.globalHigh}" color="#ffff" wrap="true" textHAlign="left"/>
-                <control id="lb.globalHigh" name="listBox" vertical="optional" horizontal="optional" displayItems="12" viewConverterClass="edu.mit.lids.ares.forestrunner.screens.HighScoreViewConverter">
-                    <control name="highscore-list-line" />
+                <control id="lb.globalHigh" name="listBox" vertical="optional" horizontal="optional" displayItems="12" viewConverterClass="edu.mit.lids.ares.forestrunner.gui.GlobalHighScoreViewConverter">
+                    <control name="highscore-list-line-global" />
                 </control>
             </panel>
         </panel>

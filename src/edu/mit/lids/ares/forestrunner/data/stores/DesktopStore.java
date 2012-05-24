@@ -22,6 +22,7 @@ import com.almworks.sqlite4java.SQLiteException;
 import com.almworks.sqlite4java.SQLiteStatement;
 
 import edu.mit.lids.ares.forestrunner.Game;
+import edu.mit.lids.ares.forestrunner.data.GlobalHighScoreRow;
 import edu.mit.lids.ares.forestrunner.data.Store;
 import edu.mit.lids.ares.forestrunner.data.UserHighScoreRow;
 
@@ -435,6 +436,57 @@ public class DesktopStore
                 row.id      = st.columnLong(0);
                 row.date    = st.columnLong(1);
                 row.score   = st.columnDouble(5);
+                if(row.id == getInteger("lastUserRowId"))
+                    row.isCurrent = true;
+                scores.add(row);
+            }
+            
+            st.dispose();
+        }
+        catch(SQLiteException e)
+        {
+            e.printStackTrace(System.err);
+        }
+        catch (RuntimeException e)
+        {
+            e.printStackTrace(System.err);
+        }
+        
+        return scores;
+    }
+    
+    @Override
+    public List<GlobalHighScoreRow>   getGlobalScores()
+    {
+        List<GlobalHighScoreRow> scores = new ArrayList<GlobalHighScoreRow>();
+        
+        String fmt = 
+            "SELECT * FROM global_data WHERE" +
+            "     velocity=%d  " +
+            "     AND density=%d   " +
+            "     AND radius=%d    " +
+            " ORDER BY score DESC";
+        
+        try
+        {
+            SQLiteStatement st = m_sqlite.prepare(String.format(
+                    fmt,
+                    getInteger("velocity"),
+                    getInteger("density"),
+                    getInteger("radius")
+                    ));
+            
+            while(st.step())
+            {
+                GlobalHighScoreRow row= new GlobalHighScoreRow();
+                row.id      = st.columnLong(0);
+                row.nick    = st.columnString(1);
+                if(row.nick == null)
+                    row.nick = getString("nick");
+                row.date    = st.columnLong(2);
+                row.score   = st.columnDouble(6);
+                if(row.id == getInteger("lastGlobalRowId"))
+                    row.isCurrent = true;
                 scores.add(row);
             }
             

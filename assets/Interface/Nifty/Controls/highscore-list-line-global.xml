@@ -1,0 +1,9 @@
+<nifty-controls>
+  <controlDefinition name="highscore-list-line-global">
+    <panel id="#highscore-line-global-panel" style="forestrunner-listbox-item" childLayout="horizontal" width="100%" align="center">
+      <control font="Interface/Fonts/FreeMono-18.fnt" id="#highscore-line-global-nick" name="label" textHAlign="left" width="55%"  />
+      <control font="Interface/Fonts/FreeMono-18.fnt" id="#highscore-line-global-date" name="label" textHAlign="left" width="25%"  />
+      <control font="Interface/Fonts/FreeMono-18.fnt" id="#highscore-line-global-score" name="label" textHAlign="right" width="20%"  />
+    </panel>
+  </controlDefinition>
+</nifty-controls>

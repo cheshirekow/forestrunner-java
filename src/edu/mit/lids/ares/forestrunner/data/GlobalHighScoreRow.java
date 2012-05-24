@@ -1,19 +1,18 @@
 package edu.mit.lids.ares.forestrunner.data;
 
-import java.util.Date;
-
 public class GlobalHighScoreRow
     implements 
         Comparable<GlobalHighScoreRow>
 {
     public boolean  isCurrent;
+    public long     id;
     public String   nick;
-    public Date     date;
-    public float    score;
+    public long     date;
+    public double   score;
     
     public GlobalHighScoreRow()
     {
-        
+        isCurrent = false;
     }
 
     @Override
@@ -24,6 +23,13 @@ public class GlobalHighScoreRow
         else if( score > o.score )
             return 1;
         else
-            return date.compareTo(o.date);
+        {
+            if( date < o.date )
+                return -1;
+            else if( date > o.date )
+                return 1;
+            else
+                return 0;
+        }
     }
 }
