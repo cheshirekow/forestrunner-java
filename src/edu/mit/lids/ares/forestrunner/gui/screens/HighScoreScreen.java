@@ -1,9 +1,13 @@
 package edu.mit.lids.ares.forestrunner.gui.screens;
 
+import java.util.List;
+
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.TextField;
 import edu.mit.lids.ares.forestrunner.Game;
+import edu.mit.lids.ares.forestrunner.data.GlobalHighScoreRow;
+import edu.mit.lids.ares.forestrunner.data.UserHighScoreRow;
 import edu.mit.lids.ares.forestrunner.gui.ScreenBase;
 import edu.mit.lids.ares.forestrunner.screens.NickChangeResult;
 
@@ -17,6 +21,11 @@ public class HighScoreScreen
     
     public void onStart_impl()
     {
+        List<UserHighScoreRow>      userList    = m_dataStore.getUserScores();
+        List<GlobalHighScoreRow>    globallist  = m_dataStore.getGlobalScores();
+        
+        //m_dataStore.recordScore(m_game.getScore());
+        
         /*
         Properties props = new Properties();
         props.setProperty("user_hash", m_comm.getHash() );

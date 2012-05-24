@@ -24,15 +24,6 @@ public class AdvancedScreen
     @Override
     public void onStart_impl()
     {   
-        AdvancedSettings settings = m_game.getAdvancedSettings();
-        
-        for( String param : AdvancedSettings.parameters )
-        {
-            String idName = "advanced.chk." + param;
-            CheckBox check = m_screen.findNiftyControl(idName, CheckBox.class);
-            check.setChecked(settings.get(param));
-        }
-        
         m_mgr.attach(this);
         m_shouldSave   = false;
         m_shouldExit   = false;

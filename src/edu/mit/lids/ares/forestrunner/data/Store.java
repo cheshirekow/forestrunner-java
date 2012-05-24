@@ -1,6 +1,8 @@
 package edu.mit.lids.ares.forestrunner.data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import edu.mit.lids.ares.forestrunner.AdvancedSettings;
@@ -40,10 +42,10 @@ public abstract class Store
         m_boolMap   = new HashMap<String,Boolean>();
         m_stringMap = new HashMap<String,String>();
         
-        m_intMap.put("density", 1);
-        m_intMap.put("radius",  1);
-        m_intMap.put("speed",   1);
-        m_intMap.put("version", Game.s_version);
+        m_intMap.put("density",     1);
+        m_intMap.put("radius",      1);
+        m_intMap.put("velocity",    1);
+        m_intMap.put("version",     Game.s_version);
         
         for( String key : AdvancedSettings.parameters)
             m_boolMap.put(key, false);
@@ -85,6 +87,21 @@ public abstract class Store
     public void setString(String key, String value)
     {
         m_stringMap.put(key,value);
+    }
+    
+    public void recordScore(float score)
+    {
+        
+    }
+    
+    public List<UserHighScoreRow>   getUserScores()
+    {
+        return new ArrayList<UserHighScoreRow>();
+    }
+    
+    public List<GlobalHighScoreRow>   getGlobalScores()
+    {
+        return new ArrayList<GlobalHighScoreRow>();
     }
     
     /**

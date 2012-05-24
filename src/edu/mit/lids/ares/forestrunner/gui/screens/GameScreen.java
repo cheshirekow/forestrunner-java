@@ -75,7 +75,7 @@ public class GameScreen
         {
             String idName = "game.sldr." + param;
             Slider slider = m_screen.findNiftyControl(idName, Slider.class);
-            slider.setValue( m_game.getParam(param) );
+            slider.setValue( m_dataStore.getInteger(param) );
         }
         
         m_mgr.attach(this);
@@ -112,6 +112,7 @@ public class GameScreen
                     m_dataStore.setInteger(param, value);
                 }
                 
+                m_dataStore.sync();
                 m_game.initRun();
                 m_settingsChanged = false;
                 return;

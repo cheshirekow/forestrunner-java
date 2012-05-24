@@ -23,16 +23,16 @@ CREATE TABLE integers (
 CREATE TABLE unsent_score(
     score_id        INTEGER PRIMARY KEY AUTOINCREMENT,
     date            INTEGER,
-    speed           INTEGER,
+    velocity        INTEGER,
     density         INTEGER,
     radius          INTEGER,
     score           FLOAT
 );
 
 CREATE TABLE user_data (
-    data_id         INTEGER PRIMARY KEY,
+    data_id         INTEGER PRIMARY KEY AUTOINCREMENT,
     date            INTEGER,
-    speed           INTEGER,
+    velocity        INTEGER,
     density         INTEGER,
     radius          INTEGER,
     score           FLOAT
@@ -43,7 +43,7 @@ CREATE TABLE global_data (
     global_id       INTEGER,
     date            INTEGER
     user            TEXT,
-    speed           INTEGER,
+    velocity        INTEGER,
     density         INTEGER,
     radius          INTEGER,
     score           FLOAT
@@ -67,5 +67,5 @@ INSERT INTO booleans
 INSERT INTO integers
         SELECT 'density',    1
  UNION  SELECT 'radius' ,    1 
- UNION  SELECT 'speed'  ,    1
+ UNION  SELECT 'velocity'  , 1
  UNION  SELECT 'version',    1;

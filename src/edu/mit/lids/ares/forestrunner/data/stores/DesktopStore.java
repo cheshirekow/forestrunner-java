@@ -170,6 +170,76 @@ public class DesktopStore
         }
     }
     
+    private void readConfig() throws SQLiteException
+    {
+        // read in config strings from the config table
+        SQLiteStatement st;
+        st = m_sqlite.prepare("SELECT * FROM strings");
+        while(st.step())
+            m_stringMap.put(st.columnString(0),st.columnString(1));
+        st.dispose();
+       
+        // read in advanced settings from the advanced table
+        st = m_sqlite.prepare("SELECT * FROM integers");
+        while(st.step())
+            m_intMap.put(st.columnString(0),st.columnInt(1));
+        st.dispose();
+        
+        // read in recent game settings from the game table
+        st = m_sqlite.prepare("SELECT * FROM booleans");
+        while(st.step())
+            m_boolMap.put(st.columnString(0),st.columnInt(1)>0);
+        st.dispose();
+    }
+    
+    private void initDatabase()
+    {
+        System.out.println("It appears the database is old or does not exist, " +
+        		            "initializing now");
+        try
+        {
+            InputStream fstream = this.getClass().getResourceAsStream("/SQL/Initialize.sql");
+            DataInputStream in = new DataInputStream(fstream);
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            String strLine;
+            StringBuilder buf = new StringBuilder();
+
+            while ((strLine = br.readLine()) != null)   
+            {
+                buf.append(strLine).append(" ");
+                   
+                if (strLine.endsWith(";"))
+                {
+                    m_sqlite.exec(buf.toString());
+                    buf = new StringBuilder();
+                }
+            }
+            
+            readConfig();
+        }
+        
+        catch( SQLiteException e )
+        {
+            m_dataOK = false;
+            e.printStackTrace(System.out);
+            return;
+        } 
+        
+        catch (FileNotFoundException e)
+        {
+            m_dataOK = false;
+            e.printStackTrace(System.out);
+            return;
+        } 
+        
+        catch (IOException e)
+        {
+            m_dataOK = false;
+            e.printStackTrace(System.out);
+            return;
+        }
+    }
+    
     @Override
     public void sync()
     {
@@ -252,78 +322,44 @@ public class DesktopStore
         {
             e.printStackTrace(System.out);
         }
-        
-        
-        
     }
     
-    private void readConfig() throws SQLiteException
+    public void recordScore(float score)
     {
-        // read in config strings from the config table
-        SQLiteStatement st;
-        st = m_sqlite.prepare("SELECT * FROM strings");
-        while(st.step())
-            m_stringMap.put(st.columnString(0),st.columnString(1));
-        st.dispose();
-       
-        // read in advanced settings from the advanced table
-        st = m_sqlite.prepare("SELECT * FROM integers");
-        while(st.step())
-            m_intMap.put(st.columnString(0),st.columnInt(1));
-        st.dispose();
+        if(!m_dataOK)
+            return;
         
-        // read in recent game settings from the game table
-        st = m_sqlite.prepare("SELECT * FROM booleans");
-        while(st.step())
-            m_boolMap.put(st.columnString(0),st.columnInt(1)>0);
-        st.dispose();
-    }
-    
-    private void initDatabase()
-    {
-        System.out.println("It appears the database is old or does not exist, " +
-        		            "initializing now");
+        /*
+        long unixTime = System.currentTimeMillis() / 1000L;
+        String fmt = "INSERT INTO %s " +
+        		     "    (date, velocity, density, radius, score) " +
+        		     "VALUES" +
+        		     "    (%d, %d, %d, %d, %0.30f)";
         try
         {
-            InputStream fstream = this.getClass().getResourceAsStream("/SQL/Initialize.sql");
-            DataInputStream in = new DataInputStream(fstream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            String strLine;
-            StringBuilder buf = new StringBuilder();
-
-            while ((strLine = br.readLine()) != null)   
-            {
-                buf.append(strLine).append(" ");
-                   
-                if (strLine.endsWith(";"))
-                {
-                    m_sqlite.exec(buf.toString());
-                    buf = new StringBuilder();
-                }
-            }
+            m_sqlite.exec(String.format(fmt,
+                        "user_data",
+                        unixTime,
+                        getInteger("velocity"),
+                        getInteger("density"),
+                        getInteger("radius"),
+                        score
+                    ));
             
-            readConfig();
+            m_sqlite.exec(String.format(fmt,
+                    "unsent_score",
+                    unixTime,
+                    getInteger("velocity"),
+                    getInteger("density"),
+                    getInteger("radius"),
+                    score
+                ));
+        } catch (SQLiteException e)
+        {
+            e.printStackTrace(System.err);
         }
-        
-        catch( SQLiteException e )
-        {
-            m_dataOK = false;
-            e.printStackTrace(System.out);
-            return;
-        } 
-        
-        catch (FileNotFoundException e)
-        {
-            m_dataOK = false;
-            e.printStackTrace(System.out);
-            return;
-        } 
-        
-        catch (IOException e)
-        {
-            m_dataOK = false;
-            e.printStackTrace(System.out);
-            return;
-        }
+        */
     }
+    
+    
 }
