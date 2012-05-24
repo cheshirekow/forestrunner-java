@@ -14,13 +14,13 @@
         </effect>
         <panel id="pnl.highscore" height="90%" width="100%" align="center" valign="center" childLayout="horizontal">
             <panel id="pnl.personalHigh" style="nifty-panel-80" height="100%" width="40%" childLayout="vertical">
-                <text id="txt.personalHigh" font="aurulent-sans-16.fnt" text="${highscore.userHigh}" color="#ffff" wrap="true" textHAlign="left"/>
+                <text id="txt.personalHigh" font="Interface/Fonts/SansSerif-20.fnt" text="${highscore.userHigh}" color="#ffff" wrap="true" textHAlign="left"/>
                 <control id="lb.personalHigh" name="listBox" vertical="optional" horizontal="optional" displayItems="13" selection="Multiple" viewConverterClass="edu.mit.lids.ares.forestrunner.gui.UserHighScoreViewConverter">
                     <control name="highscore-list-line-user" />
                 </control>
             </panel>
             <panel id="pnl.globalHigh" style="nifty-panel-80" height="100%" width="60%" childLayout="vertical"> 
-                <text id="txt.globalHigh" font="aurulent-sans-16.fnt" text="${highscore.globalHigh}" color="#ffff" wrap="true" textHAlign="left"/>
+                <text id="txt.globalHigh" font="Interface/Fonts/SansSerif-20.fnt" text="${highscore.globalHigh}" color="#ffff" wrap="true" textHAlign="left"/>
                 <control id="lb.globalHigh" name="listBox" vertical="optional" horizontal="optional" displayItems="13" selection="Multiple" viewConverterClass="edu.mit.lids.ares.forestrunner.screens.HighScoreViewConverter">
                     <control name="highscore-list-line" />
                 </control>
@@ -33,7 +33,13 @@
       </panel>
     </layer>
   </screen>
-  
+
+    <popup id="pop.comm" backgroundColor="#000a" childLayout="center">
+        <panel id="pnl.popup" childLayout="vertical">
+            <control name="label" font="Interface/Fonts/SansSerif-20.fnt" width="400px" textHAlign="left" text="Saving Score:"  />
+            <control id="pb.comm" name="progressbar" align="center" width="400px" height="50px" />
+        </panel>
+    </popup>  
   
   
 </nifty>
