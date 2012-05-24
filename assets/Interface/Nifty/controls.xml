@@ -3,4 +3,5 @@
   <useControls filename="Interface/Nifty/Controls/highscore-list-line-global.xml" />
   <useControls filename="Interface/Nifty/Controls/highscore-list-line-user.xml" />
   <useControls filename="Interface/Nifty/Controls/progressbar.xml" />
+  <useControls filename="Interface/Nifty/Controls/red-progressbar.xml" />
 </nifty-controls>

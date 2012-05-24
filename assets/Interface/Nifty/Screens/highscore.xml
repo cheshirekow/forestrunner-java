@@ -37,7 +37,7 @@
     <popup id="pop.comm" backgroundColor="#000a" childLayout="center">
         <panel id="pnl.popup" childLayout="vertical">
             <control name="label" font="Interface/Fonts/SansSerif-20.fnt" width="400px" textHAlign="left" text="Saving Score:"  />
-            <control id="pb.comm" name="progressbar" align="center" width="400px" height="50px" />
+            <control id="pb.comm" name="red-progressbar" align="center" width="400px" height="50px" />
         </panel>
     </popup>  
   

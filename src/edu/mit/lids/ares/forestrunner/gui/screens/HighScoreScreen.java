@@ -27,7 +27,7 @@ public class HighScoreScreen
     private List<GlobalHighScoreRow>    m_globalList;
     
     private static final int s_scoresToSend = 10;
-    private static final int s_numSteps     = 300;
+    private static final int s_numSteps     = 30;
     
     public HighScoreScreen( Game game )
     {
@@ -107,14 +107,14 @@ public class HighScoreScreen
             case 10: 
             case 11: 
             case 12: 
-            //case 13: 
-            //case 14: 
-            //case 15: 
-            //case 16: 
-            //case 17: 
-            //case 18: 
-            //case 19:
-            //case 20:
+            case 13: 
+            case 14: 
+            case 15: 
+            case 16: 
+            case 17: 
+            case 18: 
+            case 19:
+            case 20:
                 m_dataStore.sendOneScore();
                 break;
                 
