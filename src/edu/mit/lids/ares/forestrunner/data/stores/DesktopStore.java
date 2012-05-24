@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import org.json.simple.JSONObject;
@@ -21,6 +23,7 @@ import com.almworks.sqlite4java.SQLiteStatement;
 
 import edu.mit.lids.ares.forestrunner.Game;
 import edu.mit.lids.ares.forestrunner.data.Store;
+import edu.mit.lids.ares.forestrunner.data.UserHighScoreRow;
 
 /**
  *  @brief  data storage backend for the desktop, uses sqlite database stored
@@ -329,36 +332,103 @@ public class DesktopStore
         if(!m_dataOK)
             return;
         
-        /*
         long unixTime = System.currentTimeMillis() / 1000L;
         String fmt = "INSERT INTO %s " +
         		     "    (date, velocity, density, radius, score) " +
         		     "VALUES" +
-        		     "    (%d, %d, %d, %d, %0.30f)";
+        		     "    (%d, %d, %d, %d, %.30f)";
+        
+        String delFmt = 
+                "DELETE FROM user_data WHERE " +
+                        "velocity=%d " +
+                        "AND density=%d " +
+                        "AND radius=%d " +
+                        "AND " +
+                        "score <= " + 
+                "(" +
+                    "SELECT score FROM user_data " +
+                        "ORDER BY score  DESC LIMIT 20, 1 " +
+                ")";
         try
         {
             m_sqlite.exec(String.format(fmt,
                         "user_data",
-                        unixTime,
+                        (int) unixTime,
                         getInteger("velocity"),
                         getInteger("density"),
                         getInteger("radius"),
                         score
                     ));
-            
+
             m_sqlite.exec(String.format(fmt,
                     "unsent_score",
-                    unixTime,
+                    (int) unixTime,
                     getInteger("velocity"),
                     getInteger("density"),
                     getInteger("radius"),
                     score
                 ));
-        } catch (SQLiteException e)
+            
+            m_sqlite.exec(String.format(delFmt,
+                    getInteger("velocity"),
+                    getInteger("density"),
+                    getInteger("radius")
+                    ));
+        } 
+        
+        catch (SQLiteException e)
         {
             e.printStackTrace(System.err);
         }
-        */
+        
+        catch (RuntimeException e)
+        {
+            e.printStackTrace(System.err);
+        }
+    }
+    
+    @Override
+    public List<UserHighScoreRow>   getUserScores()
+    {
+        List<UserHighScoreRow> scores = new ArrayList<UserHighScoreRow>();
+        
+        String fmt = 
+            "SELECT * FROM user_data WHERE" +
+		    "     velocity=%d  " +
+		    "     AND density=%d   " +
+		    "     AND radius=%d    " +
+		    " ORDER BY score DESC";
+        
+        try
+        {
+            SQLiteStatement st = m_sqlite.prepare(String.format(
+                    fmt,
+                    getInteger("velocity"),
+                    getInteger("density"),
+                    getInteger("radius")
+                    ));
+            
+            while(st.step())
+            {
+                UserHighScoreRow row= new UserHighScoreRow();
+                row.id      = st.columnLong(0);
+                row.date    = st.columnLong(1);
+                row.score   = st.columnDouble(5);
+                scores.add(row);
+            }
+            
+            st.dispose();
+        }
+        catch(SQLiteException e)
+        {
+            e.printStackTrace(System.err);
+        }
+        catch (RuntimeException e)
+        {
+            e.printStackTrace(System.err);
+        }
+        
+        return scores;
     }
     
     

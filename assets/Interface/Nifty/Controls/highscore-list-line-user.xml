@@ -1,0 +1,8 @@
+<nifty-controls>
+  <controlDefinition name="highscore-list-line-user">
+    <panel childLayout="horizontal" width="100%" align="center">
+      <control font="Interface/Fonts/SansSerif-8.fnt" id="#highscore-line-user-date"  name="label" textHAlign="left" width="25%"  />
+      <control font="Interface/Fonts/SansSerif-8.fnt" id="#highscore-line-user-score" name="label" textHAlign="right" width="20%"  />
+    </panel>
+  </controlDefinition>
+</nifty-controls>

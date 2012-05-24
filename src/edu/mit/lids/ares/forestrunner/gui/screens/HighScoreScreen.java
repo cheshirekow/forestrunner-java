@@ -4,6 +4,7 @@ import java.util.List;
 
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
+import de.lessvoid.nifty.controls.ListBox;
 import de.lessvoid.nifty.controls.TextField;
 import edu.mit.lids.ares.forestrunner.Game;
 import edu.mit.lids.ares.forestrunner.data.GlobalHighScoreRow;
@@ -19,12 +20,24 @@ public class HighScoreScreen
         super(game,true,true);
     }
     
+    @SuppressWarnings("unchecked")
     public void onStart_impl()
     {
+        m_dataStore.recordScore(m_game.getScore());
+        
         List<UserHighScoreRow>      userList    = m_dataStore.getUserScores();
         List<GlobalHighScoreRow>    globallist  = m_dataStore.getGlobalScores();
         
-        //m_dataStore.recordScore(m_game.getScore());
+        ListBox<UserHighScoreRow> listBox =(ListBox<UserHighScoreRow>) 
+                m_screen.findNiftyControl("lb.personalHigh", ListBox.class);
+        listBox.clear();
+        System.out.println("personal scores:");
+        for( UserHighScoreRow row : userList )
+        {
+            System.out.println("   " + row.date + ", " + row.score);
+            listBox.addItem(row);
+        }
+        listBox.refresh();
         
         /*
         Properties props = new Properties();
