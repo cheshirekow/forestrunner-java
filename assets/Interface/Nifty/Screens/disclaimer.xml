@@ -6,12 +6,17 @@
    <!--  the disclaimer screen, displays the disclaimer and accept/reject buttons -->
   <screen id="disclaimer" controller="edu.mit.lids.ares.forestrunner.gui.screens.DisclaimerScreen">
     <layer id="layer" backgroundColor="#0000" childLayout="center">
-      <panel id="panel" style="nifty-panel-80" height="80%" width="80%" align="center" valign="center" childLayout="vertical" visibleToMouse="true">
+      <panel id="panel" style="nifty-panel-80" height="90%" width="90%" align="center" valign="center" childLayout="vertical" visibleToMouse="true">
         <effect>
           <onStartScreen name="move" mode="in" direction="top" length="300" startDelay="0" inherit="true" onEndEffect="onEntranceFinished()"/> 
           <onEndScreen name="move" mode="out" direction="bottom" length="300" startDelay="0" inherit="true" onStartEffect="onExitStarted()"/>
         </effect>
-        <text id="text1" width="85%" font="aurulent-sans-16.fnt" text="${disclaimer.text}" color="#ffff" wrap="true" textHAlign="left"/>
+        <control id="scrollbarPanelId" name="scrollPanel" horizontal="false">
+            <panel id="myScrollStuff" width="100%" childLayout="vertical">
+                <text id="text1" width="85%" font="Interface/Fonts/SansSerif-20.fnt" text="${disclaimer.text}" color="#ffff" wrap="true" textHAlign="left"/>
+            </panel>
+        </control>
+        <panel id="pnl.spacer" height="10px" childLayout="center"/>
         <panel id="button-panel" width="60%" height="40px" align="center" childLayout="horizontal">
             <control id="disclaimer.btn.agree" width="50%" height="100%" name="button" style="forestrunner-button" label="${disclaimer.agree_txt}" />
             <control id="disclaimer.btn.disagree" width="50%" height="100%"  name="button" style="forestrunner-button" label="${disclaimer.disagree_txt}" />

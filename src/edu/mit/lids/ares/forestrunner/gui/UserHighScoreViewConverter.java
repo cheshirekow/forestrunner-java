@@ -20,8 +20,9 @@ public class UserHighScoreViewConverter
     
     static
     {
-        s_dateWriteFmt  = new SimpleDateFormat("  MM/d H:m", Locale.ENGLISH);
-        s_scoreWriteFmt = "%10.04f   ";
+        // old format " MM/d H:m"
+        s_dateWriteFmt  = new SimpleDateFormat(" MM/d", Locale.ENGLISH);
+        s_scoreWriteFmt = "%10.04f ";
     }
 
     /**

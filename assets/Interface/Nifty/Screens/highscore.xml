@@ -15,13 +15,13 @@
         <panel id="pnl.highscore" height="90%" width="100%" align="center" valign="center" childLayout="horizontal">
             <panel id="pnl.personalHigh" style="nifty-panel-80" height="100%" width="40%" childLayout="vertical">
                 <text id="txt.personalHigh" font="Interface/Fonts/SansSerif-20.fnt" text="${highscore.userHigh}" color="#ffff" wrap="true" textHAlign="left"/>
-                <control id="lb.personalHigh" name="listBox" vertical="optional" horizontal="optional" displayItems="13" viewConverterClass="edu.mit.lids.ares.forestrunner.gui.UserHighScoreViewConverter">
+                <control id="lb.personalHigh" name="listBox" vertical="optional" horizontal="optional" displayItems="12" viewConverterClass="edu.mit.lids.ares.forestrunner.gui.UserHighScoreViewConverter">
                     <control name="highscore-list-line-user" />
                 </control>
             </panel>
             <panel id="pnl.globalHigh" style="nifty-panel-80" height="100%" width="60%" childLayout="vertical"> 
                 <text id="txt.globalHigh" font="Interface/Fonts/SansSerif-20.fnt" text="${highscore.globalHigh}" color="#ffff" wrap="true" textHAlign="left"/>
-                <control id="lb.globalHigh" name="listBox" vertical="optional" horizontal="optional" displayItems="13" viewConverterClass="edu.mit.lids.ares.forestrunner.screens.HighScoreViewConverter">
+                <control id="lb.globalHigh" name="listBox" vertical="optional" horizontal="optional" displayItems="12" viewConverterClass="edu.mit.lids.ares.forestrunner.screens.HighScoreViewConverter">
                     <control name="highscore-list-line" />
                 </control>
             </panel>

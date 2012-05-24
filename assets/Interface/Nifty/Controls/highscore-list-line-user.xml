@@ -1,8 +1,8 @@
 <nifty-controls>
   <controlDefinition name="highscore-list-line-user">
     <panel id="#highscore-line-user-panel" style="forestrunner-listbox-item" childLayout="horizontal" width="100%" align="center">
-      <control font="Interface/Fonts/SansSerif-8.fnt" id="#highscore-line-user-date"  name="label" textHAlign="left" width="50%"  />
-      <control font="Interface/Fonts/SansSerif-8.fnt" id="#highscore-line-user-score" name="label" textHAlign="right" width="50%"  />
+      <control font="Interface/Fonts/FreeMono-18.fnt" id="#highscore-line-user-date"  name="label" textHAlign="left" width="50%"  />
+      <control font="Interface/Fonts/FreeMono-18.fnt" id="#highscore-line-user-score" name="label" textHAlign="right" width="50%"  />
     </panel>
   </controlDefinition>
 </nifty-controls>
