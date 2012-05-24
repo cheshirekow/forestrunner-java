@@ -556,12 +556,12 @@ public class DesktopStore
             {
                 m_sqlite.exec(String.format(updateFmt, 
                     (String) scoreMap.get("nick"),
-                    (Integer) scoreMap.get("date"),
+                    Integer.parseInt( (String) scoreMap.get("date") ),
                     getInteger("velocity"),
                     getInteger("density"),
                     getInteger("radius"),
-                    (Double) scoreMap.get("score"),
-                    (Integer) scoreMap.get("global_id")
+                    Double.parseDouble( (String) scoreMap.get("score") ),
+                    Integer.parseInt(   (String) scoreMap.get("global_id") )
                 ));
                 
                 m_sqlite.exec(String.format(delFmt,
