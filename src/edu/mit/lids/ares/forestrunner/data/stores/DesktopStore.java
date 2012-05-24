@@ -48,9 +48,9 @@ public class DesktopStore
     }
     
     @Override
-    public void init()
+    public void init(Game game)
     {
-        super.init();
+        super.init(game);
         m_dataOK = true;
 
         // get the path to the user's home directory

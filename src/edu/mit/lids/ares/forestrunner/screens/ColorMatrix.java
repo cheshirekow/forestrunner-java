@@ -18,15 +18,15 @@ public class ColorMatrix {
         switch(game.getSystem())
         {
             case ANDROID:
-                m_comm = new AndroidCommProvider();
+                //m_comm = new AndroidCommProvider();
                 break;
                 
             case DESKTOP:
-                m_comm = new DesktopCommProvider();
+                //m_comm = new DesktopCommProvider();
                 break;
                 
             case APPLET:
-                m_comm = new AppletCommProvider(game);
+                //m_comm = new AppletCommProvider(game);
                 break;
         }
         

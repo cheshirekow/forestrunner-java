@@ -38,7 +38,7 @@ public abstract class Store
      *  @brief  make necessary database/network connections, build database
      *          files if they do not exist, fetch mem-stored values
      */
-    public void init()
+    public void init(Game game)
     {
         m_intMap    = new HashMap<String,Integer>();
         m_boolMap   = new HashMap<String,Boolean>();

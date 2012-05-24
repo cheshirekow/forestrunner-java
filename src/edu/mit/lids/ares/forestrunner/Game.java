@@ -406,7 +406,7 @@ public abstract class Game extends Application
 //-----------------------------------------------------------------------------
     public void initDataStore()
     {
-        m_dataStore.init();
+        m_dataStore.init(this);
     }
     
     public void initConstants()
