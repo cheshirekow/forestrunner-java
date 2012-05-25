@@ -87,7 +87,7 @@ public class LoadingScreen
                 break;
                 
             case  11:
-                m_game.changeAdvancedSettings(AdvancedSettings.s_default);
+                m_game.changeAdvancedSettings();
                 break;
                 
             case  12:

@@ -170,11 +170,16 @@ public abstract class Game extends Application
         return m_advancedSettings;
     }
     
-    public void changeAdvancedSettings(AdvancedSettings newSettings)
+    public void changeAdvancedSettings()
     {
         System.out.println("Updating advanced settings\n------------------");
         
-        m_advancedSettings = newSettings;
+        // hack: get settings from data store, not from the
+        // passed object
+        for( String key : AdvancedSettings.parameters )
+            m_advancedSettings.put(key, m_dataStore.getBoolean(key));
+        
+        //m_advancedSettings = newSettings;
         m_worldRotate      = m_advancedSettings.get("worldRotate");
         
         // first, clear out all extra processors and post processing filters
@@ -198,7 +203,7 @@ public abstract class Game extends Application
             java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.WARNING);
             java.util.logging.Logger.getLogger(ScreenBase.class.getName()).setLevel(java.util.logging.Level.ALL);
             
-            if(newSettings.get("verbose"))
+            if(m_advancedSettings.get("verbose"))
             {
                 java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(java.util.logging.Level.ALL);
                 java.util.logging.Logger.getLogger("de.lessvoid.nifty.*").setLevel(java.util.logging.Level.ALL);
@@ -206,12 +211,12 @@ public abstract class Game extends Application
         }
         
         // now add them one by one according to the settings
-        if(newSettings.get("postProcessor"))
+        if(m_advancedSettings.get("postProcessor"))
         {
             System.out.println("Adding post processor");
             viewPort.addProcessor(m_fpp);
             
-            if(newSettings.get("fogFilter"))
+            if(m_advancedSettings.get("fogFilter"))
             {
                 System.out.println("Adding fog filter");
                 m_fpp.addFilter(m_fogFilter);
@@ -219,27 +224,27 @@ public abstract class Game extends Application
                 
         }
         
-        if(newSettings.get("mainGrid"))
+        if(m_advancedSettings.get("mainGrid"))
         {
             System.out.println("Adding main grid");
             m_patchRoot.attachChild(m_gridNode);
         }
         
-        if(newSettings.get("gradientFloor"))
+        if(m_advancedSettings.get("gradientFloor"))
         {
             System.out.println("Adding gradient floor");
             m_patchRotate.attachChild(m_gradientNode);
         }
         
         
-        FloorPatch.setUseGrid( newSettings.get("debugGrids") );
-        FloorPatch.setUseOutline( newSettings.get("cartoon") );
+        FloorPatch.setUseGrid( m_advancedSettings.get("debugGrids") );
+        FloorPatch.setUseOutline( m_advancedSettings.get("cartoon") );
         
-        if(newSettings.get("cartoon"))
+        if(m_advancedSettings.get("cartoon"))
             m_acRotate.attachChild(m_acOutlineNode);
         
-        FloorPatch.setUseLighting( newSettings.get("lighting") );
-        if(newSettings.get("lighting"))
+        FloorPatch.setUseLighting( m_advancedSettings.get("lighting") );
+        if(m_advancedSettings.get("lighting"))
         {
             System.out.println("setting cylinders to lighting material");
             rootNode.addLight(m_ambientLight);

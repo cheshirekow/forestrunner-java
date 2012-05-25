@@ -58,7 +58,8 @@ public class AdvancedScreen
                     m_dataStore.setBoolean(param, check.isChecked());
                 }
                 
-                m_game.changeAdvancedSettings(settings);
+                m_dataStore.sync();
+                m_game.changeAdvancedSettings();
                 m_shouldSave = false;
                 
                 // do nothing else this frame, let the timer advance 
