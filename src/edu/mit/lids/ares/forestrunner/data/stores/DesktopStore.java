@@ -107,7 +107,7 @@ public class DesktopStore
                 		            "requesting one from server");
                 
                 String urlString = 
-                        "http://ares.lids.mit.edu/~jbialk/forest_runner/src/" 
+                        "http://ares.lids.mit.edu/forestrunner/comm/" 
                         + "create_user.php";
 
                 // try to open a stream to the create user page
@@ -483,7 +483,7 @@ public class DesktopStore
         paramMap.put("hash", getString("hash"));
         
         String urlString = 
-                "http://ares.lids.mit.edu/~jbialk/forest_runner/src/" 
+                "http://ares.lids.mit.edu/forestrunner/comm/" 
                 + Store.encode("get_global_scores.php", paramMap);
 
         // try to open a stream to the create user page
@@ -602,7 +602,7 @@ public class DesktopStore
                 paramMap.put("version", String.format("%d",getInteger("version")));
                 
                 String urlString = 
-                        "http://ares.lids.mit.edu/~jbialk/forest_runner/src/" 
+                        "http://ares.lids.mit.edu/forestrunner/comm/" 
                         + Store.encode("insert_score.php", paramMap);
 
                 // try to open a stream to the create user page
@@ -671,7 +671,7 @@ public class DesktopStore
             paramMap.put("nick", getString("nick"));
             
             String urlString = 
-                    "http://ares.lids.mit.edu/~jbialk/forest_runner/src/" 
+                    "http://ares.lids.mit.edu/forestrunner/comm/" 
                     + Store.encode("set_nick.php", paramMap);
     
             // try to open a stream to the create user page

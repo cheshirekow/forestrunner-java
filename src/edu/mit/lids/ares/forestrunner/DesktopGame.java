@@ -35,7 +35,7 @@ public class DesktopGame extends KeyboardGame
         DesktopGame app = new DesktopGame();
         app.setShowSettings(false);
         app.setSettings(settings);
-        app.setPauseOnLostFocus(true);
+        app.setPauseOnLostFocus(false);
         
         app.start();
     }
