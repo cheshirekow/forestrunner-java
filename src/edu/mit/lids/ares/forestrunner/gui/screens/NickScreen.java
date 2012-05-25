@@ -11,6 +11,7 @@ import de.lessvoid.nifty.controls.TextFieldChangedEvent;
 import de.lessvoid.nifty.screen.Screen;
 
 import edu.mit.lids.ares.forestrunner.Game;
+import edu.mit.lids.ares.forestrunner.SystemContext;
 import edu.mit.lids.ares.forestrunner.gui.ScreenBase;
 
 public class NickScreen
@@ -50,11 +51,13 @@ public class NickScreen
     {
         m_mgr.attach(this);
         m_textField.setText(m_dataStore.getString("nick"));
+        m_btn.setFocus();
     }
     
     public void onEnd_impl()
     {
         m_mgr.detach(this);
+        m_btn.setFocus();
     }
     
     /**
@@ -67,7 +70,9 @@ public class NickScreen
     {
         if(m_buttonPressed)
         {
-            m_textField.disable();
+            // this may actually give it focus
+            // m_textField.disable();
+            
             // this will allow us to do all the fun work in one frame, and then
             // transition screens in the next frame
             if(m_nickChanged)
@@ -77,6 +82,7 @@ public class NickScreen
                 m_dataStore.setString("nick", m_textField.getText());
                 m_dataStore.sync();
                 m_nickChanged = false;
+                m_btn.setFocus();
                 
                 // dont do anything more until we render again
                 return;
@@ -98,7 +104,6 @@ public class NickScreen
     public void onButton( String id, ButtonClickedEvent event )
     {
         m_buttonPressed = true;
-        m_btn.disable();
     }
     
     /**
@@ -110,6 +115,8 @@ public class NickScreen
     @NiftyEventSubscriber(id="txtfld.username")
     public void onFieldChanged( String id, TextFieldChangedEvent event )
     {
+        if(m_game.getSystem() == SystemContext.ANDROID )
+            m_btn.setFocus();
         s_logger.log(Level.INFO, "user name [" + id +"] changed ");
         m_nickChanged = true;
     }

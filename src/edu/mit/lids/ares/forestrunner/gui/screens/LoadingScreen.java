@@ -90,7 +90,11 @@ public class LoadingScreen
                 m_game.changeAdvancedSettings(AdvancedSettings.s_default);
                 break;
                 
-            case  20:
+            case  12:
+                m_game.fixWireframe();
+                break;
+                
+            case  s_totalSteps:
                 m_nifty.gotoScreen("disclaimer");
                 break;
                 

@@ -94,9 +94,9 @@ public abstract class Game extends Application
     protected int     m_patchDimY;
     protected Boolean m_worldRotate;
     
-    protected AircraftMesh  m_acBaseMesh;
-    protected AircraftMesh  m_acOutlineMesh;
-    protected AircraftMesh  m_acWireMesh;
+    protected AircraftMesh      m_acBaseMesh;
+    protected AircraftMesh      m_acOutlineMesh;
+    protected AircraftWireMesh  m_acWireMesh;
     
     protected Geometry      m_acBaseNode;
     protected Geometry      m_acOutlineNode;
@@ -448,7 +448,7 @@ public abstract class Game extends Application
         m_cylinderOutlineMesh   = new Cylinder(4,10,m_radius+s_cPad,s_treeHeight+s_cPad,true,true);
         
         m_acBaseMesh    = new AircraftMesh(m_acSide);
-        m_acWireMesh    = new AircraftMesh(m_acSide);
+        m_acWireMesh    = new AircraftWireMesh(m_acSide);
         m_acOutlineMesh = new AircraftMesh(m_acSide+s_pad,true);
 
         m_acBaseNode    = new Geometry("aircraft",          m_acBaseMesh);
@@ -457,7 +457,6 @@ public abstract class Game extends Application
         
         m_acBaseNode.setLocalTranslation(0f, 0f, -m_acTrans);
         m_acOutlineNode.setLocalTranslation(0f, 0f, -m_acTrans-s_pad/2f);
-        m_acWireNode.setLocalScale(1.1f);
         m_acWireNode.setLocalTranslation(0f, 0f, -m_acTrans-0.01f);
         
         Material material   = new Material(assetManager,
@@ -470,6 +469,7 @@ public abstract class Game extends Application
         m_acOutlineNode.setMaterial(material);
         
         material = material.clone();
+        material.setColor("Color", ColorRGBA.Black);
         material.getAdditionalRenderState().setWireframe(true);
         m_acWireNode.setMaterial(material);
         
@@ -496,8 +496,9 @@ public abstract class Game extends Application
         m_gradientNode.setMaterial(material);
         
         m_acRotate.attachChild(m_acBaseNode);
-        m_acRotate.attachChild(m_acOutlineNode);
         m_acRotate.attachChild(m_acWireNode);
+        m_acRotate.attachChild(m_acOutlineNode);
+        
         
         m_patchRoot.attachChild(m_gridNode);
         m_patchRotate.attachChild(m_gradientNode);
@@ -679,7 +680,11 @@ public abstract class Game extends Application
         //viewPort.addProcessor(m_fpp);
     }
     
-    
+    public void fixWireframe()
+    {
+        Material mat = m_acWireNode.getMaterial();
+        mat.getAdditionalRenderState().setWireframe(true);
+    }
     
     
     
