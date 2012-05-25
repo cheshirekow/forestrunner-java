@@ -332,6 +332,7 @@ public class DesktopStore
         }
     }
     
+    @Override
     public void recordScore(float score)
     {
         if(!m_dataOK)
