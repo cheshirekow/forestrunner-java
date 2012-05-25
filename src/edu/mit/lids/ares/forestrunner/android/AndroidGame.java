@@ -19,10 +19,16 @@ public class AndroidGame
     extends Game
     implements SensorEventListener
 {
-    private SensorManager   m_SensorManager;
-    private Sensor          m_Accelerometer;
-    
+    private SensorManager       m_SensorManager;
+    private Sensor              m_Accelerometer;
+    private static final int    s_nAverage  = 3;
+    private static final int    s_recalcInt = 100;
+    private int                 m_iStore;
+    private int                 m_iCalc;
+
     protected   float       m_rotate;
+    protected   float[][]   m_store;
+    protected   float[]     m_avg;
     
     public AndroidGame()
         throws UnsupportedOperationException 
@@ -40,9 +46,19 @@ public class AndroidGame
                                 "Accelerometer is not available.");
         
         m_SensorManager.registerListener(this, m_Accelerometer, 
-                SensorManager.SENSOR_DELAY_NORMAL);
+                SensorManager.SENSOR_DELAY_GAME);
         
-        m_rotate = 0f;
+        m_rotate    = 0f;
+        m_iCalc     = 0;
+        m_store     = new float[3][s_nAverage];
+        m_avg       = new float[3];
+        
+        for(int i=0; i < 3; i++)
+        {
+            for(int j=0; j < s_nAverage; j++)
+                m_store[i][j] = 0;
+        }
+        
         
         m_advancedSettings.put("mainGrid", true);
     }
@@ -86,9 +102,34 @@ public class AndroidGame
         
         // I guess as a simple estimate of orientation we can look only at the
         // magnitude of the x,y 
+
+        // every so often we recalculate the averages to avoid numerical drif
+        if( ++m_iCalc > s_recalcInt )
+        {
+            m_iCalc = 0;
+            for(int i=0; i < 3; i++)
+            {
+                m_avg[i]                = 0;
+                m_store[i][m_iStore]    = acc[i];
+                for(int j=0; j < s_nAverage; j++)
+                    m_avg[i] += m_store[i][j] / s_nAverage;
+            }
+        }
+        else
+        {
+            for(int i=0; i < 3; i++)
+            {
+                m_avg[i]            -= m_store[i][m_iStore] / s_nAverage;
+                m_avg[i]            += acc[i] / s_nAverage;
+                m_store[i][m_iStore] = acc[i];
+            }
+        }
+
+        if( ++m_iStore >= s_nAverage )
+            m_iStore = 0;
         
-        float   x = acc[0];
-        float   y = acc[1];
+        float   x = m_avg[0];
+        float   y = m_avg[1];
         // atan2 returns -PI to PI so a is -1 to 1
         double  a = Math.atan2(y, x)/Math.PI;
                 a*=4;
