@@ -52,7 +52,7 @@ public abstract class Store
         m_intMap.put("lastGlobalRowId", 0  );
         
         for( String key : AdvancedSettings.parameters)
-            m_boolMap.put(key, false);
+            m_boolMap.put(key, AdvancedSettings.s_default.get(key));
         
         m_stringMap.put("nick", "Anon");
         m_stringMap.put("hash", "");

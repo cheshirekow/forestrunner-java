@@ -28,7 +28,7 @@ public class AdvancedSettings
         s_default = new AdvancedSettings();
         s_default.put("cartoon", true);
         s_default.put("mainGrid", true);
-        s_default.put("worldRotate", true);
+        s_default.put("worldRotate", false);
     }
     
     public AdvancedSettings()
