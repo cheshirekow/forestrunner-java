@@ -284,7 +284,7 @@ public class AppletStore
             paramMap.put("radius",  String.format("%d",getInteger("radius")));
             paramMap.put("score",   String.format("%.30f",score));
             paramMap.put("hash",    getString("hash"));
-            paramMap.put("version", String.format("%d",getInteger("version")));
+            paramMap.put("version", String.format("%d",Game.s_version));
                 
             String urlString = 
                     "http://ares.lids.mit.edu/forestrunner/comm/" 

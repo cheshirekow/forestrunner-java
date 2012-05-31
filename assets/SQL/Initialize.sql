@@ -1,9 +1,9 @@
-DROP TABLE IF EXISTS config;
-DROP TABLE IF EXISTS advanced;
-DROP TABLE IF EXISTS game;
+DROP TABLE IF EXISTS strings;
+DROP TABLE IF EXISTS booleans;
+DROP TABLE IF EXISTS integers;
+DROP TABLE IF EXISTS unsent_score;
 DROP TABLE IF EXISTS user_data;
 DROP TABLE IF EXISTS global_data;
-DROP TABLE IF EXISTS nicks;
 
 CREATE TABLE strings (
     string_key      TEXT PRIMARY KEY, 
@@ -70,4 +70,4 @@ INSERT INTO integers
         SELECT 'density',    1
  UNION  SELECT 'radius' ,    1 
  UNION  SELECT 'velocity'  , 1
- UNION  SELECT 'version',    1;
+ UNION  SELECT 'version',    3;

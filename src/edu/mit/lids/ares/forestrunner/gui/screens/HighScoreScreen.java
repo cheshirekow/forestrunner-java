@@ -27,7 +27,7 @@ public class HighScoreScreen
     private List<GlobalHighScoreRow>    m_globalList;
     
     private static final int s_scoresToSend = 10;
-    private static final int s_numSteps     = 30;
+    private static final int s_numSteps     = 13;
     
     public HighScoreScreen( Game game )
     {

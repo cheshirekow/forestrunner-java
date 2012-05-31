@@ -267,7 +267,7 @@ public class FloorPatch extends Node
         return false;
     }
     
-    Boolean collisionCheck( float x, float y, float x2, float y2, float r )
+    Boolean collisionCheck2( float dx, float dy, float r )
     {
         float r2    = r*r;
         //float minD2 = (float)1e16;
@@ -277,14 +277,16 @@ public class FloorPatch extends Node
         {
             Vector3f tr = m_trees.get(i).getWorldTranslation();
             
-            Vector2f vt = new Vector2f( tr.x - x, tr.z - y );
-            Vector2f vv = new Vector2f( x2 - x, y2 - y );
-            Vector2f t  = vv.mult( (vt.dot(vv) / (vt.length() * vv.length())) );
-            Vector2f td = ( t.length() > vv.length() ) ? vv : t;
-            Vector2f tp = vv.add(td);
-            Vector2f d  = tp.subtract(new Vector2f(tr.x,tr.z));
+            Vector2f p1 = new Vector2f( -dx, -dy );
+            Vector2f p2 = new Vector2f( 0, 0 );
+            Vector2f pt = new Vector2f( tr.x, tr.z );
+            Vector2f vt = pt.subtract(p1);
+            Vector2f vv = p2.subtract(p1);
             
-            if(d.lengthSquared() < r2)
+            Vector2f t  = vv.mult( (vt.dot(vv) / (vt.length() * vv.length())) );
+            Vector2f tp = ( t.length() > vv.length() ) ? p2 : p1.add(t);
+            
+            if(tp.subtract(pt).lengthSquared() < r2)
                 return true;
         }
         

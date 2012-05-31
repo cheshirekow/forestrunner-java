@@ -339,6 +339,14 @@ public class DesktopStore
             return;
         
         long unixTime = System.currentTimeMillis() / 1000L;
+        System.out.println();
+        String msgFmt = 
+                "Saving score:\n" +
+        	 	"   velocity: %d\n" +
+        	 	"   density: %d\n" +
+        	 	"   radius: %d\n" +
+        	 	"   score: %.30f\n"; 
+                        
         String fmt = "INSERT INTO %s " +
         		     "    (date, velocity, density, radius, score) " +
         		     "VALUES" +
@@ -355,9 +363,12 @@ public class DesktopStore
                         "AND density=%d " +
                         "AND radius=%d " +
                         "AND " +
-                        "score <= " + 
+                        "score < " + 
                 "(" +
-                    "SELECT score FROM user_data " +
+                    "SELECT score FROM %s " +
+                        "WHERE velocity=%d " +
+                        "AND density=%d " +
+                        "AND radius=%d " +
                         "ORDER BY score  DESC LIMIT 20, 1 " +
                 ")";
         try
@@ -370,6 +381,12 @@ public class DesktopStore
                         getInteger("radius"),
                         score
                     ));
+         
+            System.out.println(String.format(msgFmt,
+                        getInteger("velocity"),
+                        getInteger("density"),
+                        getInteger("radius"),
+                        score));
             
             m_intMap.put("lastUserRowId", (int)m_sqlite.getLastInsertId());
 
@@ -403,10 +420,18 @@ public class DesktopStore
                     "user_data",
                     getInteger("velocity"),
                     getInteger("density"),
+                    getInteger("radius"),
+                    "user_data",
+                    getInteger("velocity"),
+                    getInteger("density"),
                     getInteger("radius")
                     ));
             
             m_sqlite.exec(String.format(delFmt,
+                    "global_data",
+                    getInteger("velocity"),
+                    getInteger("density"),
+                    getInteger("radius"),
                     "global_data",
                     getInteger("velocity"),
                     getInteger("density"),
@@ -474,9 +499,11 @@ public class DesktopStore
     @Override 
     public void syncGlobalHigh()
     {
+        System.out.println("Getting scores from server");
+        
         Map<String,String> paramMap = new HashMap<String,String>();
         
-        paramMap.put("version", String.format("%d",getInteger("version")));
+        paramMap.put("version", String.format("%d",Game.s_version));
         paramMap.put("velocity", String.format("%d",getInteger("velocity")));
         paramMap.put("density", String.format("%d",getInteger("density")));
         paramMap.put("radius", String.format("%d",getInteger("radius")));
@@ -485,6 +512,8 @@ public class DesktopStore
         String urlString = 
                 "http://ares.lids.mit.edu/forestrunner/comm/" 
                 + Store.encode("get_global_scores.php", paramMap);
+        
+        System.out.println("url: " + urlString);
 
         // try to open a stream to the create user page
         InputStream source;
@@ -541,20 +570,26 @@ public class DesktopStore
                         "AND density=%d " +
                         "AND radius=%d " +
                         "AND " +
-                        "score <= " + 
+                        "score < " + 
                 "(" +
-                    "SELECT score FROM user_data " +
+                    "SELECT score FROM %s WHERE " +
+                        "velocity=%d " +
+                        "AND density=%d " +
+                        "AND radius=%d " +
                         "ORDER BY score  DESC LIMIT 20, 1 " +
                 ")";
         
         // otherwise, things look good
         JSONArray scoreArray = (JSONArray)obj.get("scores");
-        for( Object scoreObj : scoreArray )
+        System.out.println("Received " + scoreArray.size() + " scores");
+        
+        try
         {
-            JSONObject scoreMap = (JSONObject)scoreObj;
-            
-            try
+            for( Object scoreObj : scoreArray )
             {
+                JSONObject scoreMap = (JSONObject)scoreObj;
+            
+            
                 m_sqlite.exec(String.format(updateFmt, 
                     (String) scoreMap.get("nick"),
                     Integer.parseInt( (String) scoreMap.get("date") ),
@@ -565,17 +600,23 @@ public class DesktopStore
                     Integer.parseInt(   (String) scoreMap.get("global_id") )
                 ));
                 
-                m_sqlite.exec(String.format(delFmt,
-                    "global_data",
-                    getInteger("velocity"),
-                    getInteger("density"),
-                    getInteger("radius")
-                ));
             }
-            catch(SQLiteException e)
-            {
-                e.printStackTrace(System.err);
-            }
+            
+            m_sqlite.exec(String.format(delFmt,
+                "global_data",
+                getInteger("velocity"),
+                getInteger("density"),
+                getInteger("radius"),
+                "global_data",
+                getInteger("velocity"),
+                getInteger("density"),
+                getInteger("radius")
+            ));
+        
+        }
+        catch(SQLiteException e)
+        {
+            e.printStackTrace(System.err);
         }
     }
     
@@ -599,7 +640,7 @@ public class DesktopStore
                 paramMap.put("radius",  String.format("%d",st.columnInt(4)));
                 paramMap.put("score",   String.format("%.30f",st.columnDouble(5)));
                 paramMap.put("hash",    getString("hash"));
-                paramMap.put("version", String.format("%d",getInteger("version")));
+                paramMap.put("version", String.format("%d",Game.s_version));
                 
                 String urlString = 
                         "http://ares.lids.mit.edu/forestrunner/comm/" 

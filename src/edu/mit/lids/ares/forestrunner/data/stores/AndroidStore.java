@@ -437,7 +437,7 @@ public class AndroidStore
                 paramMap.put("radius",  String.format("%d",cur.getInt(4)));
                 paramMap.put("score",   String.format("%.30f",cur.getDouble(5)));
                 paramMap.put("hash",    getString("hash"));
-                paramMap.put("version", String.format("%d",getInteger("version")));
+                paramMap.put("version", String.format("%d",Game.s_version));
                 
                 String urlString = 
                         "http://ares.lids.mit.edu/~jbialk/forest_runner/src/" 

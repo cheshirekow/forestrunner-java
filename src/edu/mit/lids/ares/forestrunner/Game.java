@@ -45,7 +45,7 @@ public abstract class Game extends Application
     
     // this should NEVER decrease, increment when parameter equations are
     // changed, or when storage backend changes
-    public static final int   s_version    = 2;
+    public static final int   s_version    = 3;
     
     public static final float s_pad        = 0.08f;
     public static final float s_cPad       = 0.03f;
@@ -836,7 +836,7 @@ public abstract class Game extends Application
             for(int j=0; j < 2 && !collision; j++)
             {
                 collision 
-                    = m_patches[i][j].collisionCheck(oldX, oldY, m_xPos, m_yPos, m_radius + m_acRadius);
+                    = m_patches[i][j].collisionCheck2(m_xSpeed*tpf, m_ySpeed*tpf, m_radius + m_acRadius);
                 if(collision)
                     System.out.println("Collision in loop");
             }
