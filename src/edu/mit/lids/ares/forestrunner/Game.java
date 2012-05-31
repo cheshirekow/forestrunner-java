@@ -9,6 +9,7 @@ import com.jme3.light.AmbientLight;
 import com.jme3.light.PointLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.niftygui.NiftyJmeDisplay;
@@ -44,7 +45,7 @@ public abstract class Game extends Application
     
     // this should NEVER decrease, increment when parameter equations are
     // changed, or when storage backend changes
-    public static final int   s_version    = 1;
+    public static final int   s_version    = 2;
     
     public static final float s_pad        = 0.08f;
     public static final float s_cPad       = 0.03f;
@@ -97,10 +98,12 @@ public abstract class Game extends Application
     protected AircraftMesh      m_acBaseMesh;
     protected AircraftMesh      m_acOutlineMesh;
     protected AircraftWireMesh  m_acWireMesh;
+    protected CylinderOutline   m_acBumperMesh;
     
     protected Geometry      m_acBaseNode;
     protected Geometry      m_acOutlineNode;
     protected Geometry      m_acWireNode;
+    protected Geometry      m_acBumperNode;
     
     protected Cylinder          m_cylinderBaseMesh;
     protected Cylinder          m_cylinderOutlineMesh;
@@ -438,8 +441,8 @@ public abstract class Game extends Application
         m_patchDimY = 8; //4;
         
         m_acSide    = 0.3f;
-        m_acRadius  = (m_acSide/2f) * (float)Math.tan(Math.PI/6.0);
-        m_acTrans   = (float)( m_acSide*Math.sin(Math.PI/3) ) - m_acRadius;
+        m_acRadius  = (m_acSide/2f);
+        m_acTrans   = (float)( m_acSide*Math.sin(Math.PI/3) )*2/3;
         m_worldRotate   = m_advancedSettings.get("worldRotate");
     }
     
@@ -455,10 +458,16 @@ public abstract class Game extends Application
         m_acBaseMesh    = new AircraftMesh(m_acSide);
         m_acWireMesh    = new AircraftWireMesh(m_acSide);
         m_acOutlineMesh = new AircraftMesh(m_acSide+s_pad,true);
+        m_acBumperMesh  = new CylinderOutline(10,m_acRadius,0);
 
         m_acBaseNode    = new Geometry("aircraft",          m_acBaseMesh);
         m_acWireNode    = new Geometry("aircraft_wireframe",m_acWireMesh);
         m_acOutlineNode = new Geometry("aircraft_outline",  m_acOutlineMesh);
+        m_acBumperNode  = new Geometry("aircraft_bumper",   m_acBumperMesh);
+        
+        Quaternion q = new Quaternion();
+        q.fromAngles(FastMath.PI/2, 0, 0);
+        m_acBumperNode.setLocalRotation(q);
         
         m_acBaseNode.setLocalTranslation(0f, 0f, -m_acTrans);
         m_acOutlineNode.setLocalTranslation(0f, 0f, -m_acTrans-s_pad/2f);
@@ -477,6 +486,7 @@ public abstract class Game extends Application
         material.setColor("Color", ColorRGBA.Black);
         material.getAdditionalRenderState().setWireframe(true);
         m_acWireNode.setMaterial(material);
+        m_acBumperNode.setMaterial(material);
         
         int     width   = (int)(m_patchWidth*(m_patchDimX+2));
         int     height  = (int)(m_patchHeight*m_patchDimY);
@@ -503,11 +513,10 @@ public abstract class Game extends Application
         m_acRotate.attachChild(m_acBaseNode);
         m_acRotate.attachChild(m_acWireNode);
         m_acRotate.attachChild(m_acOutlineNode);
-        
+        m_patchRotate.attachChild(m_acBumperNode);
         
         m_patchRoot.attachChild(m_gridNode);
         m_patchRotate.attachChild(m_gradientNode);
-        
     }
     
     
@@ -518,6 +527,7 @@ public abstract class Game extends Application
         m_patchRoot     = new Node("patch_root");
         m_patchRotate   = new Node("patch_rotate");
         m_acRotate      = new Node("ac_rotate");
+        
         
         m_patchRotate.attachChild(m_patchRoot);
         rootNode.attachChild(m_patchRotate);
@@ -578,7 +588,7 @@ public abstract class Game extends Application
         m_radius = 0.1f + 0.03f * m_params.get("radius");
         m_ySpeed = 10.0f + 1.0f * m_params.get("velocity");
         m_xSpeed = 0f;
-        m_density= 1f  + 1f  * m_params.get("density");
+        m_density= 5f  + 0.5f  * m_params.get("density");
                     //20f  + 10f  * m_params.get("density");
         
         int   dimx      = m_patchDimX;
@@ -727,6 +737,9 @@ public abstract class Game extends Application
         // update the xspeed if necessary
         updateSpeed(tpf);
         
+        float oldX = m_xPos;
+        float oldY = m_yPos;
+        
         // update the position
         m_yPos += m_ySpeed*tpf;
         m_xPos += m_xSpeed*tpf;
@@ -823,7 +836,7 @@ public abstract class Game extends Application
             for(int j=0; j < 2 && !collision; j++)
             {
                 collision 
-                    = m_patches[i][j].collisionCheck(m_xPos, m_yPos, m_radius + m_acRadius);
+                    = m_patches[i][j].collisionCheck(oldX, oldY, m_xPos, m_yPos, m_radius + m_acRadius);
                 if(collision)
                     System.out.println("Collision in loop");
             }

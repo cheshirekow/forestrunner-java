@@ -17,6 +17,7 @@ public class GameScreen
 {
     boolean         m_resumeImmediately;
     boolean         m_settingsChanged;
+    boolean         m_randomize;
     String          m_goto;
     
     //ColorMatrix cm;
@@ -27,6 +28,7 @@ public class GameScreen
         super(game,true,true);
         m_resumeImmediately = false;
         m_settingsChanged   = false;
+        m_randomize         = false;
         m_goto              = "";
         //cm                  = new ColorMatrix(game);
     }
@@ -78,6 +80,11 @@ public class GameScreen
             slider.setValue( m_dataStore.getInteger(param) );
         }
         
+        String idName = "game.sldr.radius";
+        Slider slider = m_screen.findNiftyControl(idName, Slider.class);
+        slider.setValue(2);
+        slider.disable();
+        
         m_mgr.attach(this);
     }
     
@@ -98,6 +105,24 @@ public class GameScreen
     {
         if(m_goto.length() > 0)
         {
+            if(m_randomize)
+            {
+                String[] params = {"velocity", "density"};
+                
+                for( String param : params )
+                {
+                    String idName = "game.sldr." + param;
+                    Slider slider = m_screen.findNiftyControl(idName, Slider.class);
+                    int value = (int)(Math.random()*10);
+                    slider.setValue(value);
+                }
+                
+                m_dataStore.sync();
+                m_game.initRun();
+                m_randomize       = false;
+                m_settingsChanged = true;
+                return;
+            }
             if(m_settingsChanged)
             {
                 String[] params = {"velocity", "density", "radius"};
@@ -111,6 +136,10 @@ public class GameScreen
                     m_game.setParam(param, value );
                     m_dataStore.setInteger(param, value);
                 }
+                
+                String idName = "game.sldr.radius";
+                Slider slider = m_screen.findNiftyControl(idName, Slider.class);
+                slider.setValue(2);
                 
                 m_dataStore.sync();
                 m_game.initRun();
@@ -133,6 +162,11 @@ public class GameScreen
         if( id.compareTo("game.btn.new")==0 )
         {
             m_settingsChanged = true;
+            m_goto = "countdown3";
+        }
+        else if( id.compareTo("game.btn.randomize")==0 )
+        {
+            m_randomize = true;
             m_goto = "countdown3";
         }
         else if( id.compareTo("game.btn.advanced")==0 )

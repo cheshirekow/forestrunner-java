@@ -13,12 +13,17 @@
                 <onEndScreen   name="move" mode="out" direction="bottom" length="300" startDelay="0" inherit="true" onStartEffect="onExitStarted()"    />
             </effect>
             <panel id="pnl.split" width="100%" height="100%" childLayout="horizontal">
-                <panel id="pnl.instructions" style="nifty-panel-80" width="50%" childLayout="vertical">
+                <panel id="pnl.left" width="50%" childLayout="vertical">
+                <panel id="pnl.instructions" style="nifty-panel-80" width="100%" childLayout="vertical">
                     <text id="txt.instructions" width="90%" font="Interface/Fonts/SansSerif-20.fnt" text="${game.instructions}" color="#ffff" wrap="true" textHAlign="left"/>
                     <panel id="pnl.spacer2" width="100%" height="20px">
                     </panel>
                     <control id="game.btn.advanced" width="90%" height="40px" align="center" name="button" style="forestrunner-button" label="${game.advanced}"/>
                 </panel>
+                <panel id="pnl.spacer_random" height="40px" childLayout="center"></panel>
+                <control id="game.btn.randomize" width="120px" height="40px" align="left" name="button" style="forestrunner-button" label="Randomize"/>
+                </panel>
+                
                 <panel id="pnl.options" width="50%" height="100%" childLayout="vertical">
                 <panel id="pnl.sliders" childLayout="vertical" style="nifty-panel-80">
                     <panel id="pnl.spacer1" height="20px" childLayout="vertical"></panel>

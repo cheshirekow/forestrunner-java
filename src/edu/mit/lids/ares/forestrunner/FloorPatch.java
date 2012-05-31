@@ -8,6 +8,7 @@ import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Matrix3f;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
@@ -262,6 +263,30 @@ public class FloorPatch extends Node
             //minD2 = Math.min(d2, minD2);
         }
         //System.out.println("min dist: " + Math.sqrt(minD2) + ", radius: " + r );
+        
+        return false;
+    }
+    
+    Boolean collisionCheck( float x, float y, float x2, float y2, float r )
+    {
+        float r2    = r*r;
+        //float minD2 = (float)1e16;
+        
+        //System.out.println("trees:");
+        for(int i=0; i < m_numTrees; i++)
+        {
+            Vector3f tr = m_trees.get(i).getWorldTranslation();
+            
+            Vector2f vt = new Vector2f( tr.x - x, tr.z - y );
+            Vector2f vv = new Vector2f( x2 - x, y2 - y );
+            Vector2f t  = vv.mult( (vt.dot(vv) / (vt.length() * vv.length())) );
+            Vector2f td = ( t.length() > vv.length() ) ? vv : t;
+            Vector2f tp = vv.add(td);
+            Vector2f d  = tp.subtract(new Vector2f(tr.x,tr.z));
+            
+            if(d.lengthSquared() < r2)
+                return true;
+        }
         
         return false;
     }
