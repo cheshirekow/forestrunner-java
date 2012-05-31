@@ -26,6 +26,8 @@ public abstract class Store
     // advanced settings (i.e. prefs)
     protected AdvancedSettings  m_advancedSettings;
     
+    public static final int s_numScoresToShow=20;
+    
     /**
      *  @brief  just sets some defaults
      */

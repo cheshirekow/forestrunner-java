@@ -357,20 +357,6 @@ public class DesktopStore
                 "VALUES" +
                 "    (%d, %d, %d, %d, %.30f, %d)";
         
-        String delFmt = 
-                "DELETE FROM %s WHERE " +
-                        "velocity=%d " +
-                        "AND density=%d " +
-                        "AND radius=%d " +
-                        "AND " +
-                        "score < " + 
-                "(" +
-                    "SELECT score FROM %s " +
-                        "WHERE velocity=%d " +
-                        "AND density=%d " +
-                        "AND radius=%d " +
-                        "ORDER BY score  DESC LIMIT 20, 1 " +
-                ")";
         try
         {
             m_sqlite.exec(String.format(fmt,
@@ -415,28 +401,6 @@ public class DesktopStore
                 ));
             
             m_intMap.put("lastGlobalRowId", (int)m_sqlite.getLastInsertId());
-            
-            m_sqlite.exec(String.format(delFmt,
-                    "user_data",
-                    getInteger("velocity"),
-                    getInteger("density"),
-                    getInteger("radius"),
-                    "user_data",
-                    getInteger("velocity"),
-                    getInteger("density"),
-                    getInteger("radius")
-                    ));
-            
-            m_sqlite.exec(String.format(delFmt,
-                    "global_data",
-                    getInteger("velocity"),
-                    getInteger("density"),
-                    getInteger("radius"),
-                    "global_data",
-                    getInteger("velocity"),
-                    getInteger("density"),
-                    getInteger("radius")
-                    ));
         } 
         
         catch (SQLiteException e)
@@ -453,7 +417,8 @@ public class DesktopStore
     @Override
     public List<UserHighScoreRow>   getUserScores()
     {
-        List<UserHighScoreRow> scores = new ArrayList<UserHighScoreRow>();
+        List<UserHighScoreRow> scores = 
+                new ArrayList<UserHighScoreRow>(s_numScoresToShow);
         
         String fmt = 
             "SELECT * FROM user_data WHERE" +
@@ -461,6 +426,13 @@ public class DesktopStore
 		    "     AND density=%d   " +
 		    "     AND radius=%d    " +
 		    " ORDER BY score DESC";
+        
+        String delFmt = 
+                "DELETE FROM user_data WHERE" +
+                "     velocity=%d  " +
+                "     AND density=%d   " +
+                "     AND radius=%d" +
+                "     AND score<%f";
         
         try
         {
@@ -471,7 +443,8 @@ public class DesktopStore
                     getInteger("radius")
                     ));
             
-            while(st.step())
+            int iRows = 0;
+            while(st.step() && iRows < s_numScoresToShow)
             {
                 UserHighScoreRow row= new UserHighScoreRow();
                 row.id      = st.columnLong(0);
@@ -480,6 +453,20 @@ public class DesktopStore
                 if(row.id == getInteger("lastUserRowId"))
                     row.isCurrent = true;
                 scores.add(row);
+                
+                iRows++;
+            }
+            
+            if(iRows >= s_numScoresToShow)
+            {
+                double maxScore = scores.get( scores.size()-1 ).score;
+                m_sqlite.exec(String.format(
+                        delFmt,
+                        getInteger("velocity"),
+                        getInteger("density"),
+                        getInteger("radius"),
+                        maxScore
+                        ));
             }
             
             st.dispose();
@@ -564,21 +551,6 @@ public class DesktopStore
                 "VALUES" + 
                     "('%s',%d,%d,%d,%d,%.30f,%d)";
         
-        String delFmt = 
-                "DELETE FROM %s WHERE " +
-                        "velocity=%d " +
-                        "AND density=%d " +
-                        "AND radius=%d " +
-                        "AND " +
-                        "score < " + 
-                "(" +
-                    "SELECT score FROM %s WHERE " +
-                        "velocity=%d " +
-                        "AND density=%d " +
-                        "AND radius=%d " +
-                        "ORDER BY score  DESC LIMIT 20, 1 " +
-                ")";
-        
         // otherwise, things look good
         JSONArray scoreArray = (JSONArray)obj.get("scores");
         System.out.println("Received " + scoreArray.size() + " scores");
@@ -601,18 +573,6 @@ public class DesktopStore
                 ));
                 
             }
-            
-            m_sqlite.exec(String.format(delFmt,
-                "global_data",
-                getInteger("velocity"),
-                getInteger("density"),
-                getInteger("radius"),
-                "global_data",
-                getInteger("velocity"),
-                getInteger("density"),
-                getInteger("radius")
-            ));
-        
         }
         catch(SQLiteException e)
         {
@@ -759,7 +719,8 @@ public class DesktopStore
     @Override
     public List<GlobalHighScoreRow>   getGlobalScores()
     {
-        List<GlobalHighScoreRow> scores = new ArrayList<GlobalHighScoreRow>();
+        List<GlobalHighScoreRow> scores = 
+                new ArrayList<GlobalHighScoreRow>(s_numScoresToShow);
         
         String fmt = 
             "SELECT * FROM global_data WHERE" +
@@ -767,6 +728,13 @@ public class DesktopStore
             "     AND density=%d   " +
             "     AND radius=%d    " +
             " ORDER BY score DESC";
+        
+        String delFmt = 
+                "DELETE FROM global_data WHERE " +
+                        "velocity=%d " +
+                        "AND density=%d " +
+                        "AND radius=%d " +
+                        "AND score<%f ";
         
         try
         {
@@ -776,8 +744,9 @@ public class DesktopStore
                     getInteger("density"),
                     getInteger("radius")
                     ));
-            
-            while(st.step())
+
+            int iRow = 0;
+            while(st.step() && iRow < s_numScoresToShow)
             {
                 GlobalHighScoreRow row= new GlobalHighScoreRow();
                 row.id      = st.columnLong(0);
@@ -789,6 +758,20 @@ public class DesktopStore
                 if(row.id == getInteger("lastGlobalRowId"))
                     row.isCurrent = true;
                 scores.add(row);
+                
+                iRow++;
+            }
+            
+            if(iRow >= s_numScoresToShow)
+            {
+                double maxScore = scores.get( scores.size()-1 ).score;
+                m_sqlite.exec(String.format(
+                        delFmt,
+                        getInteger("velocity"),
+                        getInteger("density"),
+                        getInteger("radius"),
+                        maxScore
+                        ));
             }
             
             st.dispose();

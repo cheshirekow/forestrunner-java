@@ -146,18 +146,6 @@ public class AndroidStore
         
         long unixTime = System.currentTimeMillis() / 1000L;
         
-        String delFmt = 
-                "DELETE FROM %s WHERE " +
-                        "velocity=%d " +
-                        "AND density=%d " +
-                        "AND radius=%d " +
-                        "AND " +
-                        "score <= " + 
-                "(" +
-                    "SELECT score FROM user_data " +
-                        "ORDER BY score  DESC LIMIT 20, 1 " +
-                ")";
-        
         ContentValues cv;
         cv = new ContentValues();
         
@@ -182,20 +170,6 @@ public class AndroidStore
         
         m_intMap.put("lastGlobalRowId", 
                 (int)db.insert("global_data", "data_id", cv) );
-        
-        db.execSQL(String.format(delFmt,
-                "user_data",
-                getInteger("velocity"),
-                getInteger("density"),
-                getInteger("radius")
-                ));
-        
-        db.execSQL(String.format(delFmt,
-                "global_data",
-                getInteger("velocity"),
-                getInteger("density"),
-                getInteger("radius")
-                ));
     }
     
     
@@ -206,6 +180,7 @@ public class AndroidStore
     {
         List<UserHighScoreRow> scores = new ArrayList<UserHighScoreRow>();
         SQLiteDatabase db = m_helper.getReadableDatabase();
+        SQLiteDatabase writeDb = m_helper.getWritableDatabase();
         
         String fmt = 
             "SELECT * FROM user_data WHERE" +
@@ -214,6 +189,13 @@ public class AndroidStore
             "     AND radius=%d    " +
             " ORDER BY score DESC";
         
+        String delFmt = 
+                "DELETE FROM user_data WHERE" +
+                "     velocity=%d  " +
+                "     AND density=%d   " +
+                "     AND radius=%d" +
+                "     AND score<%f";
+        
         Cursor cur = db.rawQuery(String.format(
                     fmt,
                     getInteger("velocity"),
@@ -221,6 +203,7 @@ public class AndroidStore
                     getInteger("radius")
                     ), new String[]{} );
             
+        int iRow = 0;
         if(cur.moveToFirst())
         {
             do
@@ -232,7 +215,21 @@ public class AndroidStore
                 if(row.id == getInteger("lastUserRowId"))
                     row.isCurrent = true;
                 scores.add(row);
-            }while(cur.moveToNext());
+                
+                iRow++;
+            }while(cur.moveToNext() && iRow < s_numScoresToShow);
+        }
+        
+        if(iRow >= s_numScoresToShow)
+        {
+            double maxScore = scores.get( scores.size()-1 ).score;
+            writeDb.execSQL(String.format(
+                    delFmt,
+                    getInteger("velocity"),
+                    getInteger("density"),
+                    getInteger("radius"),
+                    maxScore
+                    ));
         }
             
         cur.close();
@@ -250,6 +247,7 @@ public class AndroidStore
     {
         List<GlobalHighScoreRow> scores = new ArrayList<GlobalHighScoreRow>();
         SQLiteDatabase db = m_helper.getReadableDatabase();
+        SQLiteDatabase writeDb = m_helper.getWritableDatabase();
         
         String fmt = 
             "SELECT * FROM global_data WHERE" +
@@ -257,6 +255,13 @@ public class AndroidStore
             "     AND density=%d   " +
             "     AND radius=%d    " +
             " ORDER BY score DESC";
+        
+        String delFmt = 
+            "DELETE FROM global_data WHERE " +
+                    "velocity=%d " +
+                    "AND density=%d " +
+                    "AND radius=%d " +
+                    "AND score<%f ";
     
         Cursor cur = db.rawQuery(String.format(
                 fmt,
@@ -265,6 +270,7 @@ public class AndroidStore
                 getInteger("radius")
                 ), new String[]{} );
         
+        int iRow = 0;
         if(cur.moveToFirst())
         {
             do
@@ -279,7 +285,21 @@ public class AndroidStore
                 if(row.id == getInteger("lastGlobalRowId"))
                     row.isCurrent = true;
                 scores.add(row);
-            }while(cur.moveToNext());
+                
+                iRow++;
+            }while(cur.moveToNext() && iRow < s_numScoresToShow);
+        }
+        
+        if(iRow >= s_numScoresToShow)
+        {
+            double maxScore = scores.get( scores.size()-1 ).score;
+            writeDb.execSQL(String.format(
+                    delFmt,
+                    getInteger("velocity"),
+                    getInteger("density"),
+                    getInteger("radius"),
+                    maxScore
+                    ));
         }
         
         cur.close();
@@ -368,18 +388,6 @@ public class AndroidStore
                 "VALUES" + 
                     "('%s',%d,%d,%d,%d,%.30f,%d)";
         
-        String delFmt = 
-                "DELETE FROM %s WHERE " +
-                        "velocity=%d " +
-                        "AND density=%d " +
-                        "AND radius=%d " +
-                        "AND " +
-                        "score <= " + 
-                "(" +
-                    "SELECT score FROM user_data " +
-                        "ORDER BY score  DESC LIMIT 20, 1 " +
-                ")";
-        
         SQLiteDatabase db= m_helper.getWritableDatabase();
         
         // otherwise, things look good
@@ -398,13 +406,6 @@ public class AndroidStore
                 Integer.parseInt(   (String) scoreMap.get("global_id") )
             ));
         }
-        
-        db.execSQL(String.format(delFmt,
-                "global_data",
-                getInteger("velocity"),
-                getInteger("density"),
-                getInteger("radius")
-            ));
     }
     
     
