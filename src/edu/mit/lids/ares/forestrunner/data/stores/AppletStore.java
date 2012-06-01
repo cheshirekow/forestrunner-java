@@ -181,6 +181,9 @@ public class AppletStore
         
         StringBuilder buf       = new StringBuilder();
         String        encData   = "";
+        
+        m_cookieData.put("version",String.format("%d", Game.s_version));
+
         try
         {
            for(String key : m_cookieData.keySet())
@@ -337,7 +340,7 @@ public class AppletStore
         List<UserHighScoreRow> scores = new ArrayList<UserHighScoreRow>();
         
         Map<String,String> paramMap = new HashMap<String,String>();
-        paramMap.put("version", String.format("%d",getInteger("version")));
+        paramMap.put("version", String.format("%d",Game.s_version));
         paramMap.put("velocity", String.format("%d",getInteger("velocity")));
         paramMap.put("density", String.format("%d",getInteger("density")));
         paramMap.put("radius", String.format("%d",getInteger("radius")));
@@ -426,7 +429,7 @@ public class AppletStore
         List<GlobalHighScoreRow> scores = new ArrayList<GlobalHighScoreRow>();
         
         Map<String,String> paramMap = new HashMap<String,String>();
-        paramMap.put("version", String.format("%d",getInteger("version")));
+        paramMap.put("version", String.format("%d",Game.s_version));
         paramMap.put("velocity", String.format("%d",getInteger("velocity")));
         paramMap.put("density", String.format("%d",getInteger("density")));
         paramMap.put("radius", String.format("%d",getInteger("radius")));

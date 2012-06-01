@@ -4,9 +4,11 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -15,6 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -24,6 +28,9 @@ import com.almworks.sqlite4java.SQLiteConnection;
 import com.almworks.sqlite4java.SQLiteConstants;
 import com.almworks.sqlite4java.SQLiteException;
 import com.almworks.sqlite4java.SQLiteStatement;
+
+import com.jme3.system.JmeSystem;
+import com.jme3.system.Platform;
 
 import edu.mit.lids.ares.forestrunner.Game;
 import edu.mit.lids.ares.forestrunner.data.GlobalHighScoreRow;
@@ -39,8 +46,10 @@ import edu.mit.lids.ares.forestrunner.data.UserHighScoreRow;
 public class DesktopStore 
     extends Store
 {
-    protected boolean           m_dataOK;
-    protected SQLiteConnection  m_sqlite;
+    protected static final boolean  m_isTesting = true;
+    protected boolean               m_dataOK;
+    protected SQLiteConnection      m_sqlite;
+    protected File                  m_dbFile;
     
     public DesktopStore()
     {
@@ -52,6 +61,81 @@ public class DesktopStore
     {
         super.init(game);
         m_dataOK = true;
+        
+        // extract the necessary native libraries from the fat jar
+        List<String> fileList = new ArrayList<String>();
+        switch(JmeSystem.getPlatform())
+        {
+            case  MacOSX_PPC32:
+            case  MacOSX_PPC64:
+                fileList.add("libsqlite4java-osx-ppc.jnilib");
+                break;
+        
+            case  MacOSX32:
+            case  MacOSX64:
+                fileList.add("libsqlite4java-osx.jnilib");
+                break;
+                
+            case Windows32:
+                fileList.add("sqlite4java-win32-x86.dll");
+                break;
+                
+            case Windows64:
+                fileList.add("sqlite4java-win32-x64.dll");
+                break;
+                
+            case Linux32:
+                fileList.add("libsqlite4java-linux-i386.so");
+                break;
+                
+            case Linux64:
+                fileList.add("libsqlite4java-linux-amd64.so");
+                break;
+                
+            default:
+                System.out.println("I dont have sqlite4java natives for the current platform");
+                m_dataOK    = false;
+                return;
+        }
+        
+        if(!m_isTesting)
+        {
+            try
+            {
+                ZipFile zipFile     = new ZipFile("forestrunner.jar");
+                File    thisDir     = new File(".");
+                String  dir         = "sqlite4java" + File.separator 
+                                        + "lib" + File.separator;
+                
+                for(String fileName : fileList)
+                {
+                    File        newFile    = new File(thisDir.getAbsolutePath() 
+                                                        + File.separator 
+                                                        + fileName);
+                    if(newFile.exists())
+                        continue;
+                    
+                    ZipEntry    entry       = zipFile.getEntry(dir + fileName);
+                    InputStream zipStream   = zipFile.getInputStream(entry);
+                    OutputStream outStream  = new FileOutputStream(newFile);
+                    
+                    byte[]  buf  = new byte[1024];
+                    int     i    = 0;
+    
+                    while((i = zipStream.read(buf)) != -1)
+                    {
+                        outStream.write(buf, 0, i);
+                    }
+                }
+            } 
+            catch (IOException e1)
+            {
+                e1.printStackTrace();
+                m_dataOK    = false;
+                return;
+            }
+        }
+        
 
         // get the path to the user's home directory
         String userHome     = System.getProperty("user.home");
@@ -79,11 +163,11 @@ public class DesktopStore
         
 
         String  dbFileName = dataDir + File.separator + "data.sqlite";
-        File    dbFile     = new File(dbFileName);
+              m_dbFile     = new File(dbFileName);
 
         try
         {
-            m_sqlite = new SQLiteConnection(dbFile);
+            m_sqlite = new SQLiteConnection(m_dbFile);
             m_sqlite.open(true);
             
             readConfig();

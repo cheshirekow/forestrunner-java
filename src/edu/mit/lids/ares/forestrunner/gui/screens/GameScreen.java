@@ -1,6 +1,17 @@
 package edu.mit.lids.ares.forestrunner.gui.screens;
 
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Scanner;
+
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
@@ -9,6 +20,7 @@ import de.lessvoid.nifty.controls.SliderChangedEvent;
 import de.lessvoid.nifty.screen.Screen;
 import edu.mit.lids.ares.forestrunner.Game;
 import edu.mit.lids.ares.forestrunner.Game.State;
+import edu.mit.lids.ares.forestrunner.data.Store;
 import edu.mit.lids.ares.forestrunner.gui.ScreenBase;
 
 public class GameScreen
@@ -17,6 +29,7 @@ public class GameScreen
 {
     boolean         m_resumeImmediately;
     boolean         m_settingsChanged;
+    boolean         m_askServer;
     boolean         m_randomize;
     String          m_goto;
     
@@ -27,6 +40,7 @@ public class GameScreen
     {
         super(game,true,true);
         m_resumeImmediately = false;
+        m_askServer         = false;
         m_settingsChanged   = false;
         m_randomize         = false;
         m_goto              = "";
@@ -105,6 +119,89 @@ public class GameScreen
     {
         if(m_goto.length() > 0)
         {
+            if(m_askServer)
+            {
+                String urlString = 
+                        "http://ares.lids.mit.edu/forestrunner/comm/" 
+                        + "get_difficulty.php";
+                String jsonString = "";
+                
+                // ask the server which parameters are most needed
+                try
+                {
+                    // try to open a stream to the create user page
+                    URL           url = new URL(urlString);
+                    URLConnection con = url.openConnection();
+                    con.setConnectTimeout(2000);
+                    con.setReadTimeout(2000);
+                    InputStream source = con.getInputStream();
+                    
+                    // read the entire stream into a single string
+                    jsonString = 
+                            new Scanner( source, "UTF-8" )
+                                    .useDelimiter("\\A").next();
+
+                    JSONObject obj = (JSONObject) JSONValue.parse(jsonString);
+                    
+                    // check the result message
+                    if( !obj.containsKey("status") )
+                    {
+                        System.err.println("Returned JSON message is malformed, " +
+                                            "no status: " + jsonString);
+                        throw new RuntimeException("bad JSON return");
+                    }
+                    
+                    String status = (String) obj.get("status");
+                    if( status.compareTo("OK") != 0 )
+                    {
+                        System.err.println("Failed to get global scores from server ");
+                        if(obj.containsKey("message"))
+                            System.err.println("Message: " + obj.get("message"));
+                        throw new RuntimeException("JSON returned error");
+                    }
+                    
+                    
+                    String[] params = {"velocity", "density"};
+                    
+                    for( String param : params )
+                    {
+                        String idName = "game.sldr." + param;
+                        Slider slider = m_screen.findNiftyControl(idName, Slider.class);
+                        int value = Integer.parseInt((String)obj.get(param));
+                        slider.setValue(value);
+                    }
+                    
+                    m_askServer = false;
+                    m_settingsChanged = true;
+                    return;
+                } 
+                catch (MalformedURLException e)
+                {
+                    System.err.println("Failed to get difficulty from server");
+                    e.printStackTrace(System.out);
+                } 
+                catch (SocketTimeoutException e)
+                {
+                    System.err.println("Failed to get difficulty from server");
+                    e.printStackTrace(System.out);
+                }
+                catch (IOException e)
+                {
+                    System.err.println("Failed to get difficulty from server");
+                    e.printStackTrace(System.out);
+                }
+                catch (RuntimeException e)
+                {
+                    System.err.println("Failed to get difficulty from server");
+                    e.printStackTrace(System.out);
+                }
+                
+                // only executed if execption is thrown
+                m_askServer = false;
+                m_randomize = true;
+                return;
+            }
+            
             if(m_randomize)
             {
                 String[] params = {"velocity", "density"};
@@ -117,12 +214,11 @@ public class GameScreen
                     slider.setValue(value);
                 }
                 
-                m_dataStore.sync();
-                m_game.initRun();
                 m_randomize       = false;
                 m_settingsChanged = true;
                 return;
             }
+            
             if(m_settingsChanged)
             {
                 String[] params = {"velocity", "density", "radius"};
@@ -166,7 +262,7 @@ public class GameScreen
         }
         else if( id.compareTo("game.btn.randomize")==0 )
         {
-            m_randomize = true;
+            m_askServer = true;
             m_goto = "countdown3";
         }
         else if( id.compareTo("game.btn.advanced")==0 )
