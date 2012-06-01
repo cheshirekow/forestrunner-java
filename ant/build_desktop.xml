@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project forestrunner_desktop">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar">
+        <jar destfile="/home/josh/Codes/java/forestrunner_desktop/dist/forestrunner.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="edu.mit.lids.ares.forestrunner.DesktopGame"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="/home/josh/Codes/java/forestrunner_desktop/bin"/>
+        	<fileset dir="/home/josh/Codes/java/sqlite4java/sqlite4java-282/packme"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/eventbus.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/jinput.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/jME3-core.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/jME3-effects.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/jME3-lwjgl.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/jME3-lwjgl-natives.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/jME3-networking.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/jME3-niftygui.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/jME3-plugins.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/lwjgl.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/nifty.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/nifty-default-controls.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/nifty-examples.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/nifty-style-black.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/stack-alloc.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/vecmath.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/xmlpull-xpp3.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/apache_commons/commons-lang3-3.1/commons-lang3-3.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/json-simple/json_simple-1.1-all/lib/json_simple-1.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/sqlite4java/sqlite4java-282/sqlite4java.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/jME3-desktop.jar"/>
+        </jar>
+    </target>
+</project>

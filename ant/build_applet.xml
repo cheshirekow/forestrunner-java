@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="all" name="Create  Jar for forestrunner applet code">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_code_jar">
+        <jar destfile="/home/josh/Codes/java/forestrunner_applet/dist/code.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset excludes="Interface/**" dir="/home/josh/Codes/java/forestrunner_applet/bin"/>
+        	<zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/eventbus.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/jME3-core.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/jME3-effects.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/jME3-lwjgl.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/jME3-networking.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/jME3-niftygui.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/jME3-plugins.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/nifty.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/nifty-default-controls.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/nifty-style-black.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/stack-alloc.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/vecmath.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/xmlpull-xpp3.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/apache_commons/commons-lang3-3.1/commons-lang3-3.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/google-gson-2.1/gson-2.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/sqlite4java/sqlite4java-282/sqlite4java.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/jme_nightly/lib/jME3-desktop.jar"/>
+        	<zipfileset excludes="META-INF/*.SF" src="/home/josh/Codes/java/json-simple/json_simple-1.1-all/lib/json_simple-1.1.jar"/>
+        </jar>
+    </target>
+	<target name="create_data_jar">
+        <jar destfile="/home/josh/Codes/java/forestrunner_applet/dist/data.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset excludes="edu/**" dir="/home/josh/Codes/java/forestrunner_applet/bin"/>
+        </jar>
+    </target>
+    <target name="all" depends="create_code_jar,create_data_jar">
+	</target>
+</project>
