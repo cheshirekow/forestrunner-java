@@ -46,9 +46,9 @@ public abstract class Store
         m_boolMap   = new HashMap<String,Boolean>();
         m_stringMap = new HashMap<String,String>();
         
-        m_intMap.put("density",     1);
-        m_intMap.put("radius",      1);
-        m_intMap.put("velocity",    1);
+        m_intMap.put("density",     (int)Math.random()*10);
+        m_intMap.put("radius",      (int)Math.random()*10);
+        m_intMap.put("velocity",    2);//(int)Math.random()*10);
         m_intMap.put("version",         Game.s_version);
         m_intMap.put("lastUserRowId",   0  );
         m_intMap.put("lastGlobalRowId", 0  );
