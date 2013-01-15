@@ -26,6 +26,9 @@ public class HighScoreScreen
     private List<UserHighScoreRow>      m_userList;
     private List<GlobalHighScoreRow>    m_globalList;
     
+    private ListBox<UserHighScoreRow>   m_userListBox;
+    private ListBox<GlobalHighScoreRow> m_globalListBox;
+    
     private static final int s_scoresToSend = 10;
     private static final int s_numSteps     = 13;
     
@@ -34,15 +37,21 @@ public class HighScoreScreen
         super(game,true,true);
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     public void bind(Nifty nifty, Screen screen)
     {
         super.bind(nifty,screen);
         m_commPopup = m_nifty.createPopup("pop.comm");
         m_pb = m_commPopup.findControl("pb.comm", ProgressbarControl.class);
+        
+        m_userListBox =(ListBox<UserHighScoreRow>) 
+                m_screen.findNiftyControl("lb.personalHigh", ListBox.class);
+        
+        m_globalListBox =(ListBox<GlobalHighScoreRow>) 
+                m_screen.findNiftyControl("lb.globalHigh", ListBox.class);
     }
     
-    @SuppressWarnings("unchecked")
     @Override
     public void update_impl(float tpf)
     {
@@ -66,16 +75,16 @@ public class HighScoreScreen
                 
             case 5:
             {
-                ListBox<UserHighScoreRow> listBox =(ListBox<UserHighScoreRow>) 
-                        m_screen.findNiftyControl("lb.personalHigh", ListBox.class);
-                listBox.clear();
-                System.out.println("personal scores:");
-                for( UserHighScoreRow row : m_userList )
-                {
-                    System.out.println("   " + row.date + ", " + row.score);
-                    listBox.addItem(row);
-                }
-                listBox.refresh();
+                
+                m_userListBox.clear();
+                m_userListBox.addAllItems(m_userList);
+//                System.out.println("personal scores:");
+//                for( UserHighScoreRow row : m_userList )
+//                {
+//                    System.out.println("   " + row.date + ", " + row.score);
+//                    m_userListBox.addItem(row);
+//                }
+                m_userListBox.refresh();
                 
                 break;
             }
@@ -86,16 +95,16 @@ public class HighScoreScreen
                 
             case 7:
             {
-                ListBox<GlobalHighScoreRow> listBox =(ListBox<GlobalHighScoreRow>) 
-                        m_screen.findNiftyControl("lb.globalHigh", ListBox.class);
-                listBox.clear();
-                System.out.println("global scores:");
-                for( GlobalHighScoreRow row : m_globalList )
-                {
-                    System.out.println("   " + row.date + ", " + row.score);
-                    listBox.addItem(row);
-                }
-                listBox.refresh();
+                
+                m_globalListBox.clear();
+                m_globalListBox.addAllItems(m_globalList);
+                //System.out.println("global scores:");
+                //for( GlobalHighScoreRow row : m_globalList )
+                //{
+                    //System.out.println("   " + row.date + ", " + row.score);
+                //    m_globalListBox.addItem(row);
+                //}
+                m_globalListBox.refresh();
                 
                 break;
             }
@@ -107,14 +116,6 @@ public class HighScoreScreen
             case 10: 
             case 11: 
             case 12: 
-            //case 13: 
-            //case 14: 
-            //case 15: 
-            //case 16: 
-            //case 17: 
-            //case 18: 
-            //case 19:
-            //case 20:
                 m_dataStore.sendOneScore();
                 break;
                 
@@ -193,7 +194,7 @@ public class HighScoreScreen
     @NiftyEventSubscriber(pattern="highscore.btn.*")
     public void onButton( String id, ButtonClickedEvent event )
     {
-        System.out.println("highscore button [" + id +"] pressed ");
+//        System.out.println("highscore button [" + id +"] pressed ");
         if( id.compareTo("highscore.btn.again")==0 )
         {
             m_game.initRun();

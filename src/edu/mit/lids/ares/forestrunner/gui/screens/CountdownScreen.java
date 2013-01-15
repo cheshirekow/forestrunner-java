@@ -21,7 +21,7 @@ public class CountdownScreen
     @Override
     public void bind(Nifty nifty, Screen screen)
     {
-        System.out.println("bind( " + screen.getScreenId() + ")");
+//        System.out.println("bind( " + screen.getScreenId() + ")");
         m_nifty     = nifty;
         m_screen    = screen;
 
@@ -37,7 +37,7 @@ public class CountdownScreen
     {
         int screenNum = Integer.parseInt(num);
         
-        System.out.println("Countdown effect end [" + screenNum + "]");
+//        System.out.println("Countdown effect end [" + screenNum + "]");
         
         switch(screenNum)
         {

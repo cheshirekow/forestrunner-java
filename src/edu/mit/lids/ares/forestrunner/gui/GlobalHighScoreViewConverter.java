@@ -19,7 +19,7 @@ public class GlobalHighScoreViewConverter
     
     private static SimpleDateFormat s_dateWriteFmt  = new SimpleDateFormat(" MM/d ", Locale.ENGLISH);
     private static String           s_scoreWriteFmt = " %10.04f ";
-    private static String           s_nickWriteFmt  = " %8s";
+    private static String           s_nickWriteFmt  = " %14s";
     
     /**
      * Default constructor.

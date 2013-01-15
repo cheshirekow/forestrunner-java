@@ -14,7 +14,7 @@ public class CrashScreen
     @Override
     public void onStart_impl()
     {
-        System.out.print("Changing to highscore");
+//        System.out.print("Changing to highscore");
         m_nifty.gotoScreen("highscore");
     }
 }

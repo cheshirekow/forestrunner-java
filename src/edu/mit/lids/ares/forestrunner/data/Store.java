@@ -158,7 +158,7 @@ public abstract class Store
             } 
         }
         
-        System.out.println("Attempting to create data store: " + className );
+        System.err.println("Attempting to create data store: " + className );
         
         try
         {

@@ -74,7 +74,7 @@ public class AdvancedScreen
     @NiftyEventSubscriber(pattern="advanced.btn.*")
     public void onButton( String id, ButtonClickedEvent event )
     {
-        System.out.println("advanced button [" + id +"] pressed ");
+//        System.out.println("advanced button [" + id +"] pressed ");
         
         if( id.compareTo("advanced.btn.ok")==0 )
             m_shouldSave = true;

@@ -151,11 +151,11 @@ public class AppletStore
             }
         }
         
-        System.out.println("Cookie Data:");
-        for( String key : m_cookieData.keySet() )
-        {
-            System.out.println( key + " : " + m_cookieData.get(key) );
-        }
+//        System.out.println("Cookie Data:");
+//        for( String key : m_cookieData.keySet() )
+//        {
+//            System.out.println( key + " : " + m_cookieData.get(key) );
+//        }
         
         for( String key : m_stringMap.keySet() )
             extractString(key);
@@ -261,7 +261,7 @@ public class AppletStore
                 return;
             }
             
-            System.out.println("Updated nickname at server: " + jsonString);
+//            System.out.println("Updated nickname at server: " + jsonString);
         }
         
         catch (MalformedURLException e)
@@ -322,7 +322,7 @@ public class AppletStore
             
             setInteger("lastRowId", ( (Long)obj.get("row_id") ).intValue());
             
-            System.out.println("Sent score to server: " + jsonString);
+//            System.out.println("Sent score to server: " + jsonString);
         }
         catch (MalformedURLException e)
         {
@@ -382,14 +382,14 @@ public class AppletStore
             // otherwise, things look good
             JSONArray scoreArray = (JSONArray)obj.get("scores");
             
-            System.out.println(
-                    "Received user scores: (" + scoreArray.size() + ")");
+//            System.out.println(
+//                    "Received user scores: (" + scoreArray.size() + ")");
             
             for( Object scoreObj : scoreArray )
             {
                 JSONObject scoreMap = (JSONObject)scoreObj;
                 
-                System.out.println(scoreMap.toJSONString());
+//                System.out.println(scoreMap.toJSONString());
                 UserHighScoreRow row = new UserHighScoreRow();
                 row.id      = Integer.parseInt(     (String) scoreMap.get("row_id") );
                 row.date    = Integer.parseInt(     (String) scoreMap.get("date") );
@@ -405,12 +405,12 @@ public class AppletStore
         catch (MalformedURLException e)
         {
             System.err.println("Failed to get global scores form server");
-            e.printStackTrace(System.out);
+            e.printStackTrace(System.err);
         } 
         catch (IOException e)
         {
             System.err.println("Failed to get global scores form server");
-            e.printStackTrace(System.out);
+            e.printStackTrace(System.err);
         }  
         catch( RuntimeException e)
         {
@@ -476,6 +476,8 @@ public class AppletStore
                 GlobalHighScoreRow row = new GlobalHighScoreRow();
                 row.id      = Integer.parseInt(     (String) scoreMap.get("row_id") );
                 row.nick    =                       (String) scoreMap.get("nick");
+                if(row.nick.length() > 14)
+                    row.nick = row.nick.substring(0,14);
                 row.date    = Integer.parseInt(     (String) scoreMap.get("date")   );
                 row.score   = Double.parseDouble(   (String) scoreMap.get("score")  );
                 if( row.id == getInteger("lastRowId"))
@@ -487,12 +489,12 @@ public class AppletStore
         catch (MalformedURLException e)
         {
             System.err.println("Failed to get global scores form server");
-            e.printStackTrace(System.out);
+            e.printStackTrace(System.err);
         } 
         catch (IOException e)
         {
             System.err.println("Failed to get global scores form server");
-            e.printStackTrace(System.out);
+            e.printStackTrace(System.err);
         }  
         catch( RuntimeException e)
         {

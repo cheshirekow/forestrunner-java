@@ -37,7 +37,7 @@ public class DatabaseHelper
     
     private void initDatabase(SQLiteDatabase db)
     {
-        System.out.println("It appears the database is old or does not exist, " +
+        System.err.println("It appears the database is old or does not exist, " +
                             "initializing now");
         try
         {
@@ -61,13 +61,13 @@ public class DatabaseHelper
         
         catch (FileNotFoundException e)
         {
-            e.printStackTrace(System.out);
+            e.printStackTrace(System.err);
             return;
         } 
         
         catch (IOException e)
         {
-            e.printStackTrace(System.out);
+            e.printStackTrace(System.err);
             return;
         }
     }

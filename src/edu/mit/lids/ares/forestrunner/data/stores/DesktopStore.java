@@ -46,7 +46,7 @@ import edu.mit.lids.ares.forestrunner.data.UserHighScoreRow;
 public class DesktopStore 
     extends Store
 {
-    protected static final boolean  m_isTesting = true;
+    protected static final boolean  m_isTesting = false;
     protected boolean               m_dataOK;
     protected SQLiteConnection      m_sqlite;
     protected File                  m_dbFile;
@@ -93,7 +93,7 @@ public class DesktopStore
                 break;
                 
             default:
-                System.out.println("I dont have sqlite4java natives for the current platform");
+                System.err.println("I dont have sqlite4java natives for the current platform");
                 m_dataOK    = false;
                 return;
         }
@@ -837,6 +837,8 @@ public class DesktopStore
                 row.nick    = st.columnString(1);
                 if(row.nick == null)
                     row.nick = getString("nick");
+                if(row.nick.length() > 14)
+                    row.nick = row.nick.substring(0,14);
                 row.date    = st.columnLong(2);
                 row.score   = st.columnDouble(6);
                 if(row.id == getInteger("lastGlobalRowId"))

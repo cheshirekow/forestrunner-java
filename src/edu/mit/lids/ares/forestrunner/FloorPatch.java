@@ -197,7 +197,7 @@ public class FloorPatch extends Node
     {
         if( override )
         {
-            System.out.println("override shuffle");
+//            System.out.println("override shuffle");
             m_numTrees = 0;
         }
         else

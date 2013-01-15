@@ -109,7 +109,7 @@ public class GameScreen
         
         if( m_resumeImmediately )
         {
-            System.out.println("Game is just paused, resuming now");
+//            System.out.println("Game is just paused, resuming now");
             m_game.setState(State.RUNNING);
         }
     }
@@ -178,22 +178,22 @@ public class GameScreen
                 catch (MalformedURLException e)
                 {
                     System.err.println("Failed to get difficulty from server");
-                    e.printStackTrace(System.out);
+                    e.printStackTrace(System.err);
                 } 
                 catch (SocketTimeoutException e)
                 {
                     System.err.println("Failed to get difficulty from server");
-                    e.printStackTrace(System.out);
+                    e.printStackTrace(System.err);
                 }
                 catch (IOException e)
                 {
                     System.err.println("Failed to get difficulty from server");
-                    e.printStackTrace(System.out);
+                    e.printStackTrace(System.err);
                 }
                 catch (RuntimeException e)
                 {
                     System.err.println("Failed to get difficulty from server");
-                    e.printStackTrace(System.out);
+                    e.printStackTrace(System.err);
                 }
                 
                 // only executed if execption is thrown
@@ -228,7 +228,7 @@ public class GameScreen
                     String idName = "game.sldr." + param;
                     Slider slider = m_screen.findNiftyControl(idName, Slider.class);
                     int value = (int)slider.getValue( );
-                    System.out.println("Setting " + param + " to " + value);
+//                    System.out.println("Setting " + param + " to " + value);
                     m_game.setParam(param, value );
                     m_dataStore.setInteger(param, value);
                 }
@@ -253,7 +253,7 @@ public class GameScreen
     @NiftyEventSubscriber(pattern="game.btn.*")
     public void onButton( String id, ButtonClickedEvent event )
     {
-        System.out.println("game button [" + id +"] pressed ");
+//        System.out.println("game button [" + id +"] pressed ");
         
         if( id.compareTo("game.btn.new")==0 )
         {

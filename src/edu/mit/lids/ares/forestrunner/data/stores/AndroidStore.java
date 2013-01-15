@@ -280,8 +280,10 @@ public class AndroidStore
                 row.nick    = cur.getString(1);
                 if(row.nick == null)
                     row.nick = getString("nick");
+                if(row.nick.length() > 14)
+                    row.nick = row.nick.substring(0,14);
                 row.date    = cur.getLong(2);
-                row.score   = cur.getLong(6);
+                row.score   = cur.getDouble(6);
                 if(row.id == getInteger("lastGlobalRowId"))
                     row.isCurrent = true;
                 scores.add(row);
@@ -345,19 +347,19 @@ public class AndroidStore
         catch (MalformedURLException e)
         {
             System.err.println("Failed to get global scores form server");
-            e.printStackTrace(System.out);
+            e.printStackTrace(System.err);
             return;
         } 
         catch (SocketTimeoutException e)
         {
             System.err.println("Failed to get global scores form server");
-            e.printStackTrace(System.out);
+            e.printStackTrace(System.err);
             return;
         }
         catch (IOException e)
         {
             System.err.println("Failed to get global scores form server");
-            e.printStackTrace(System.out);
+            e.printStackTrace(System.err);
             return;
         }  
 
@@ -418,7 +420,7 @@ public class AndroidStore
         if(!m_hasHash)
             return;
         
-        System.out.println("Sending one score row");
+        //System.out.println("Sending one score row");
         
         SQLiteDatabase db = m_helper.getReadableDatabase();
         SQLiteDatabase writeDb = m_helper.getWritableDatabase();
@@ -514,7 +516,7 @@ public class AndroidStore
         if(!m_hasHash)
             return;
         
-        System.out.println("Sending nickname");
+        //System.out.println("Sending nickname");
         
         try
         {
@@ -558,7 +560,7 @@ public class AndroidStore
                 return;
             }
             
-            System.out.println("Updated nickname at server: " + jsonString);
+            //System.out.println("Updated nickname at server: " + jsonString);
         }
         
         catch (MalformedURLException e)
@@ -657,7 +659,7 @@ public class AndroidStore
         
         catch (MalformedURLException e)
         {
-            System.out.println("Failed to connect to server to get a new " +
+            System.err.println("Failed to connect to server to get a new " +
                                 "hash, continuing without data");
             e.printStackTrace(System.err);
             m_dataOK = false;
@@ -666,7 +668,7 @@ public class AndroidStore
         
         catch (SocketTimeoutException e)
         {
-            System.out.println("Failed to connect to server to get a new " +
+            System.err.println("Failed to connect to server to get a new " +
                     "hash, continuing without data");
             e.printStackTrace(System.err);
             m_dataOK = false;
@@ -675,7 +677,7 @@ public class AndroidStore
         
         catch (IOException e)
         {
-            System.out.println("Failed to connect to server to get a new " +
+            System.err.println("Failed to connect to server to get a new " +
                     "hash, continuing without data");
             e.printStackTrace(System.err);
             m_dataOK = false;
