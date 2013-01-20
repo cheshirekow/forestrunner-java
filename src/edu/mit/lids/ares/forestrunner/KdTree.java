@@ -94,7 +94,7 @@ public class KdTree
         
         public void findNearest( NearestSearch search )
         {
-            float diff = 
+            
         }
     }
 }
