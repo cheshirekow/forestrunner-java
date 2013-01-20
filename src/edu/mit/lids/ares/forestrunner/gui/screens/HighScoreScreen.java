@@ -1,5 +1,6 @@
 package edu.mit.lids.ares.forestrunner.gui.screens;
 
+import java.util.Iterator;
 import java.util.List;
 
 import de.lessvoid.nifty.Nifty;
@@ -10,6 +11,7 @@ import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import edu.mit.lids.ares.forestrunner.Game;
 import edu.mit.lids.ares.forestrunner.data.GlobalHighScoreRow;
+import edu.mit.lids.ares.forestrunner.data.Store;
 import edu.mit.lids.ares.forestrunner.data.UserHighScoreRow;
 import edu.mit.lids.ares.forestrunner.gui.ScreenBase;
 import edu.mit.lids.ares.forestrunner.nifty.ProgressbarControl;
@@ -50,6 +52,28 @@ public class HighScoreScreen
         
         m_globalListBox =(ListBox<GlobalHighScoreRow>) 
                 m_screen.findNiftyControl("lb.globalHigh", ListBox.class);
+        
+        // create an initial list of items, we'll resuse the items instead
+        // of clearing them out at the end ofevery fround
+        for(int i=0; i < Store.s_numScoresToShow; i++)
+        {
+            UserHighScoreRow userRow = new UserHighScoreRow();
+            userRow.date = 0;
+            userRow.id   = 0;
+            userRow.isCurrent = false;
+            userRow.score = 0;
+            
+            m_userListBox.addItem(userRow);
+            
+            GlobalHighScoreRow globalRow = new GlobalHighScoreRow();
+            globalRow.date = 0;
+            globalRow.id   = 0;
+            globalRow.isCurrent = false;
+            globalRow.nick = "";
+            globalRow.score = 0;
+            
+            m_globalListBox.addItem(globalRow);
+        }
     }
     
     @Override
@@ -75,15 +99,16 @@ public class HighScoreScreen
                 
             case 5:
             {
+                List<UserHighScoreRow> userList = m_userListBox.getItems();
+                Iterator<UserHighScoreRow> destIter  = userList.iterator();
+                Iterator<UserHighScoreRow> srcIter   = m_userList.iterator();
                 
-                m_userListBox.clear();
-                m_userListBox.addAllItems(m_userList);
-//                System.out.println("personal scores:");
-//                for( UserHighScoreRow row : m_userList )
-//                {
-//                    System.out.println("   " + row.date + ", " + row.score);
-//                    m_userListBox.addItem(row);
-//                }
+                while( srcIter.hasNext() && destIter.hasNext() )
+                {
+                    UserHighScoreRow srcRow     = srcIter.next();
+                    UserHighScoreRow destRow    = destIter.next();
+                    destRow.copyFrom(srcRow);
+                }
                 m_userListBox.refresh();
                 
                 break;
@@ -95,15 +120,16 @@ public class HighScoreScreen
                 
             case 7:
             {
+                List<GlobalHighScoreRow> globalList    = m_globalListBox.getItems();
+                Iterator<GlobalHighScoreRow> destIter  = globalList.iterator();
+                Iterator<GlobalHighScoreRow> srcIter   = m_globalList.iterator();
                 
-                m_globalListBox.clear();
-                m_globalListBox.addAllItems(m_globalList);
-                //System.out.println("global scores:");
-                //for( GlobalHighScoreRow row : m_globalList )
-                //{
-                    //System.out.println("   " + row.date + ", " + row.score);
-                //    m_globalListBox.addItem(row);
-                //}
+                while( srcIter.hasNext() && destIter.hasNext() )
+                {
+                    GlobalHighScoreRow srcRow     = srcIter.next();
+                    GlobalHighScoreRow destRow    = destIter.next();
+                    destRow.copyFrom(srcRow);
+                }
                 m_globalListBox.refresh();
                 
                 break;

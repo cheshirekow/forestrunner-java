@@ -46,7 +46,7 @@ public class GlobalHighScoreViewConverter
         final TextRenderer textRdrDate  = txtDate.getRenderer(TextRenderer.class);
         final TextRenderer textRdrScore = txtScore.getRenderer(TextRenderer.class);
         
-        if (item != null) 
+        if (item != null && item.id != 0) 
         {
             Date   date         = new Date(item.date * 1000);
             String nickString   = String.format(s_nickWriteFmt, item.nick);
@@ -72,6 +72,9 @@ public class GlobalHighScoreViewConverter
     @Override
     public final int getWidth(final Element listBoxItem, final GlobalHighScoreRow item) 
     {
+        if(item.id == 0)
+            return 0;
+        
         final Element txtNick  = listBoxItem.findElementByName(LINE_NICK);
         final Element txtDate  = listBoxItem.findElementByName(LINE_DATE);
         final Element txtScore = listBoxItem.findElementByName(LINE_SCORE);

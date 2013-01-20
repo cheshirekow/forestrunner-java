@@ -13,6 +13,14 @@ public class UserHighScoreRow
     {
         isCurrent = false;
     }
+    
+    public void copyFrom( UserHighScoreRow o )
+    {
+        isCurrent = o.isCurrent;
+        id        = o.id;
+        date      = o.date;
+        score     = o.score;
+    }
 
     @Override
     public int compareTo(UserHighScoreRow o)

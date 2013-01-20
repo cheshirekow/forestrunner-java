@@ -14,6 +14,15 @@ public class GlobalHighScoreRow
     {
         isCurrent = false;
     }
+    
+    public void copyFrom(GlobalHighScoreRow o)
+    {
+        isCurrent = o.isCurrent;
+        id        = o.id;
+        nick      = o.nick;
+        date      = o.date;
+        score     = o.score;
+    }
 
     @Override
     public int compareTo(GlobalHighScoreRow o)

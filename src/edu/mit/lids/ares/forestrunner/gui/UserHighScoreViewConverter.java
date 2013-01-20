@@ -48,7 +48,7 @@ public class UserHighScoreViewConverter
         final TextRenderer textRdrDate  = txtDate.getRenderer(TextRenderer.class);
         final TextRenderer textRdrScore = txtScore.getRenderer(TextRenderer.class);
         
-        if (item != null) 
+        if (item != null && item.id != 0) 
         {
             Date   date         = new Date(item.date * 1000);
             String scoreString  = String.format(s_scoreWriteFmt, item.score);
@@ -71,6 +71,9 @@ public class UserHighScoreViewConverter
     @Override
     public final int getWidth(final Element listBoxItem, final UserHighScoreRow item) 
     {
+        if(item.id == 0 )
+            return 0;
+        
         final Element txtDate = listBoxItem.findElementByName(LINE_DATE);
         final Element txtScore = listBoxItem.findElementByName(LINE_SCORE);
         
