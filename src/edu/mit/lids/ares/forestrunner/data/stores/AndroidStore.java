@@ -4,7 +4,6 @@ package edu.mit.lids.ares.forestrunner.data.stores;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -13,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -44,6 +45,8 @@ public class AndroidStore
     protected boolean           m_dataOK;
     protected DatabaseHelper    m_helper;
     protected boolean           m_hasHash;
+    public static final Logger  s_logger = 
+            Logger.getLogger(AndroidStore.class.getName());
     
     @Override
     public void init(Game game)
@@ -141,6 +144,7 @@ public class AndroidStore
     @Override
     public void recordScore(float score)
     {
+        s_logger.log(Level.INFO, "Android store is recording score: " + score );
         SQLiteDatabase db       = m_helper.getWritableDatabase();
         SQLiteDatabase readDb   = m_helper.getReadableDatabase();
         
@@ -325,7 +329,7 @@ public class AndroidStore
         paramMap.put("hash", getString("hash"));
         
         String urlString = 
-                "http://ares.lids.mit.edu/~jbialk/forest_runner/src/" 
+                "http://ares.lids.mit.edu/forestrunner/comm/" 
                 + Store.encode("get_global_scores.php", paramMap);
 
         // try to open a stream to the create user page
@@ -443,7 +447,7 @@ public class AndroidStore
                 paramMap.put("version", String.format("%d",Game.s_version));
                 
                 String urlString = 
-                        "http://ares.lids.mit.edu/~jbialk/forest_runner/src/" 
+                        "http://ares.lids.mit.edu/forestrunner/comm/" 
                         + Store.encode("insert_score.php", paramMap);
     
                 // try to open a stream to the create user page
@@ -525,7 +529,7 @@ public class AndroidStore
             paramMap.put("nick", getString("nick"));
             
             String urlString = 
-                    "http://ares.lids.mit.edu/~jbialk/forest_runner/src/" 
+                    "http://ares.lids.mit.edu/forestrunner/comm/" 
                     + Store.encode("set_nick.php", paramMap);
     
             // try to open a stream to the create user page
@@ -637,7 +641,7 @@ public class AndroidStore
     private void requestHash()
     {
         String urlString = 
-                "http://ares.lids.mit.edu/~jbialk/forest_runner/src/" 
+                "http://ares.lids.mit.edu/forestrunner/comm/" 
                 + "create_user.php";
 
         // try to open a stream to the create user page

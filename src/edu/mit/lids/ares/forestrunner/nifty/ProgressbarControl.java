@@ -48,8 +48,10 @@ public class ProgressbarControl implements Controller
         
     }
     
-    public void setProgress(final float progress) 
+    public void setProgress(float progress) 
     {
+        if(progress > 1.0f)
+            progress = 1.0f;
         final int MIN_WIDTH = 50; 
         int pixelWidth = (int)(MIN_WIDTH + 
                                 (m_progressBarElement.getParent().getWidth() - MIN_WIDTH) * progress);

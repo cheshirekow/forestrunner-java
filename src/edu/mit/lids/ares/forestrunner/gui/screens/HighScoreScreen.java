@@ -2,6 +2,8 @@ package edu.mit.lids.ares.forestrunner.gui.screens;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
@@ -19,6 +21,9 @@ import edu.mit.lids.ares.forestrunner.nifty.ProgressbarControl;
 public class HighScoreScreen 
     extends ScreenBase
 {
+    public static final Logger s_logger = 
+            Logger.getLogger(HighScoreScreen.class.getName());
+    
     private int     m_step;
     private String  m_goto;
     
@@ -31,8 +36,12 @@ public class HighScoreScreen
     private ListBox<UserHighScoreRow>   m_userListBox;
     private ListBox<GlobalHighScoreRow> m_globalListBox;
     
-    private static final int s_scoresToSend = 10;
     private static final int s_numSteps     = 13;
+    
+    static
+    {
+        s_logger.setLevel( Level.ALL );
+    }
     
     public HighScoreScreen( Game game )
     {
@@ -69,7 +78,7 @@ public class HighScoreScreen
             globalRow.date = 0;
             globalRow.id   = 0;
             globalRow.isCurrent = false;
-            globalRow.nick = "";
+            globalRow.nick = ""; 
             globalRow.score = 0;
             
             m_globalListBox.addItem(globalRow);
@@ -79,6 +88,7 @@ public class HighScoreScreen
     @Override
     public void update_impl(float tpf)
     {
+        s_logger.log(Level.INFO, "High score screen is performing step " + m_step );
         switch(m_step)
         {
             case 0:
