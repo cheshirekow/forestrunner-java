@@ -591,6 +591,8 @@ public abstract class Game extends Application
         m_density= 5f  + 0.5f  * m_params.get("density");
                     //20f  + 10f  * m_params.get("density");
         
+        FloorPatch.setSeed(0);      
+        
         int   dimx      = m_patchDimX;
         int   dimy      = m_patchDimY;
         float width     = m_patchWidth;

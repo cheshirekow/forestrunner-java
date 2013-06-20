@@ -3,6 +3,7 @@ package edu.mit.lids.ares.forestrunner;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
@@ -37,10 +38,14 @@ public class FloorPatch extends Node
     static Boolean  s_useLighting;
    
     static int      s_maxTrees;
-    static Matrix3f s_rotation;
+    static Matrix3f  s_rotation;
+    
+    static Random    s_rand;
     
     static
     {
+        s_rand = new Random(0);
+        
         s_colors            = new ArrayList<ColorRGBA>();
         s_litMaterials      = new ArrayList<Material>();
         s_unlitMaterials    = new ArrayList<Material>();
@@ -63,6 +68,11 @@ public class FloorPatch extends Node
         s_maxTrees      = 100;
         
         m_pad = 0.03f;
+    }
+    
+    static void setSeed( long seed )
+    {
+        s_rand.setSeed( seed );
     }
     
     static void setDim( float width, float height )
@@ -145,7 +155,7 @@ public class FloorPatch extends Node
         do 
         {
             k++;
-            p *= Math.random();
+            p *= s_rand.nextDouble();
         } while (p > L);
 
         return k - 1;
@@ -168,7 +178,7 @@ public class FloorPatch extends Node
         
         for( int i=0; i < maxObstacles; i++)
         {
-            int iColor = (int) (Math.random()*(double)s_colors.size() );
+            int iColor = (int) (s_rand.nextDouble()*(double)s_colors.size() );
             Geometry geometry;
             
             geometry = new Geometry("cylinder",s_cylinderMesh);
@@ -207,12 +217,13 @@ public class FloorPatch extends Node
         for(int i=0; i < m_numTrees; i++)
         {
             // translate it to some point, uniformly distributed
-            float x = (float)Math.random()*s_width;
-            float y = (float)Math.random()*s_height;
+            float x = (float)s_rand.nextDouble()*s_width;
+            float y = (float)s_rand.nextDouble()*s_height;
             
             // random height eliminates jittering in image of overlapping
             // cylinders
-            float z = (Game.s_treeHeight+Game.s_cPad)/2f + (float)(Math.random()*0.001);
+            float z = (Game.s_treeHeight+Game.s_cPad)/2f 
+                            + (float)(s_rand.nextDouble()*0.001);
             
             m_trees.get(i).setLocalTranslation(x, z, y);
             m_outlines.get(i).setLocalTranslation(x,z, y);

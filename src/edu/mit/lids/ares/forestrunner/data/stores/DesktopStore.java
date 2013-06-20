@@ -46,7 +46,7 @@ import edu.mit.lids.ares.forestrunner.data.UserHighScoreRow;
 public class DesktopStore 
     extends Store
 {
-    protected static final boolean  m_isTesting = false;
+    protected static final boolean  m_isTesting = true;
     protected boolean               m_dataOK;
     protected SQLiteConnection      m_sqlite;
     protected File                  m_dbFile;
@@ -140,7 +140,10 @@ public class DesktopStore
         // get the path to the user's home directory
         String userHome     = System.getProperty("user.home");
         String dataDir      = userHome + File.separator + ".forestrunner";
+        String stateLogDir  = dataDir + File.separator + "stateLogs";
+        
         File dataDirFile    = new File(dataDir);
+        File stateLogDirFile= new File(stateLogDir);
         
         // if the forestrunner directory doesn't exist yet, then create it
         if(!dataDirFile.exists())
@@ -148,8 +151,27 @@ public class DesktopStore
             try
             {
                 Boolean result = dataDirFile.mkdirs();
-                if(result)
+                if(!result)
                     throw new RuntimeException("Failed to create data dir");
+            }
+            catch(Exception e)
+            {
+                System.out.println("Failed to create data dir: " 
+                                    + dataDir + ", will continue without data");
+                e.printStackTrace(System.out);
+                m_dataOK    = false;
+                return;
+            }
+        }
+        
+        // if the state log directory doesn't exist yet then create it
+        if(!stateLogDirFile.exists())
+        {
+            try
+            {
+                Boolean result = stateLogDirFile.mkdirs();
+                if(!result)
+                    throw new RuntimeException("Failed to create log dir");
             }
             catch(Exception e)
             {
