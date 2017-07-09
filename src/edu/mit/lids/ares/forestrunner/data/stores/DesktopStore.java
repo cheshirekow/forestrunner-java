@@ -1,10 +1,12 @@
 package edu.mit.lids.ares.forestrunner.data.stores;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -46,10 +48,12 @@ import edu.mit.lids.ares.forestrunner.data.UserHighScoreRow;
 public class DesktopStore 
     extends Store
 {
-    protected static final boolean  m_isTesting = true;
+    protected static final boolean  m_isTesting = false;
     protected boolean               m_dataOK;
     protected SQLiteConnection      m_sqlite;
     protected File                  m_dbFile;
+    protected File                  m_logDir;
+    protected BufferedWriter        m_logWriter;
     
     public DesktopStore()
     {
@@ -143,7 +147,7 @@ public class DesktopStore
         String stateLogDir  = dataDir + File.separator + "stateLogs";
         
         File dataDirFile    = new File(dataDir);
-        File stateLogDirFile= new File(stateLogDir);
+        m_logDir            = new File(stateLogDir);
         
         // if the forestrunner directory doesn't exist yet, then create it
         if(!dataDirFile.exists())
@@ -165,11 +169,11 @@ public class DesktopStore
         }
         
         // if the state log directory doesn't exist yet then create it
-        if(!stateLogDirFile.exists())
+        if(!m_logDir.exists())
         {
             try
             {
-                Boolean result = stateLogDirFile.mkdirs();
+                Boolean result = m_logDir.mkdirs();
                 if(!result)
                     throw new RuntimeException("Failed to create log dir");
             }
@@ -351,6 +355,95 @@ public class DesktopStore
             m_dataOK = false;
             e.printStackTrace(System.out);
             return;
+        }
+    }
+    
+    @Override
+    public void initRunLog( Long time )
+    {
+        if( m_logWriter != null )
+        {
+            try
+            {
+                m_logWriter.close();
+            } catch (IOException e)
+            {
+                System.out.println("Failed to close current logWriter");
+                e.printStackTrace(System.out);
+            }
+            m_logWriter = null;
+        }
+            
+        String fileName = 
+                String.format("%s_%d.txt", m_stringMap.get("hash"), time);
+        File logFile = new File(
+                            m_logDir.getAbsolutePath() 
+                            + File.separator 
+                            + fileName);
+        
+        if( logFile.exists() )
+        {
+            System.out.println(
+                "Can't create log file " + logFile.getAbsolutePath() 
+                 + " because it exists" );
+            return;
+        }
+        
+        try
+        {
+            if( !logFile.createNewFile() )
+            {
+                throw new RuntimeException("Failed to create file " 
+                                    + logFile.getAbsolutePath() );
+            }
+            
+            FileWriter fw = new FileWriter(logFile.getAbsoluteFile());
+            m_logWriter   = new BufferedWriter(fw);
+            
+            m_logWriter.write( "time: " + time + "\n");
+            m_logWriter.write( "nick: " + m_stringMap.get("nick") + "\n" );
+            m_logWriter.write( "hash: " + m_stringMap.get("hash") + "\n" );
+            
+            m_logWriter.write( "density "  + m_intMap.get("density") + "\n" );
+            m_logWriter.write( "radius "   + m_intMap.get("density") + "\n" );
+            m_logWriter.write( "velocity " + m_intMap.get("velocity") + "\n" );
+            m_logWriter.write( "version "  + m_intMap.get("version")  + "\n" );
+            m_logWriter.write("\n\n");
+        } 
+        catch (IOException e)
+        {
+            e.printStackTrace(System.out);
+        }
+        catch( RuntimeException e )
+        {
+            
+            e.printStackTrace(System.out);
+        }
+        
+    }
+    
+    @Override
+    public void logState( double time, double x, double y, double xspeed )
+    {
+        if( m_logWriter != null )
+        {
+            try
+            {
+                m_logWriter.write( time + "," + x + "," + y + "," + xspeed + "\n" );
+                m_logWriter.flush();
+            } catch (IOException e)
+            {
+                try
+                {
+                    m_logWriter.close();
+                } catch (IOException e1)
+                {
+                    e1.printStackTrace();
+                }
+                
+                m_logWriter = null;
+                e.printStackTrace(System.out);
+            }
         }
     }
     

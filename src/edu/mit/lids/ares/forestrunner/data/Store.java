@@ -60,6 +60,18 @@ public abstract class Store
         m_stringMap.put("hash", "");
     }
     
+    /// initialize a new log for a new run
+    public void initRunLog( Long time )
+    {
+        
+    }
+    
+    /// record the state in the current log if there is one
+    public void logState( double time, double x, double y, double xspeed )
+    {
+        
+    }
+    
     public void sync()
     {
         

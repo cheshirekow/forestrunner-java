@@ -590,8 +590,10 @@ public abstract class Game extends Application
         m_xSpeed = 0f;
         m_density= 5f  + 0.5f  * m_params.get("density");
                     //20f  + 10f  * m_params.get("density");
-        
-        FloorPatch.setSeed(0);      
+       
+        Long seed = System.currentTimeMillis();
+        FloorPatch.setSeed(seed);      
+        m_dataStore.initRunLog(seed);
         
         int   dimx      = m_patchDimX;
         int   dimy      = m_patchDimY;
@@ -745,6 +747,8 @@ public abstract class Game extends Application
         // update the position
         m_yPos += m_ySpeed*tpf;
         m_xPos += m_xSpeed*tpf;
+        
+        m_dataStore.logState(m_score, m_xPos, m_yPos, m_xSpeed);
         
         // if we've passed the end if the first row, then shuffle it back
         // to the last row
